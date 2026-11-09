@@ -1,0 +1,1228 @@
+/* ============================================================
+   RELOJ CHECADOR — FASE 7.1A
+   Dark Premium · Consistente con os-admin.css
+   NIP-Only · Prototype Mode
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+
+/* ── Variables ──────────────────────────────────────────── */
+:root {
+  --rc-bg:        #020711;
+  --rc-bg2:       #061521;
+  --rc-card:      rgba(18, 35, 60, 0.82);
+  --rc-card2:     rgba(7, 16, 30, 0.90);
+  --rc-border:    rgba(126, 169, 230, 0.28);
+  --rc-border2:   rgba(126, 169, 230, 0.14);
+  --rc-blue:      #4f8cff;
+  --rc-cyan:      #23d7ff;
+  --rc-text:      #e8f0fe;
+  --rc-muted:     #7a9bbf;
+  --rc-green:     #22c55e;
+  --rc-red:       #ef4444;
+  --rc-orange:    #f59e0b;
+  --rc-purple:    #a78bfa;
+  --rc-shadow:    0 24px 80px rgba(4, 20, 50, 0.85);
+  --rc-glow-b:    0 0 24px rgba(79, 140, 255, 0.35);
+  --rc-glow-g:    0 0 20px rgba(34, 197, 94, 0.40);
+  --rc-glow-r:    0 0 20px rgba(239, 68, 68, 0.40);
+  --rc-glow-o:    0 0 20px rgba(245, 158, 11, 0.40);
+  --rc-glow-p:    0 0 20px rgba(167, 139, 250, 0.40);
+  --rc-radius:    20px;
+  --rc-radius-sm: 12px;
+}
+
+/* ── Reset & Base ─────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── FIX CRITICO: [hidden] con display explcícito ──────────── */
+/* display:grid/flex en author stylesheet sobreescribe el UA [hidden].
+   Este override con !important garantiza que el atributo funcione.
+   SIN ESTO: keypad y success se muestran al mismo tiempo. */
+.rc-keypad-view[hidden],
+.rc-success-view[hidden] { display: none !important; }
+
+.reloj-page {
+  font-family: "Inter", system-ui, sans-serif;
+  background:
+    radial-gradient(circle at 20% 0%,   rgba(47, 133, 255, 0.38) 0%, transparent 55%),
+    radial-gradient(circle at 85% 90%,  rgba(0, 209, 255, 0.18)  0%, transparent 50%),
+    linear-gradient(160deg, var(--rc-bg) 0%, var(--rc-bg2) 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  color: var(--rc-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Kiosk card ────────────────────────────────── */
+.rc-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--rc-card);
+  border: 1px solid var(--rc-border);
+  border-radius: var(--rc-radius);
+  box-shadow: var(--rc-shadow);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Dentro del overlay: card más ancha y con scroll si es necesario */
+.rc-overlay .rc-card {
+  max-width: 500px;
+  overflow-y: auto;
+  max-height: calc(100vh - 80px);
+}
+
+.rc-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--rc-blue), var(--rc-cyan), transparent);
+  opacity: 0.7;
+  border-radius: var(--rc-radius) var(--rc-radius) 0 0;
+}
+
+/* ── Header ─────────────────────────────────────────── */
+.rc-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid var(--rc-border2);
+}
+
+.rc-logo-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--rc-blue), var(--rc-cyan));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 16px;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 0 14px rgba(79, 140, 255, 0.45);
+}
+
+.rc-header-meta { flex: 1; }
+
+.rc-header-empresa {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--rc-text);
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.rc-header-sucursal {
+  font-size: 11px;
+  color: var(--rc-muted);
+  margin-top: 2px;
+}
+
+.rc-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--rc-green);
+  box-shadow: 0 0 8px var(--rc-green);
+  flex-shrink: 0;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+.rc-status-dot.offline {
+  background: var(--rc-red);
+  box-shadow: 0 0 8px var(--rc-red);
+  animation: none;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(0.85); }
+}
+
+/* ── Reloj digital ────────────────────────────────── */
+.rc-clock-block {
+  text-align: center;
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid var(--rc-border2);
+}
+
+.rc-time {
+  font-size: 58px;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  color: #fff;
+  text-shadow:
+    0 0 30px rgba(79, 140, 255, 0.55),
+    0 0 60px rgba(35, 215, 255, 0.25);
+  font-variant-numeric: tabular-nums;
+}
+
+.rc-time-sep {
+  animation: blink-sep 1s step-end infinite;
+}
+@keyframes blink-sep {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
+.rc-date {
+  font-size: 13px;
+  color: var(--rc-muted);
+  margin-top: 6px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: capitalize;
+}
+
+/* ── NIP section ─────────────────────────────────── */
+.rc-nip-section { padding: 20px 24px 0; }
+
+.rc-nip-label {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--rc-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 14px;
+}
+
+.rc-nip-dots {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.rc-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--rc-border);
+  background: transparent;
+  transition: all 0.15s ease;
+}
+.rc-dot.filled {
+  background: var(--rc-blue);
+  border-color: var(--rc-blue);
+  box-shadow: 0 0 10px rgba(79, 140, 255, 0.6);
+  transform: scale(1.08);
+}
+.rc-dot.error {
+  background: var(--rc-red);
+  border-color: var(--rc-red);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+  animation: shake 0.35s ease;
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-5px); }
+  40%       { transform: translateX(5px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
+}
+
+/* ── Teclado ─────────────────────────────────────── */
+.rc-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 0 24px 16px;
+}
+
+.rc-key {
+  background: rgba(14, 28, 52, 0.75);
+  border: 1px solid var(--rc-border2);
+  border-radius: var(--rc-radius-sm);
+  color: var(--rc-text);
+  font-family: inherit;
+  font-size: 20px; /* ≥16px: previene auto-zoom iOS Safari */
+  font-weight: 700;
+  height: 52px;   /* ≥44px: Apple HIG mínimo touch target */
+  cursor: pointer;
+  transition: background 0.12s, transform 0.1s, box-shadow 0.12s;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: rgba(79, 140, 255, 0.15);
+  touch-action: manipulation; /* evita delay de 300ms en iOS */
+}
+.rc-key:hover { background: rgba(79, 140, 255, 0.15); border-color: rgba(79, 140, 255, 0.4); }
+.rc-key:active { transform: scale(0.94); box-shadow: 0 0 14px rgba(79, 140, 255, 0.3); }
+
+.rc-key-del {
+  font-size: 14px;
+  color: var(--rc-muted);
+  border-color: rgba(239, 68, 68, 0.20);
+}
+.rc-key-del:hover {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.40);
+  color: var(--rc-red);
+}
+
+/* ── Botones de acción ───────────────────────────── */
+.rc-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 0 24px 20px;
+}
+
+.rc-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 64px;
+  border-radius: var(--rc-radius-sm);
+  border: 1px solid transparent;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: all 0.15s ease;
+  touch-action: manipulation; /* sin delay 300ms en iOS */
+  -webkit-tap-highlight-color: transparent;
+}
+.rc-btn:active { transform: scale(0.97); }
+.rc-btn svg { width: 20px; height: 20px; fill: currentColor; }
+.rc-btn:disabled,
+.rc-btn.rc-btn-disabled {
+  opacity: 0.28;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+  pointer-events: none;
+  filter: grayscale(0.6);
+}
+
+.rc-btn-entrada       { background: rgba(34,197,94,.12);  border-color: rgba(34,197,94,.35);  color: #4ade80; }
+.rc-btn-entrada:hover { background: rgba(34,197,94,.22);  border-color: rgba(34,197,94,.60);  box-shadow: var(--rc-glow-g); }
+.rc-btn-salida        { background: rgba(239,68,68,.12);  border-color: rgba(239,68,68,.35);  color: #f87171; }
+.rc-btn-salida:hover  { background: rgba(239,68,68,.22);  border-color: rgba(239,68,68,.60);  box-shadow: var(--rc-glow-r); }
+.rc-btn-inicio-descanso       { background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.35); color: #fbbf24; }
+.rc-btn-inicio-descanso:hover { background: rgba(245,158,11,.22); border-color: rgba(245,158,11,.60); box-shadow: var(--rc-glow-o); }
+.rc-btn-fin-descanso       { background: rgba(79,140,255,.12); border-color: rgba(79,140,255,.35); color: var(--rc-blue); }
+.rc-btn-fin-descanso:hover { background: rgba(79,140,255,.22); border-color: rgba(79,140,255,.60); box-shadow: var(--rc-glow-b); }
+
+
+/* ── Resultado ────────────────────────────────────── */
+.rc-result {
+  margin: 0 24px 20px;
+  padding: 14px 16px;
+  border-radius: var(--rc-radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  display: none;
+  animation: fade-in-up 0.25s ease;
+  border: 1px solid transparent;
+}
+.rc-result.visible { display: block; }
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.rc-result-ok   { background: rgba(34,197,94,.10);  border-color: rgba(34,197,94,.30);  color: #4ade80; }
+.rc-result-error{ background: rgba(239,68,68,.10);  border-color: rgba(239,68,68,.30);  color: #f87171; }
+.rc-result-warn { background: rgba(245,158,11,.10); border-color: rgba(245,158,11,.30); color: #fbbf24; }
+.rc-result-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+.rc-result-sub  { font-size: 12px; opacity: .80; }
+.rc-result-note { font-size: 11px; opacity: .60; margin-top: 4px; font-style: italic; }
+
+/* ── Banner prototipo ─────────────────────────────── */
+.rc-proto-banner {
+  margin: 0 24px 18px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(167,139,250,.08);
+  border: 1px solid rgba(167,139,250,.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 10.5px;
+  color: rgba(167,139,250,.80);
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+.rc-proto-banner svg { width: 12px; height: 12px; fill: currentColor; flex-shrink: 0; }
+
+/* ── Divider ──────────────────────────────────────── */
+.rc-divider { height: 1px; background: var(--rc-border2); margin: 0 24px 16px; }
+
+/* ── Spinner ──────────────────────────────────────── */
+.rc-spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid rgba(79,140,255,.25); border-top-color: var(--rc-blue);
+  border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Modal Overlay ────────────────────────────────── */
+.rc-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(2, 7, 17, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
+}
+.rc-overlay.is-open { opacity: 1; pointer-events: all; }
+.rc-overlay .rc-card {
+  animation: rc-card-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.rc-overlay.is-open .rc-card { transform: scale(1) translateY(0); }
+
+@keyframes rc-card-in {
+  from { opacity: 0; transform: scale(0.94) translateY(18px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+
+/* Prevenir scroll del body mientras el modal está abierto */
+body.reloj-open { overflow: hidden; }
+
+.rc-esc-hint {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  font-size: 11px;
+  color: rgba(126,169,230,.50);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  user-select: none;
+}
+.rc-esc-hint kbd {
+  background: rgba(126,169,230,.12);
+  border: 1px solid rgba(126,169,230,.20);
+  border-radius: 5px;
+  padding: 2px 6px;
+  font-family: inherit;
+  font-size: 10px;
+}
+
+/* =========================================================
+   CALEBSYS RELOJ CHECADOR — FASE 7.1C
+   SUCCESS / TOAST UX — Replicado exactamente del diseño
+   ========================================================= */
+
+/* ── Wrapper keypad-view ──────────────────────────────── */
+.rc-keypad-view { width: 100%; }
+
+/* ── Sub-labels de botones de acción ─────────────────── */
+.rc-btn-label {
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+.rc-btn-sub {
+  font-size: 10px;
+  font-weight: 500;
+  opacity: .72;
+  line-height: 1;
+}
+
+/* ── Variables en modo CLARO ─────────────────────────── */
+/* Sobreescribe --rc-text (blanco oscuro → oscuro) para card blanca */
+[data-theme="light"] {
+  --rc-text:  #07132a;
+  --rc-muted: #64748b;
+}
+
+/* ── TOAST SUPERIOR ───────────────────────────────────── */
+.rc-toast {
+  position: fixed;
+  top: 22px;
+  left: 50%;
+  z-index: 9999;
+  transform: translate(-50%, -120%);
+  min-width: 280px;
+  max-width: 420px;
+  padding: 14px 18px;
+  border-radius: 18px;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 420ms cubic-bezier(.2,.9,.2,1), opacity 280ms ease;
+}
+.rc-toast.show {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}
+.rc-toast.success {
+  color: #065f46;
+  background: rgba(220, 252, 231, 0.92);
+  border: 1px solid rgba(34, 197, 94, 0.28);
+  box-shadow: 0 18px 50px rgba(34, 197, 94, 0.20);
+}
+.rc-toast.danger {
+  color: #991b1b;
+  background: rgba(254, 226, 226, 0.94);
+  border: 1px solid rgba(239, 68, 68, 0.28);
+  box-shadow: 0 18px 50px rgba(239, 68, 68, 0.18);
+}
+.rc-toast.warning {
+  color: #92400e;
+  background: rgba(254, 243, 199, 0.94);
+  border: 1px solid rgba(245, 158, 11, 0.32);
+  box-shadow: 0 18px 50px rgba(245, 158, 11, 0.18);
+}
+.rc-toast.error {
+  color: #7f1d1d;
+  background: rgba(254, 226, 226, 0.96);
+  border: 1px solid rgba(239, 68, 68, 0.38);
+}
+
+/* ── VISTA DE ÉXITO ───────────────────────────────────── */
+.rc-success-view {
+  width: 100%;
+  min-height: 400px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 34px 28px;
+}
+.rc-success-card,
+.rc-success-view {
+  animation: rcSuccessIn 420ms cubic-bezier(.2,.9,.2,1) both;
+}
+@keyframes rcSuccessIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.rc-success-icon {
+  width: 82px;
+  height: 82px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 18px;
+  font-size: 36px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow:
+    0 18px 48px rgba(34, 197, 94, 0.32),
+    inset 0 1px 0 rgba(255,255,255,0.34);
+}
+
+.rc-success-view h2 {
+  margin: 0 0 18px;
+  font-size: 22px;
+  font-weight: 950;
+  letter-spacing: -0.04em;
+  color: var(--rc-text, #07132a);
+}
+
+.rc-success-user {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 auto 18px;
+  text-align: left;
+}
+
+.rc-success-photo-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  position: relative;
+  overflow: hidden;
+  flex: 0 0 auto;
+}
+.rc-success-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rc-avatar-fallback {
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  font-weight: 950;
+  font-size: 14px;
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+}
+
+.rc-success-user strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 950;
+  color: var(--rc-text, #07132a);
+  text-transform: uppercase;
+}
+.rc-success-user span {
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--rc-muted, #64748b);
+}
+
+.rc-success-divider {
+  width: min(260px, 100%);
+  height: 1px;
+  margin: 6px auto 16px;
+  background: linear-gradient(90deg, transparent, rgba(148, 163, 184, .42), transparent);
+}
+
+.rc-success-view p {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--rc-muted, #64748b);
+}
+
+.rc-success-time {
+  display: block;
+  margin-bottom: 20px;
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 950;
+  letter-spacing: -0.05em;
+  color: var(--rc-text, #07132a);
+}
+
+.rc-success-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 850;
+  color: #047857;
+  background: rgba(220, 252, 231, 0.90);
+  border: 1px solid rgba(34, 197, 94, 0.24);
+}
+
+/* ── DARK MODE — overrides de éxito ──────────────────── */
+[data-theme="dark"] .rc-success-view h2,
+.rc-theme-dark .rc-success-view h2 {
+  color: #f8fbff;
+}
+[data-theme="dark"] .rc-success-user strong,
+.rc-theme-dark .rc-success-user strong {
+  color: #f8fbff;
+}
+[data-theme="dark"] .rc-success-user span,
+[data-theme="dark"] .rc-success-view p,
+.rc-theme-dark .rc-success-user span,
+.rc-theme-dark .rc-success-view p {
+  color: #91a8c7;
+}
+[data-theme="dark"] .rc-success-time,
+.rc-theme-dark .rc-success-time {
+  color: #f8fbff;
+  text-shadow: 0 0 30px rgba(47, 133, 255, 0.20);
+}
+[data-theme="dark"] .rc-success-badge,
+.rc-theme-dark .rc-success-badge {
+  color: #86efac;
+  background: rgba(20, 83, 45, 0.35);
+  border-color: rgba(34, 197, 94, 0.25);
+}
+
+/* ── LIGHT MODE — polish del teclado y card ──────────── */
+[data-theme="light"] body,
+.rc-theme-light body {
+  background:
+    radial-gradient(circle at 15% 18%, rgba(59, 130, 246, 0.12), transparent 28%),
+    radial-gradient(circle at 90% 82%, rgba(14, 165, 233, 0.13), transparent 32%),
+    linear-gradient(135deg, #f8fbff 0%, #eef6ff 46%, #ffffff 100%);
+}
+[data-theme="light"] .rc-shell,
+.rc-theme-light .rc-shell {
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(148, 163, 184, 0.32);
+  box-shadow:
+    0 30px 90px rgba(15, 23, 42, 0.10),
+    inset 0 1px 0 rgba(255,255,255,0.80);
+  backdrop-filter: blur(22px);
+}
+[data-theme="light"] .rc-key,
+.rc-theme-light .rc-key {
+  background: rgba(255,255,255,0.78);
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  color: #06122c;
+  box-shadow:
+    0 12px 30px rgba(15,23,42,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.88);
+}
+[data-theme="light"] .rc-key:hover,
+.rc-theme-light .rc-key:hover {
+  border-color: rgba(37, 99, 235, 0.45);
+  box-shadow:
+    0 16px 38px rgba(37, 99, 235, 0.10),
+    inset 0 1px 0 rgba(255,255,255,0.92);
+}
+[data-theme="light"] .rc-time,
+.rc-theme-light .rc-time {
+  color: #06122c;
+  text-shadow: 0 16px 42px rgba(37,99,235,0.12);
+}
+[data-theme="light"] .rc-time .seconds,
+.rc-theme-light .rc-time .seconds {
+  color: #1683ff;
+}
+[data-theme="light"] .rc-prototype,
+.rc-theme-light .rc-prototype {
+  color: #6d28d9;
+  background: rgba(245, 243, 255, 0.88);
+  border: 1px solid rgba(139, 92, 246, 0.20);
+}
+
+/* ── LIGHT MODE — Card, overlay, header, clock, NIP, botones ─── */
+
+/* Overlay: fondo más claro */
+[data-theme="light"] .rc-overlay {
+  background: rgba(15, 23, 42, 0.40);
+  backdrop-filter: blur(12px);
+}
+
+/* Card: blanca glassmorphism */
+[data-theme="light"] .rc-card {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(148, 163, 184, 0.28);
+  box-shadow:
+    0 32px 80px rgba(15, 23, 42, 0.14),
+    0 0 0 1px rgba(148, 163, 184, 0.12) inset;
+}
+/* Acento superior de la card en azul suave */
+[data-theme="light"] .rc-card::before {
+  background: linear-gradient(90deg, transparent, #2563eb, #0ea5e9, transparent);
+  opacity: 0.45;
+}
+
+/* Header */
+[data-theme="light"] .rc-header {
+  border-bottom-color: rgba(148, 163, 184, 0.18);
+}
+[data-theme="light"] .rc-header-empresa {
+  color: #07132a;
+}
+[data-theme="light"] .rc-header-sucursal {
+  color: #64748b;
+}
+
+/* Reloj */
+[data-theme="light"] .rc-clock-block {
+  border-bottom-color: rgba(148, 163, 184, 0.18);
+}
+[data-theme="light"] .rc-date {
+  color: #64748b;
+}
+
+/* Dots NIP */
+[data-theme="light"] .rc-dot {
+  border-color: rgba(37, 99, 235, 0.30);
+}
+
+/* Label NIP */
+[data-theme="light"] .rc-nip-label {
+  color: #64748b;
+}
+
+/* Divider */
+[data-theme="light"] .rc-divider {
+  background: rgba(148, 163, 184, 0.22);
+}
+
+/* Botones de acción en modo claro */
+[data-theme="light"] .rc-btn-entrada {
+  background: rgba(34, 197, 94, 0.08);
+  border-color: rgba(34, 197, 94, 0.32);
+  color: #15803d;
+}
+[data-theme="light"] .rc-btn-entrada:hover {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.55);
+}
+[data-theme="light"] .rc-btn-salida {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.32);
+  color: #b91c1c;
+}
+[data-theme="light"] .rc-btn-salida:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.55);
+}
+[data-theme="light"] .rc-btn-inicio-descanso {
+  background: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.32);
+  color: #b45309;
+}
+[data-theme="light"] .rc-btn-inicio-descanso:hover {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.55);
+}
+[data-theme="light"] .rc-btn-fin-descanso {
+  background: rgba(37, 99, 235, 0.08);
+  border-color: rgba(37, 99, 235, 0.28);
+  color: #1d4ed8;
+}
+[data-theme="light"] .rc-btn-fin-descanso:hover {
+  background: rgba(37, 99, 235, 0.15);
+  border-color: rgba(37, 99, 235, 0.50);
+}
+
+/* Resultado inline en modo claro */
+[data-theme="light"] .rc-result-ok    { background: rgba(34,197,94,.08);  color: #047857; }
+[data-theme="light"] .rc-result-error { background: rgba(239,68,68,.08);  color: #b91c1c; }
+[data-theme="light"] .rc-result-warn  { background: rgba(245,158,11,.08); color: #b45309; }
+
+/* Banner proto en modo claro */
+[data-theme="light"] .rc-proto-banner {
+  color: #5b21b6;
+  background: rgba(245, 243, 255, 0.88);
+  border-color: rgba(139, 92, 246, 0.22);
+}
+
+/* ESC hint en modo claro */
+[data-theme="light"] .rc-esc-hint {
+  color: rgba(37, 99, 235, 0.50);
+}
+[data-theme="light"] .rc-esc-hint kbd {
+  background: rgba(37, 99, 235, 0.08);
+  border-color: rgba(37, 99, 235, 0.18);
+}
+
+/* Key del borrar en modo claro */
+[data-theme="light"] .rc-key-del {
+  color: #64748b;
+  border-color: rgba(239, 68, 68, 0.15);
+}
+[data-theme="light"] .rc-key-del:hover {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.30);
+  color: #b91c1c;
+}
+
+/* =========================================================
+   RESPONSIVE — Reloj Checador
+   Desktop   : 1024px+  → modal overlay en os.html (F7)
+   Tablet    : 768–1024px → modal/standalone más compacto
+   Mobile    : ≤ 480px  → standalone full-width, touch-first
+   X-Small   : ≤ 360px  → columna única en acciones
+   ========================================================= */
+
+/* ── TABLET (768px – 1024px) ─────────────────────────────── */
+@media (max-width: 1024px) {
+  /* En overlay: card más compacta */
+  .rc-overlay .rc-card {
+    max-width: 420px;
+  }
+
+  /* Reloj un poco más pequeño */
+  .rc-time {
+    font-size: 48px;
+  }
+
+  /* Teclas un poco más pequeñas */
+  .rc-key {
+    height: 48px;
+    font-size: 18px;
+  }
+
+  /* Botones de acción: mantener 2 columnas */
+  .rc-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .rc-btn {
+    height: 58px;
+  }
+}
+
+/* ── MOBILE (≤ 480px) ────────────────────────────────────── */
+@media (max-width: 480px) {
+
+  /* Página standalone: sin padding lateral excesivo */
+  .reloj-page {
+    padding: 0;
+    align-items: flex-start;
+  }
+
+  /* Card ocupa toda la pantalla, sin bordes redondeados laterales */
+  .reloj-page .rc-card,
+  .rc-standalone-page .rc-card {
+    max-width: 100%;
+    width: 100%;
+    border-radius: 0 0 20px 20px;
+    border-left: none;
+    border-right: none;
+  }
+
+  /* Overlay modal en OS: card más pequeña con margen */
+  .rc-overlay .rc-card {
+    max-width: calc(100vw - 24px);
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+    border-radius: 20px;
+  }
+
+  /* Header compacto */
+  .rc-header {
+    padding: 14px 16px 12px;
+  }
+
+  /* Reloj más pequeño en mobile */
+  .rc-clock-block {
+    padding: 16px 20px 14px;
+  }
+  .rc-time {
+    font-size: 42px;
+    letter-spacing: -0.04em;
+  }
+  .rc-date {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  /* NIP section */
+  .rc-nip-section {
+    padding: 14px 20px 0;
+  }
+  .rc-nip-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+  .rc-nip-dots {
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .rc-dot {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Teclado numérico — botones grandes para touch */
+  .rc-keypad {
+    gap: 6px;
+    padding: 0 16px 12px;
+  }
+  .rc-key {
+    height: 58px;
+    font-size: 22px;
+    font-weight: 700;
+    border-radius: 14px;
+    /* Touch highlight */
+    -webkit-tap-highlight-color: rgba(79,140,255,0.18);
+  }
+  .rc-key:active {
+    transform: scale(0.92);
+  }
+
+  /* Botones de acción: 2 columnas */
+  .rc-actions {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    padding: 0 16px 16px;
+  }
+  .rc-btn {
+    height: 60px;
+    border-radius: 14px;
+    gap: 2px;
+  }
+  .rc-btn-label {
+    font-size: 12px;
+  }
+  .rc-btn-sub {
+    font-size: 9px;
+  }
+  .rc-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Divider */
+  .rc-divider {
+    margin: 0 16px 12px;
+  }
+
+  /* Resultado inline */
+  .rc-result {
+    margin: 0 16px 14px;
+    font-size: 12px;
+    padding: 10px 14px;
+  }
+
+  /* Banner prototipo */
+  .rc-proto-banner {
+    margin: 0 16px 14px;
+    font-size: 9.5px;
+    padding: 6px 10px;
+  }
+
+  /* Toast: más corto y centrado */
+  .rc-toast {
+    min-width: calc(100vw - 32px);
+    max-width: calc(100vw - 32px);
+    font-size: 13px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    top: 12px;
+  }
+
+  /* Vista de éxito: compacta */
+  .rc-success-view {
+    min-height: 320px;
+    padding: 24px 20px 20px;
+  }
+  .rc-success-icon {
+    width: 68px;
+    height: 68px;
+    font-size: 28px;
+    margin-bottom: 14px;
+  }
+  .rc-success-view h2 {
+    font-size: 18px;
+    margin-bottom: 14px;
+  }
+  .rc-success-user {
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .rc-success-photo-wrap,
+  .rc-avatar-fallback {
+    width: 40px;
+    height: 40px;
+    font-size: 12px;
+  }
+  .rc-success-user strong {
+    font-size: 13px;
+  }
+  .rc-success-user span {
+    font-size: 11px;
+  }
+  .rc-success-time {
+    font-size: 26px;
+    margin-bottom: 16px;
+  }
+  .rc-success-badge {
+    font-size: 11px;
+    padding: 0 12px;
+    min-height: 30px;
+  }
+  .rc-success-view p {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+}
+
+/* ── X-SMALL (≤ 360px) — 1 columna en acciones ────────────── */
+@media (max-width: 360px) {
+  .rc-actions {
+    grid-template-columns: 1fr;
+  }
+  .rc-btn {
+    height: 52px;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 0 16px;
+    gap: 10px;
+  }
+  .rc-btn svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+  .rc-btn-label {
+    font-size: 13px;
+  }
+  .rc-btn-sub {
+    display: none; /* Esconder sub-label en pantallas muy pequeñas */
+  }
+  .rc-time {
+    font-size: 36px;
+  }
+  .rc-key {
+    height: 52px;
+    font-size: 20px;
+  }
+}
+
+/* ── ESC hint: ocultar en móvil (no aplica touch) ─────────── */
+@media (max-width: 768px) {
+  .rc-esc-hint { display: none; }
+}
+
+/* ── Evitar scroll horizontal global ─────────────────────── */
+@media (max-width: 480px) {
+  html, body { overflow-x: hidden; max-width: 100vw; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   SESIÓN 5 — Estilos: identidad JWT + loading block
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Bloque de identidad del empleado ────────────────────── */
+.rc-user-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 18px 16px 10px;
+}
+.rc-user-name {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--rc-text-primary, #f1f5f9);
+  text-align: center;
+}
+.rc-user-role {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--rc-text-muted, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── Bloque de carga (spinner + label) ───────────────────── */
+.rc-loading-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 28px 16px 20px;
+}
+.rc-pending-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--rc-text-secondary, #94a3b8);
+  letter-spacing: 0.01em;
+}
+
+/* ── Spinner (ya usado en rc-result; asegurar visibilidad) ── */
+.rc-spinner {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(99,179,237,0.25);
+  border-top-color: #63b3ed;
+  border-radius: 50%;
+  animation: rc-spin 0.75s linear infinite;
+}
+@keyframes rc-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   GAP-1 — Mensaje "jornada cerrada" (compartido os.html modal
+   + asistencia-reloj.html standalone). Antes vivía sólo en el
+   <style> inline de la página standalone; el modal de escritorio
+   quedaba sin estilo.
+   ═══════════════════════════════════════════════════════════ */
+.rc-jornada-cerrada-msg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 12px 24px 4px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(239, 68, 68, 0.10);
+  border: 1px solid rgba(239, 68, 68, 0.28);
+  color: #f87171;
+  font-size: 14px;
+  font-weight: 600;
+  box-sizing: border-box;
+}
+.rc-jornada-cerrada-msg svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+/* FIX [hidden]: display:flex de autor sobreescribe el UA [hidden].
+   Sin esto, el spinner de carga y el mensaje de jornada cerrada
+   se muestran aunque tengan el atributo hidden. */
+.rc-loading-block[hidden],
+.rc-jornada-cerrada-msg[hidden] { display: none !important; }
+
+
+/* ═══════════════════════════════════════════════════════════
+   RH-04 — Leyenda de acción + botón único ACEPTAR
+   El reloj ya no ficha solo: muestra "Hora de Ingreso" /
+   "Hora de Salida" y el usuario confirma con ACEPTAR.
+   ═══════════════════════════════════════════════════════════ */
+.rc-accion-label {
+  text-align: center;
+  padding: 20px 16px 8px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: var(--rc-text, #e8f0fe);
+}
+.rc-accion-label[hidden] { display: none !important; }
+
+.rc-btn-aceptar {
+  display: block;
+  width: calc(100% - 48px);
+  margin: 8px 24px 20px;
+  padding: 16px 20px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--rc-blue, #4f8cff), var(--rc-cyan, #23d7ff));
+  color: #fff;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 12px 32px rgba(79, 140, 255, 0.35);
+  transition: transform 0.1s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  touch-action: manipulation;
+}
+.rc-btn-aceptar:hover   { box-shadow: 0 16px 40px rgba(79, 140, 255, 0.45); }
+.rc-btn-aceptar:active  { transform: scale(0.97); }
+.rc-btn-aceptar:disabled { opacity: 0.5; cursor: not-allowed; }
+.rc-btn-aceptar[hidden] { display: none !important; }
+
+/* Variante informativa (azul) para "ya fichó en control de acceso" */
+.rc-jornada-cerrada-msg.rc-msg-info {
+  background: rgba(79, 140, 255, 0.10);
+  border-color: rgba(79, 140, 255, 0.28);
+  color: #93c5fd;
+}

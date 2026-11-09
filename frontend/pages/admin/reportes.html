@@ -1,0 +1,149 @@
+<!-- PAGE: REPORTES -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Reportes</h1>
+    <p class="page-subtitle" id="rep-subtitle">Análisis de ventas, inventario y operaciones</p>
+  </div>
+  <div class="page-header-actions">
+    <!-- Scope selector — visible sólo para Administrador/admin -->
+    <div id="rep-scope-bar" hidden style="display:flex;align-items:center;gap:6px;">
+      <span style="font-size:11px;font-weight:700;color:var(--text-secondary);">ALCANCE</span>
+      <button id="rep-scope-suc" data-click="repSetScope" data-click-arg="suc"
+              class="btn btn-sm" style="font-size:11px;">Mi Sucursal</button>
+      <button id="rep-scope-all" data-click="repSetScope" data-click-arg="all"
+              class="btn btn-primary btn-sm" style="font-size:11px;">Todas</button>
+    </div>
+    <button class="btn btn-secondary btn-sm" data-click="__print">
+      <i class="fa-solid fa-file-export"></i> Imprimir
+    </button>
+    <button class="btn btn-secondary btn-sm" data-click="repRefreshAll" title="Recargar datos">
+      <i class="fa-solid fa-rotate"></i>
+    </button>
+  </div>
+</div>
+
+<!-- KPI row -->
+<div class="grid-3" id="rep-kpis" style="margin-bottom:20px;">
+  <div class="card" style="padding:16px 20px;">
+    <div class="rep-kpi-title">Ventas Hoy</div>
+    <div id="rep-ventas-hoy" class="rep-kpi-val">—</div>
+    <div id="rep-delta" class="rep-kpi-sub"></div>
+  </div>
+  <div class="card" style="padding:16px 20px;">
+    <div class="rep-kpi-title">Tickets Hoy</div>
+    <div id="rep-tickets-hoy" class="rep-kpi-val">—</div>
+    <div class="rep-kpi-sub">ventas completadas</div>
+  </div>
+  <div class="card" style="padding:16px 20px;">
+    <div class="rep-kpi-title">CxC Pendiente</div>
+    <div id="rep-cxc-total" class="rep-kpi-val" style="color:var(--danger);">—</div>
+    <div class="rep-kpi-sub">total en cartera</div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+
+  <!-- Ventas por período -->
+  <div class="card" style="padding:20px;">
+    <div class="rep-section-title">
+      <i class="fa-solid fa-chart-line" style="color:var(--primary);"></i> Ventas del Mes
+    </div>
+    <div id="rep-daily-chart" style="min-height:72px;display:flex;align-items:flex-end;gap:3px;">
+      <span class="rep-loading">Cargando...</span>
+    </div>
+    <div id="rep-daily-total" class="rep-chart-total"></div>
+    <!-- Desglose por sucursal — sólo en scope ALL -->
+    <div id="rep-by-sucursal" hidden style="margin-top:14px;"></div>
+  </div>
+
+  <!-- Productos más vendidos hoy -->
+  <div class="card" style="padding:20px;">
+    <div class="rep-section-title">
+      <i class="fa-solid fa-tag" style="color:#22c55e;"></i> Productos Más Vendidos Hoy
+    </div>
+    <div id="rep-top-products" style="min-height:72px;">
+      <span class="rep-loading">Cargando...</span>
+    </div>
+  </div>
+
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+
+  <!-- Cartera vencida aging -->
+  <div class="card" style="padding:20px;">
+    <div class="rep-section-title">
+      <i class="fa-solid fa-file-invoice-dollar" style="color:var(--danger);"></i> Cartera Vencida — Antigüedad
+      <span id="rep-aging-scope-note" style="font-size:10px;font-weight:400;color:var(--text-secondary);margin-left:6px;"></span>
+    </div>
+    <div id="rep-aging" style="min-height:72px;">
+      <span class="rep-loading">Cargando...</span>
+    </div>
+  </div>
+
+  <!-- Inventario KPIs — siempre empresa-wide -->
+  <div class="card" style="padding:20px;">
+    <div class="rep-section-title">
+      <i class="fa-solid fa-boxes-stacked" style="color:#f59e0b;"></i> Inventario
+      <span style="font-size:10px;font-weight:400;color:var(--text-secondary);margin-left:6px;">(empresa completa)</span>
+    </div>
+    <div id="rep-inventario" style="min-height:72px;">
+      <span class="rep-loading">Cargando...</span>
+    </div>
+  </div>
+
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+
+  <!-- Top clientes CxC — empresa-wide -->
+  <div class="card" style="padding:20px;">
+    <div class="rep-section-title">
+      <i class="fa-solid fa-users" style="color:#8b5cf6;"></i> Clientes con Mayor Saldo CxC
+      <span style="font-size:10px;font-weight:400;color:var(--text-secondary);margin-left:6px;">(empresa completa)</span>
+    </div>
+    <div id="rep-top-clients" style="min-height:72px;">
+      <span class="rep-loading">Cargando...</span>
+    </div>
+  </div>
+
+  <!-- Cortes de caja -->
+  <div class="card" style="padding:20px;">
+    <div class="rep-section-title">
+      <i class="fa-solid fa-cash-register" style="color:#14b8a6;"></i> Últimos Cortes de Caja
+      <span id="rep-caja-scope-note" style="font-size:10px;font-weight:400;color:var(--text-secondary);margin-left:6px;"></span>
+    </div>
+    <div id="rep-caja" style="min-height:72px;">
+      <span class="rep-loading">Cargando...</span>
+    </div>
+  </div>
+
+</div>
+
+<style>
+.rep-kpi-title { font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px; }
+.rep-kpi-val   { font-size:22px;font-weight:800;color:var(--text-primary); }
+.rep-kpi-sub   { font-size:11px;margin-top:2px;color:var(--text-secondary); }
+.rep-section-title { font-weight:700;font-size:14px;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap; }
+.rep-chart-total { font-size:11px;color:var(--text-secondary);margin-top:6px;text-align:right; }
+.rep-loading { font-size:12px;color:var(--text-secondary); }
+.rep-kv { display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border-light,#f1f5f9);font-size:13px; }
+.rep-kv:last-child { border-bottom:none; }
+.rep-kv-label { color:var(--text-secondary); }
+.rep-kv-val   { font-weight:700; }
+.rep-bar-wrap { flex:1;display:flex;flex-direction:column;align-items:center; }
+.rep-bar      { width:100%;background:var(--primary,#3b82f6);border-radius:3px 3px 0 0;min-height:2px; }
+.rep-bar-lbl  { font-size:9px;color:var(--text-secondary);margin-top:2px;text-align:center;overflow:hidden; }
+.rep-bucket-row { display:flex;align-items:center;gap:8px;margin-bottom:6px; }
+.rep-bucket-label { font-size:11px;width:70px;flex-shrink:0;color:var(--text-secondary); }
+.rep-bucket-bar   { flex:1;height:14px;border-radius:3px; }
+.rep-bucket-val   { font-size:11px;font-weight:700;width:76px;text-align:right;flex-shrink:0; }
+.rep-tbl { width:100%;border-collapse:collapse;font-size:12px; }
+.rep-tbl th { text-align:left;padding:4px 6px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text-secondary);border-bottom:1px solid var(--border,#e2e8f0); }
+.rep-tbl td { padding:5px 6px;border-bottom:1px solid var(--border-light,#f1f5f9); }
+.rep-tbl tr:last-child td { border-bottom:none; }
+.rep-err  { font-size:12px;color:var(--danger);padding:8px 0; }
+.rep-suc-tbl { width:100%;border-collapse:collapse;font-size:11px;margin-top:4px; }
+.rep-suc-tbl th { padding:3px 6px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text-secondary);border-bottom:1px solid var(--border,#e2e8f0); }
+.rep-suc-tbl td { padding:4px 6px;border-bottom:1px solid var(--border-light,#f1f5f9); }
+</style>

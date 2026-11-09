@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>CALEBSYS OS — Administrador</title>
+
+  <link rel="stylesheet" href="/styles/os-admin.css" />
+</head>
+
+<body>
+  <div class="os-page">
+    <aside class="os-sidebar">
+      <div class="sidebar-top">
+        <div class="brand">
+          <div class="brand-logo" aria-hidden="true">
+            <span>C</span>
+          </div>
+          <div class="brand-text">
+            <div class="brand-title">CALEBSYS</div>
+          </div>
+        </div>
+
+        <div class="tenant-card">
+          <div class="tenant-logo-frame">
+            <img id="businessLogo" class="business-logo" alt="Logo del negocio" />
+            <div id="businessLogoFallback" class="business-logo-fallback">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 4h7v7H4V4Zm9 0h7v7h-7V4ZM4 13h7v7H4v-7Zm9 0h7v7h-7v-7Z"/>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <div id="companyName" class="tenant-name">Maderas y Materiales</div>
+            <div id="companyBranch" class="tenant-branch">Magdaleno</div>
+          </div>
+        </div>
+
+        <div class="status-box">
+          <div class="status-line">
+            <span class="green-dot"></span>
+            <span>Sesión activa</span>
+          </div>
+          <div class="status-line">
+            <span class="green-dot"></span>
+            <span>Servidor conectado</span>
+          </div>
+          <div class="status-line">
+            <span class="green-dot"></span>
+            <span>Sucursal matriz</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-bottom">
+        <button class="user-card" type="button" aria-label="Perfil del usuario">
+          <div class="user-avatar">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z"/>
+            </svg>
+          </div>
+          <div class="user-meta">
+            <div id="userName" class="user-name">Administrador</div>
+            <div id="userRole" class="user-role">General</div>
+          </div>
+          <span class="user-arrow">›</span>
+        </button>
+
+        <button class="assistant-side" type="button" data-action="open-reloj" aria-haspopup="dialog">
+          <span class="assistant-spark" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2 9.8 8.2 4 10.5l5.8 2.3L12 19l2.2-6.2 5.8-2.3-5.8-2.3L12 2Zm-7 13 1.1 3.1L9 19.2l-2.9 1.1L5 23.5l-1.1-3.2L1 19.2l2.9-1.1L5 15Zm14-1 1.1 3.1 2.9 1.1-2.9 1.1L19 22.5l-1.1-3.2-2.9-1.1 2.9-1.1L19 14Z"/>
+            </svg>
+          </span>
+          <span class="assistant-text">
+            <strong>Asistencia Laboral</strong>
+            <small>F7</small>
+          </span>
+          <span class="assistant-open">↗</span>
+        </button>
+
+        <div class="sidebar-divider"></div>
+
+        <button class="logout-clean" type="button" id="logoutButton">
+          <span class="logout-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5v-2H5V5h5V3Zm4.7 4.3-1.4 1.4L15.6 11H8v2h7.6l-2.3 2.3 1.4 1.4L19.4 12l-4.7-4.7Z"/>
+            </svg>
+          </span>
+          <span>Cerrar sesión</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="os-main">
+      <section class="os-glass-panel">
+        <div class="top-strip">
+          <div class="strip-item">
+            <svg viewBox="0 0 24 24">
+              <path d="M7 2h2v3h6V2h2v3h3v17H4V5h3V2Zm11 8H6v10h12V10Z"/>
+            </svg>
+            <span id="currentDate">Cargando fecha...</span>
+          </div>
+
+          <div class="strip-item">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm1 10.2 4 2.3-1 1.7-5-3V6h2v6.2Z"/>
+            </svg>
+            <span id="currentTime">--:--</span>
+          </div>
+
+          <div class="strip-separator"></div>
+
+          <div class="strip-item">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 18.5 8.5 15a5 5 0 0 1 7 0L12 18.5Zm0-5.5a7.7 7.7 0 0 0-5.5 2.3L4.8 13.6a10.1 10.1 0 0 1 14.4 0l-1.7 1.7A7.7 7.7 0 0 0 12 13Zm0-5a13.2 13.2 0 0 0-9.4 3.9L1 10.2a15.6 15.6 0 0 1 22 0l-1.6 1.7A13.2 13.2 0 0 0 12 8Z"/>
+            </svg>
+            <span id="connectionStatus">En línea</span>
+          </div>
+
+          <div class="strip-item">
+            <span class="green-dot"></span>
+            <span id="pluginsCount">Plugins cargados: 8/8</span>
+          </div>
+
+          <button class="theme-pill" id="themeToggle" type="button" aria-label="Cambiar tema">☀️</button>
+        </div>
+
+        <div class="hero-block">
+          <div class="hero-kicker">CALEBSYS OS · HOME AUTORIZADO</div>
+
+          <h1>
+            Bienvenido, <span id="welcomeUserName">Antonio Magdaleno</span>
+          </h1>
+
+          <p>
+            Sesión activa como
+            <strong id="homeAuthorized">Administrador</strong>
+            <span class="hero-dot">•</span>
+            <span id="welcomeCompanyName">Maderas y Materiales Magdaleno</span>
+          </p>
+        </div>
+
+        <div class="plugins-label">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 4h7v7H4V4Zm9 0h7v7h-7V4ZM4 13h7v7H4v-7Zm9 0h7v7h-7v-7Z"/>
+          </svg>
+          <span>Plugins disponibles</span>
+        </div>
+
+        <div class="plugin-grid" id="pluginGrid"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL OVERLAY — Reloj Checador (FASE 7.1C) -->
+  <div class="rc-overlay" id="relojModal" role="dialog" aria-modal="true" aria-label="Reloj Checador">
+    <span class="rc-esc-hint"><kbd>ESC</kbd> cerrar</span>
+
+    <!-- Toast superior — dentro del overlay pero fuera de rc-card -->
+    <div id="rc-toast" class="rc-toast" role="alert" aria-live="assertive"></div>
+
+    <div class="rc-card">
+
+      <!-- HEADER — siempre visible -->
+      <header class="rc-header">
+        <div class="rc-logo-mark" aria-hidden="true">C</div>
+        <div class="rc-header-meta">
+          <div class="rc-header-empresa" id="rcEmpresa">Calebsys</div>
+          <div class="rc-header-sucursal" id="rcSucursal">Sucursal</div>
+        </div>
+        <div class="rc-status-dot" id="rcStatusDot" title="Conectado"></div>
+      </header>
+
+      <!-- ─── VISTA CHECADA — auto-detección Entrada/Salida ──────────
+           Sin NIP ni teclado: el usuario ya está logueado, el backend
+           resuelve la acción por estado de jornada (reloj-checador.js). -->
+      <div id="rc-keypad-view" class="rc-keypad-view">
+
+        <div class="rc-clock-block">
+          <div class="rc-time" id="rcTime" aria-live="polite">--<span class="rc-time-sep">:</span>--<span class="rc-time-sep">:</span>--</div>
+          <div class="rc-date" id="rcDate">Cargando fecha...</div>
+        </div>
+
+        <!-- Identidad del usuario (poblada desde JWT por hydrateUserInfo) -->
+        <div class="rc-user-identity">
+          <div class="rc-user-name" id="rcUserName">—</div>
+          <div class="rc-user-role" id="rcUserRole"></div>
+        </div>
+
+        <!-- RH-04: leyenda de acción detectada + botón único ACEPTAR -->
+        <div id="rcAccionLabel" class="rc-accion-label" hidden>Hora de Ingreso</div>
+        <button id="rcBtnAceptar" class="rc-btn-aceptar" type="button" hidden>ACEPTAR</button>
+
+        <!-- RH-04: salida temprana (&lt; 4 h) requiere autorización del admin -->
+        <div id="rcMsgAutorizacion" class="rc-jornada-cerrada-msg" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 1 21h22L12 2zm0 4.53L19.06 19H4.94L12 6.53zM11 10v4h2v-4h-2zm0 6v2h2v-2h-2z"/></svg>
+          <span>Tu salida requiere autorización del administrador.</span>
+        </div>
+
+        <!-- RH-04: ya fichó en dispositivo externo de control de acceso -->
+        <div id="rcMsgControlAcceso" class="rc-jornada-cerrada-msg rc-msg-info" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          <span>Ya registraste tu ingreso en el control de acceso.</span>
+        </div>
+
+        <!-- Overlay de carga mientras se registra la checada -->
+        <div class="rc-loading-block" id="rcLoading" hidden>
+          <span class="rc-spinner"></span>
+          <span class="rc-pending-label" id="rcPendingLabel">Registrando…</span>
+        </div>
+
+        <!-- Mensaje jornada cerrada — único estado con UI fija -->
+        <div id="rcMsgJornadaCerrada" class="rc-jornada-cerrada-msg" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm-1-5h2v2h-2v-2Zm0-8h2v6h-2V7Z"/></svg>
+          <span>Jornada cerrada · Regresa mañana</span>
+        </div>
+
+        <div class="rc-result" id="rcResult" role="status" aria-live="assertive"></div>
+
+      </div><!-- /#rc-keypad-view -->
+
+      <!-- ─── VISTA ÉXITO (oculta al inicio) ───────────── -->
+      <div id="rc-success-view" class="rc-success-view" hidden>
+        <div class="rc-success-icon" id="rcSuccessIcon">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <h2 id="rc-success-title">¡Entrada registrada!</h2>
+        <div class="rc-success-user">
+          <div class="rc-success-photo-wrap">
+            <img id="rc-success-photo" class="rc-success-photo" alt="Foto del trabajador" hidden />
+            <div id="rc-success-avatar" class="rc-avatar-fallback">AM</div>
+          </div>
+          <div>
+            <strong id="rc-success-name">ADMINISTRADOR</strong>
+            <span id="rc-success-code">EMP-0001</span>
+          </div>
+        </div>
+        <div class="rc-success-divider"></div>
+        <p id="rc-success-date">Domingo, 28 de Junio de 2026</p>
+        <strong id="rc-success-time" class="rc-success-time">08:02:16 AM</strong>
+        <div id="rc-success-badge" class="rc-success-badge">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>Tu checada fue registrada correctamente</span>
+        </div>
+      </div><!-- /#rc-success-view -->
+
+    </div><!-- /.rc-card -->
+  </div><!-- /#relojModal -->
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="/scripts/os-admin.js" charset="utf-8"></script>
+  <link rel="stylesheet" href="/styles/reloj-checador.css" />
+  <script src="/scripts/reloj-checador.js" charset="utf-8"></script>
+</body>
+</html>

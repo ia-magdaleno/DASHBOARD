@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rutas GPS — CalebSys</title>
+  <style>
+    :root {
+      --bg:      #f4f6fb;
+      --card:    #ffffff;
+      --border:  #e2e8f0;
+      --text:    #1e293b;
+      --muted:   #64748b;
+      --accent:  #2563eb;
+      --success: #16a34a;
+      --warn:    #d97706;
+      --danger:  #dc2626;
+      --radius:  10px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: system-ui, sans-serif; }
+
+    .page-header {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--card);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .page-header h1 { font-size: 1.1rem; font-weight: 700; flex: 1; }
+
+    .tab-bar {
+      display: flex; border-bottom: 2px solid var(--border);
+      background: var(--card); padding: 0 20px;
+    }
+    .tab {
+      padding: 10px 16px; font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px;
+      color: var(--muted); transition: color .15s, border-color .15s;
+    }
+    .tab.active { color: var(--accent); border-color: var(--accent); }
+
+    .panel { display: none; padding: 20px; }
+    .panel.active { display: block; }
+
+    /* Form */
+    .form-group { margin-bottom: 14px; }
+    label { display: block; font-size: 0.78rem; font-weight: 600; margin-bottom: 4px; }
+    input, select { width: 100%; padding: 8px 10px; border: 1px solid var(--border);
+                    border-radius: 8px; font-size: 0.85rem; background: var(--card); }
+
+    .btn { padding: 9px 18px; border: none; border-radius: 8px; font-weight: 600;
+           font-size: 0.84rem; cursor: pointer; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-sm      { padding: 5px 12px; font-size: 0.76rem; }
+    .btn-danger  { background: var(--danger); color: #fff; }
+
+    /* Stops builder */
+    #stops-builder { margin-top: 16px; }
+    .stop-row {
+      display: grid; grid-template-columns: 40px 1fr 1fr 1fr auto;
+      gap: 6px; align-items: center; margin-bottom: 6px;
+    }
+    .stop-row input { margin: 0; }
+
+    /* List */
+    .route-row {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 14px; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .route-info { flex: 1; }
+    .route-info .date-label { font-weight: 700; font-size: 0.92rem; }
+    .route-info .sub { font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
+    .status-pill {
+      font-size: 0.66rem; font-weight: 700; padding: 3px 8px;
+      border-radius: 20px; text-transform: uppercase;
+    }
+    .sp-planned   { background: #e2e8f0; color: var(--muted); }
+    .sp-in_progress { background: #dbeafe; color: var(--accent); }
+    .sp-completed { background: #dcfce7; color: var(--success); }
+    .sp-cancelled { background: #fee2e2; color: var(--danger); }
+
+    /* Live panel */
+    #live-container { display: none; }
+    #live-header { font-weight: 700; margin-bottom: 12px; font-size: 0.9rem; }
+    #deviation-banner {
+      display: none; padding: 10px 14px; border-radius: 8px;
+      background: #fee2e2; color: var(--danger); font-weight: 600;
+      margin-bottom: 12px; font-size: 0.82rem;
+    }
+    #stops-live-list { display: flex; flex-direction: column; gap: 6px; }
+    .live-stop-row {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 12px;
+    }
+    .live-seq { width: 24px; height: 24px; border-radius: 50%; background: var(--accent);
+                color:#fff; font-size:0.7rem; font-weight:700;
+                display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+    .live-label { flex:1; font-size:0.82rem; }
+    .live-status { font-size:0.68rem; font-weight:700; padding:2px 7px;
+                   border-radius:20px; }
+    #gps-info { font-size: 0.76rem; color: var(--muted); margin-top: 10px; }
+    #btn-back-live { margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>🗺 Rutas GPS</h1>
+</div>
+
+<div class="tab-bar">
+  <div class="tab active" data-tab="list">Lista de rutas</div>
+  <div class="tab" data-tab="create">Nueva ruta</div>
+</div>
+
+<!-- PANEL: Lista -->
+<div class="panel active" id="panel-list">
+  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:flex-end;">
+    <div>
+      <label>Fecha</label>
+      <input type="date" id="filter-date">
+    </div>
+    <button class="btn btn-primary" id="btn-filter" style="margin-top:18px;">Buscar</button>
+  </div>
+  <div id="routes-list">Cargando…</div>
+</div>
+
+<!-- PANEL: Crear -->
+<div class="panel" id="panel-create">
+  <div class="form-group">
+    <label>Fecha de la ruta</label>
+    <input type="date" id="new-date">
+  </div>
+  <div class="form-group">
+    <label>Usuario asignado</label>
+    <input type="text" id="new-user" placeholder="username del repartidor">
+  </div>
+  <div class="form-group">
+    <label>Sucursal</label>
+    <input type="text" id="new-sucursal" placeholder="MAG-001">
+  </div>
+  <div class="form-group">
+    <label>Umbral de desviación (metros)</label>
+    <input type="number" id="new-threshold" value="150" min="50" max="2000">
+  </div>
+
+  <div id="stops-builder">
+    <label style="margin-bottom:8px;display:block;">Paradas</label>
+    <div id="stops-rows"></div>
+    <button class="btn" id="btn-add-stop" style="background:#e2e8f0;margin-top:4px;">+ Agregar parada</button>
+  </div>
+
+  <div style="margin-top:18px;display:flex;gap:8px;">
+    <button class="btn btn-primary" id="btn-save-route">Guardar ruta</button>
+  </div>
+  <div id="create-msg" style="margin-top:10px;font-size:0.8rem;"></div>
+</div>
+
+<!-- Panel en vivo (oculto hasta seleccionar una ruta) -->
+<div class="panel active" id="panel-live" style="display:none;">
+  <button class="btn btn-sm" id="btn-back-live" style="background:#e2e8f0;">← Volver</button>
+  <div id="live-header">Ruta en vivo</div>
+  <div id="deviation-banner">⚠ Desviación detectada</div>
+  <div id="gps-info"></div>
+  <div id="stops-live-list"></div>
+</div>
+
+</body>
+</html>

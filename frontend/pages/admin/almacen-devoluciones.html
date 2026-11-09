@@ -1,0 +1,94 @@
+<!-- PAGE: DEVOLUCIONES DE VENTA -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Devoluciones de Venta</h1>
+    <p class="page-subtitle">Reingreso de mercancía · asiento contable inverso automático</p>
+  </div>
+  <div class="page-header-actions">
+    <button class="btn btn-primary btn-sm" data-click="openModalDevolucion">
+      <i class="fa-solid fa-rotate-left"></i> Nueva Devolución
+    </button>
+  </div>
+</div>
+
+<div class="table-wrapper">
+  <div class="table-toolbar">
+    <div class="table-toolbar-title">
+      Historial de Devoluciones
+      <span class="badge badge-neutral" id="dev-count"></span>
+    </div>
+    <div class="table-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Buscar venta, SKU..." id="dev-search">
+    </div>
+  </div>
+  <div id="dev-table-body">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <div class="loading-text">Cargando devoluciones...</div>
+    </div>
+  </div>
+  <div id="dev-pagination" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border-color);font-size:13px;color:var(--text-muted);">
+    <span id="dev-pag-info">—</span>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-secondary btn-sm" id="dev-btn-prev" data-click="devPrev" disabled>
+        <i class="fa-solid fa-chevron-left"></i> Anterior
+      </button>
+      <button class="btn btn-secondary btn-sm" id="dev-btn-next" data-click="devNext" disabled>
+        Siguiente <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Nueva Devolución -->
+<div class="modal-backdrop" id="modal-devolucion">
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa-solid fa-rotate-left"></i> Nueva Devolución de Venta</div>
+      <button class="modal-close" data-click="closeModalDevolucion">&times;</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:16px;">
+
+      <!-- Buscar venta -->
+      <div class="form-group">
+        <label class="form-label">ID de Venta *</label>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="dev-sale-id" class="form-input"
+                 placeholder="Pega o escribe el ID de la venta" style="flex:1;">
+          <button class="btn btn-secondary btn-sm" data-click="buscarVentaDevolucion">
+            <i class="fa-solid fa-magnifying-glass"></i> Buscar
+          </button>
+        </div>
+      </div>
+
+      <!-- Info de la venta encontrada -->
+      <div id="dev-venta-info" style="display:none;background:var(--bg-card);border:1px solid var(--border);
+           border-radius:8px;padding:12px;font-size:13px;">
+      </div>
+
+      <!-- Bodega de reingreso -->
+      <div class="form-group">
+        <label class="form-label">Bodega de reingreso</label>
+        <select id="dev-warehouse" class="form-input">
+          <option value="">Principal (por defecto)</option>
+        </select>
+      </div>
+
+      <!-- Ítems a devolver (se generan dinámicamente tras buscar la venta) -->
+      <div id="dev-items-container" style="display:none;">
+        <label class="form-label">Productos a devolver *</label>
+        <div id="dev-items" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+
+      <div id="dev-error" style="color:var(--danger);font-size:13px;display:none;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-click="closeModalDevolucion">Cancelar</button>
+      <button class="btn btn-primary" id="btn-confirmar-dev"
+              data-click="confirmarDevolucion" disabled>
+        <i class="fa-solid fa-check"></i> Registrar Devolución
+      </button>
+    </div>
+  </div>
+</div>

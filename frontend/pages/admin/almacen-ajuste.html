@@ -1,0 +1,92 @@
+<!-- PAGE: AJUSTE DE INVENTARIO -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Ajuste de Inventario</h1>
+    <p class="page-subtitle">Mermas, correcciones físicas y donaciones · requiere autorización</p>
+  </div>
+  <div class="page-header-actions">
+    <button class="btn btn-primary btn-sm" data-click="openModalAjuste">
+      <i class="fa-solid fa-sliders"></i> Nuevo Ajuste
+    </button>
+  </div>
+</div>
+
+<div class="table-wrapper">
+  <div class="table-toolbar">
+    <div class="table-toolbar-title">
+      Historial de Ajustes
+      <span class="badge badge-neutral" id="ajuste-count"></span>
+    </div>
+    <div class="table-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Buscar SKU, tipo..." id="ajuste-search">
+    </div>
+  </div>
+  <div id="ajuste-table-body">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <div class="loading-text">Cargando ajustes...</div>
+    </div>
+  </div>
+  <div id="ajuste-pagination" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border-color);font-size:13px;color:var(--text-muted);">
+    <span id="ajuste-pag-info">—</span>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-secondary btn-sm" id="ajuste-btn-prev" data-click="ajustePrev" disabled>
+        <i class="fa-solid fa-chevron-left"></i> Anterior
+      </button>
+      <button class="btn btn-secondary btn-sm" id="ajuste-btn-next" data-click="ajusteNext" disabled>
+        Siguiente <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Nuevo Ajuste -->
+<div class="modal-backdrop" id="modal-ajuste">
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa-solid fa-sliders"></i> Nuevo Ajuste de Inventario</div>
+      <button class="modal-close" data-click="closeModalAjuste">&times;</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:16px;">
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label">Bodega *</label>
+          <select id="ajuste-warehouse" class="form-input">
+            <option value="">Seleccionar bodega...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Autorizado por *</label>
+          <input type="text" id="ajuste-autorizado" class="form-input" placeholder="Nombre o ID">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Notas generales</label>
+        <textarea id="ajuste-notas" class="form-input" rows="2"
+                  placeholder="Descripción del ajuste (conteo físico, merma, etc.)"></textarea>
+      </div>
+
+      <!-- Renglones -->
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <label class="form-label" style="margin:0;">Productos *</label>
+          <button class="btn btn-secondary btn-sm" data-click="addAjusteItem">
+            <i class="fa-solid fa-plus"></i> Agregar
+          </button>
+        </div>
+        <div id="ajuste-items" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+
+      <div id="ajuste-error" style="color:var(--danger);font-size:13px;display:none;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-click="closeModalAjuste">Cancelar</button>
+      <button class="btn btn-primary" id="btn-confirmar-ajuste" data-click="confirmarAjuste">
+        <i class="fa-solid fa-check"></i> Aplicar Ajuste
+      </button>
+    </div>
+  </div>
+</div>

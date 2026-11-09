@@ -1,0 +1,150 @@
+<!-- PAGE: CUENTAS POR COBRAR -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Cuentas por Cobrar</h1>
+    <p class="page-subtitle">Cartera vigente, vencida y liquidada · Antigüedad de saldos · Seguimiento de abonos</p>
+  </div>
+  <div class="page-header-actions">
+    <button class="btn btn-secondary btn-sm" data-click="cxcExportar"><i class="fa-solid fa-file-export"></i> Exportar Cartera</button>
+  </div>
+</div>
+
+<!-- ── Sección 1: cartera ─────────────────────────────────────────────── -->
+<div id="cxc-vista-cartera">
+  <div class="table-wrapper">
+    <div class="table-toolbar">
+      <div class="table-toolbar-title">
+        Clientes con Saldo Pendiente
+        <span class="badge badge-warning" id="cxc-count">Cargando...</span>
+      </div>
+      <div class="table-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Buscar cliente, documento..." id="cxc-search-input" data-input="cxcFiltrar">
+      </div>
+    </div>
+    <table class="data-table" id="cxc-table">
+      <thead>
+        <tr>
+          <th data-click="cxcOrdenar" data-click-arg="cliente" style="cursor:pointer;">Cliente <i class="fa-solid fa-sort fa-xs"></i></th>
+          <th data-click="cxcOrdenar" data-click-arg="documento" style="cursor:pointer;">Documento <i class="fa-solid fa-sort fa-xs"></i></th>
+          <th data-click="cxcOrdenar" data-click-arg="monto" style="cursor:pointer;text-align:right;">Saldo <i class="fa-solid fa-sort fa-xs"></i></th>
+          <th data-click="cxcOrdenar" data-click-arg="vencimiento" style="cursor:pointer;">Vencimiento <i class="fa-solid fa-sort fa-xs"></i></th>
+          <th data-click="cxcOrdenar" data-click-arg="dias" style="cursor:pointer;text-align:right;">Días Vencido <i class="fa-solid fa-sort fa-xs"></i></th>
+          <th>Estado</th>
+          <th style="width:110px;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="cxc-table-body">
+        <tr><td colspan="7" style="text-align:center;padding:32px;">
+          <i class="fa-solid fa-spinner fa-spin"></i> Cargando cartera…
+        </td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ── Sección 2: antigüedad de saldos ────────────────────────────────── -->
+<div id="cxc-vista-aging" style="margin-top:28px;">
+  <div class="table-wrapper">
+    <div class="table-toolbar">
+      <div class="table-toolbar-title">
+        Antigüedad de saldos
+        <span class="badge badge-neutral" id="aging-asof">—</span>
+      </div>
+      <button class="btn btn-secondary btn-sm" data-click="cxcExportarAging">
+        <i class="fa-solid fa-file-csv"></i> CSV
+      </button>
+    </div>
+    <table class="data-table" id="aging-table">
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th style="text-align:right;">Por vencer</th>
+          <th style="text-align:right;">1–30</th>
+          <th style="text-align:right;">31–60</th>
+          <th style="text-align:right;">61–90</th>
+          <th style="text-align:right;">90+</th>
+          <th style="text-align:right;">Total</th>
+        </tr>
+      </thead>
+      <tbody id="aging-body">
+        <tr><td colspan="7" style="text-align:center;padding:32px;">
+          <i class="fa-solid fa-spinner fa-spin"></i> Calculando…
+        </td></tr>
+      </tbody>
+      <tfoot id="aging-foot"></tfoot>
+    </table>
+  </div>
+</div>
+
+<!-- ── Modal: registrar abono ─────────────────────────────────────────── -->
+<div class="modal-backdrop" id="modal-abono">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Registrar abono</h3>
+      <button class="modal-close" data-click="cxcCerrarAbono">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p id="abono-contexto" style="margin-bottom:12px;color:var(--text-muted);font-size:13px;"></p>
+      <div class="form-group">
+        <label class="form-label">Monto</label>
+        <input type="number" step="0.01" min="0.01" class="form-control" id="abono-monto">
+        <small id="abono-hint" style="color:var(--text-muted);"></small>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Origen del pago</label>
+        <select class="form-control" id="abono-origen" data-change="cxcOrigenCambio">
+          <option value="efectivo">Cobro en caja</option>
+          <option value="saldo_favor">Aplicar saldo a favor del cliente</option>
+        </select>
+      </div>
+      <div class="form-group" id="abono-metodo-wrap">
+        <label class="form-label">Forma de pago</label>
+        <select class="form-control" id="abono-metodo">
+          <option value="efectivo">Efectivo</option>
+          <option value="transferencia">Transferencia</option>
+          <option value="tarjeta">Tarjeta</option>
+          <option value="cheque">Cheque</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Referencia (opcional)</label>
+        <input type="text" class="form-control" id="abono-ref" placeholder="Folio SPEI, autorización…">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nota (opcional)</label>
+        <input type="text" class="form-control" id="abono-nota">
+      </div>
+      <div id="abono-error" style="color:var(--danger);font-size:13px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-click="cxcCerrarAbono">Cancelar</button>
+      <button class="btn btn-primary" id="abono-guardar" data-click="cxcGuardarAbono">Registrar abono</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal: estado de cuenta (historial de abonos) ──────────────────── -->
+<div class="modal-backdrop" id="modal-estado-cuenta">
+  <!-- .modal fija width:480px; el estado de cuenta lleva 6 columnas y necesita
+       más aire, por eso se ensancha aquí (max-width solo no gana a width). -->
+  <div class="modal" style="width:760px;max-width:94vw;">
+    <div class="modal-header">
+      <h3 class="modal-title">Estado de cuenta</h3>
+      <button class="modal-close" data-click="cxcCerrarEstado">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="estado-resumen" style="margin-bottom:12px;"></div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Fecha</th><th>Origen</th><th>Forma</th><th>Referencia</th>
+              <th style="text-align:right;">Abono</th><th style="text-align:right;">Saldo</th></tr>
+        </thead>
+        <tbody id="estado-body"></tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-click="cxcCerrarEstado">Cerrar</button>
+    </div>
+  </div>
+</div>

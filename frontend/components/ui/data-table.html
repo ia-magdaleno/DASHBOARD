@@ -1,0 +1,26 @@
+<!-- COMPONENT: Data Table -->
+<!-- Usage: Full table with toolbar, search and empty/loading states -->
+<div class="table-wrapper">
+  <div class="table-toolbar">
+    <div class="table-toolbar-title">Título de la Tabla <span class="badge badge-neutral">0 registros</span></div>
+    <div class="table-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Buscar...">
+    </div>
+    <button class="btn btn-secondary btn-sm btn-icon"><i class="fa-solid fa-filter"></i></button>
+  </div>
+  <!-- Loading state -->
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <div class="loading-text">Conectando con /api/endpoint...</div>
+  </div>
+  <!-- OR: Data state -->
+  <table>
+    <thead><tr><th>Columna 1</th><th>Columna 2</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td>Dato</td><td class="td-muted">Secundario</td><td><span class="badge badge-success">Activo</span></td></tr>
+    </tbody>
+  </table>
+  <!-- OR: Empty state -->
+  <!-- <div class="empty-state">...</div> -->
+</div>

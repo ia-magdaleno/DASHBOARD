@@ -1,0 +1,399 @@
+<!-- PAGE: CLIENTES / CRM — Fase 5.1B -->
+<!-- Conectado a: GET /api/clients, POST /api/clients, PUT /api/clients/{id} -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Clientes / CRM</h1>
+    <p class="page-subtitle">Directorio de clientes · Crédito · Anticipos · Historial</p><!-- Fix B-06 -->
+  </div>
+  <div class="page-header-actions">
+    <button class="btn btn-secondary btn-sm" data-click="clientsExport">
+      <i class="fa-solid fa-file-csv"></i> Exportar CSV
+    </button>
+    <button class="btn btn-primary btn-sm" data-click="clientsNuevoCliente">
+      <i class="fa-solid fa-user-plus"></i> Nuevo Cliente
+    </button>
+  </div>
+</div>
+
+<!-- KPI Strip -->
+<div class="kpi-grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));">
+  <div class="kpi-card">
+    <div class="kpi-info">
+      <div class="kpi-label">Total Clientes</div>
+      <div class="kpi-value" id="kpi-total-clientes">—</div>
+      <div class="kpi-trend" id="kpi-trend-clientes"><i class="fa-solid fa-circle-notch fa-spin"></i> Cargando...</div>
+    </div>
+    <div class="kpi-icon" style="background:rgba(99,102,241,0.15);color:var(--info);">
+      <i class="fa-solid fa-users"></i>
+    </div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-info">
+      <div class="kpi-label">Con Crédito Activo</div>
+      <div class="kpi-value" id="kpi-credito-activo">—</div>
+      <div class="kpi-trend" id="kpi-trend-credito"><i class="fa-solid fa-circle-notch fa-spin"></i> Cargando...</div>
+    </div>
+    <div class="kpi-icon" style="background:rgba(16,185,129,0.15);color:var(--success);">
+      <i class="fa-solid fa-credit-card"></i>
+    </div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-info">
+      <div class="kpi-label">Saldo Deudor Total</div>
+      <div class="kpi-value" id="kpi-deuda-total">—</div>
+      <div class="kpi-trend" id="kpi-trend-deuda"><i class="fa-solid fa-circle-notch fa-spin"></i> Cargando...</div>
+    </div>
+    <div class="kpi-icon" style="background:rgba(239,68,68,0.15);color:var(--danger);">
+      <i class="fa-solid fa-file-invoice-dollar"></i>
+    </div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-info">
+      <div class="kpi-label">Anticipos Total</div>
+      <div class="kpi-value" id="kpi-saldo-favor">—</div>
+      <div class="kpi-trend" id="kpi-trend-favor"><i class="fa-solid fa-circle-notch fa-spin"></i> Cargando...</div>
+    </div>
+    <div class="kpi-icon" style="background:rgba(245,158,11,0.15);color:var(--warning);">
+      <i class="fa-solid fa-piggy-bank"></i>
+    </div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-info">
+      <div class="kpi-label">Con Resguardo</div>
+      <div class="kpi-value" id="kpi-resguardos">—</div>
+      <div class="kpi-trend" id="kpi-trend-resguardos"><i class="fa-solid fa-circle-notch fa-spin"></i> Cargando...</div>
+    </div>
+    <div class="kpi-icon" style="background:rgba(99,102,241,0.15);color:var(--info);">
+      <i class="fa-solid fa-boxes-stacked"></i>
+    </div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-info">
+      <div class="kpi-label">Apartados Total</div>
+      <div class="kpi-value" id="kpi-apartados">—</div>
+      <div class="kpi-trend" id="kpi-trend-apartados"><i class="fa-solid fa-circle-notch fa-spin"></i> Cargando...</div>
+    </div>
+    <div class="kpi-icon" style="background:rgba(239,68,68,0.15);color:var(--danger);">
+      <i class="fa-solid fa-bookmark"></i>
+    </div>
+  </div>
+</div>
+
+<!-- Pill Tabs Filter -->
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+  <div class="pill-tabs" id="clients-filter-tabs">
+    <div class="pill-tab active" data-filter="all" data-click="clientsSetFilter" data-click-arg="all" data-click-self="true">Todos</div>
+    <div class="pill-tab" data-filter="credit" data-click="clientsSetFilter" data-click-arg="credit" data-click-self="true">Con Crédito</div>
+    <div class="pill-tab" data-filter="deuda" data-click="clientsSetFilter" data-click-arg="deuda" data-click-self="true">Con Deuda</div>
+    <div class="pill-tab" data-filter="saldo_favor" data-click="clientsSetFilter" data-click-arg="saldo_favor" data-click-self="true">Anticipos</div>
+    <div class="pill-tab" data-filter="resguardos" data-click="clientsSetFilter" data-click-arg="resguardos" data-click-self="true">Con Resguardo</div>
+    <div class="pill-tab" data-filter="apartados" data-click="clientsSetFilter" data-click-arg="apartados" data-click-self="true">Con Apartado</div>
+  </div>
+  <div style="margin-left:auto;font-size:12px;color:var(--text-muted);" id="clients-last-updated"></div>
+</div>
+
+<!-- Tabla principal -->
+<div class="table-wrapper">
+  <div class="table-toolbar">
+    <div class="table-toolbar-title">
+      Directorio de Clientes
+      <span class="badge badge-neutral" id="clients-count" style="margin-left:6px;">—</span>
+    </div>
+    <div class="table-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Buscar nombre, RFC, teléfono..." id="clients-search-input" data-input="clientsSearch">
+    </div>
+    <button class="btn btn-secondary btn-sm btn-icon" title="Recargar" data-click="loadClients">
+      <i class="fa-solid fa-rotate-right"></i>
+    </button>
+  </div>
+  <div id="clients-table-body">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <div class="loading-text">Conectando con /api/clients...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Script de apoyo local para esta página (filtro/búsqueda en memoria) -->
+
+<!-- MODALES DE ESTA PÁGINA -->
+
+<!-- Modal: Nuevo Cliente -->
+<div class="modal-backdrop" id="modal-nuevo-cliente">
+  <div class="modal" style="width:560px;max-width:95vw;">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa-solid fa-user-plus" style="color:var(--success);margin-right:8px;"></i>Nuevo Cliente</div>
+      <button class="modal-close" data-click="closeModal" data-click-arg="modal-nuevo-cliente"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="max-height:65vh;overflow-y:auto;">
+
+      <!-- Sección: Identificación -->
+      <div style="font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+        <i class="fa-solid fa-id-card" style="color:var(--brand-400);"></i> Identificación
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Nombre Comercial *</label>
+          <input class="form-control" id="new-client-name" type="text" placeholder="Como se conoce al cliente" required>
+          <div id="err-name" style="font-size:11px;color:var(--danger);margin-top:3px;display:none;">Campo obligatorio</div>
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">RFC</label>
+          <input class="form-control" id="new-client-rfc" type="text" placeholder="XAXX010101000" maxlength="13"
+            data-input="toUpperCase">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Tipo de Cliente</label>
+          <select class="form-control" id="new-client-type">
+            <option value="Público General">Público General</option>
+            <option value="Mayorista">Mayorista</option>
+            <option value="Constructora">Constructora</option>
+            <option value="Gobierno">Gobierno</option>
+            <option value="VIP">VIP</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Régimen Fiscal</label>
+          <input class="form-control" id="new-client-regimen" type="text" placeholder="601 General de Ley">
+        </div>
+      </div>
+
+      <div class="divider" style="margin:14px 0;"></div>
+      <!-- Sección: Contacto -->
+      <div style="font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+        <i class="fa-solid fa-phone" style="color:var(--success);"></i> Contacto
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Teléfono</label>
+          <input class="form-control" id="new-client-phone" type="tel" placeholder="55 0000 0000">
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label"><i class="fa-brands fa-whatsapp" style="color:var(--success);"></i> WhatsApp</label>
+          <input class="form-control" id="new-client-whatsapp" type="tel" placeholder="55 0000 0000">
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:10px;">
+        <label class="form-label">Correo Electrónico</label>
+        <input class="form-control" id="new-client-email" type="email" placeholder="correo@empresa.com">
+      </div>
+
+      <div class="divider" style="margin:14px 0;"></div>
+      <!-- Sección: Crédito -->
+      <div style="font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+        <i class="fa-solid fa-credit-card" style="color:var(--warning);"></i> Crédito
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Crédito Autorizado</label>
+          <select class="form-control" id="new-client-credito-toggle" data-change="clientsCreditToggle">
+            <option value="no">Sin Crédito</option>
+            <option value="si">Con Crédito</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Límite de Crédito</label>
+          <input class="form-control" id="new-client-limite" type="number" value="0" min="0" step="0.01" disabled style="opacity:.5;">
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Días de Crédito</label>
+          <input class="form-control" id="new-client-dias" type="number" value="30" min="1" max="365" disabled style="opacity:.5;">
+        </div>
+      </div>
+
+      <div class="divider" style="margin:14px 0;"></div>
+      <!-- Sección: Dirección -->
+      <div style="font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+        <i class="fa-solid fa-location-dot" style="color:var(--purple);"></i> Dirección <span style="font-weight:400;color:var(--text-muted);font-size:10px;">(opcional)</span>
+      </div>
+      <div class="form-group" style="margin-bottom:10px;">
+        <label class="form-label">Calle y Número</label>
+        <input class="form-control" id="new-client-direccion" type="text" placeholder="Calle, Número Exterior, Interior">
+      </div>
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;">
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Ciudad / Municipio</label>
+          <input class="form-control" id="new-client-ciudad" type="text" placeholder="Ciudad">
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Estado</label>
+          <input class="form-control" id="new-client-estado" type="text" placeholder="SON">
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">C.P.</label>
+          <input class="form-control" id="new-client-cp" type="text" placeholder="83000" maxlength="5">
+        </div>
+      </div>
+
+      <!-- Error banner -->
+      <div id="new-client-error" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:var(--danger);margin-top:8px;">
+        <i class="fa-solid fa-triangle-exclamation"></i> <span id="new-client-error-msg"></span>
+      </div>
+
+    </div><!-- /modal-body -->
+    <div class="modal-footer" style="justify-content:space-between;">
+      <div style="font-size:11px;color:var(--text-muted);">
+        <i class="fa-solid fa-database" style="color:var(--brand-400);"></i> POST /api/clients
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary" data-click="closeModal" data-click-arg="modal-nuevo-cliente" id="btn-cancel-new-client">Cancelar</button>
+        <button class="btn btn-primary" id="btn-save-new-client" data-click="clientsSave">
+          <i class="fa-solid fa-check"></i> Guardar Cliente
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Editar Cliente -->
+<div class="modal-backdrop" id="modal-editar-cliente">
+  <div class="modal" style="width:520px;max-width:95vw;">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa-solid fa-pen-to-square" style="color:var(--brand-400);margin-right:8px;"></i>Editar Cliente</div>
+      <button class="modal-close" data-click="closeModal" data-click-arg="modal-editar-cliente"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="max-height:60vh;overflow-y:auto;">
+      <input type="hidden" id="edit-client-id">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group"><label class="form-label">Nombre *</label><input class="form-control" id="edit-client-name" type="text"></div>
+        <div class="form-group"><label class="form-label">RFC</label><input class="form-control" id="edit-client-rfc" type="text" data-input="toUpperCase"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group"><label class="form-label">Tipo</label>
+          <select class="form-control" id="edit-client-type">
+            <option>Público General</option><option>Mayorista</option><option>Constructora</option><option>Gobierno</option><option>VIP</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Teléfono</label><input class="form-control" id="edit-client-phone" type="tel"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group"><label class="form-label">WhatsApp</label><input class="form-control" id="edit-client-whatsapp" type="tel"></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-control" id="edit-client-email" type="email"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group"><label class="form-label">Límite Crédito</label><input class="form-control" id="edit-client-limite" type="number" min="0" step="0.01"></div>
+        <div class="form-group"><label class="form-label">Días Crédito</label><input class="form-control" id="edit-client-dias" type="number" min="1" max="365"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Dirección</label><input class="form-control" id="edit-client-direccion" type="text"></div>
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;">
+        <div class="form-group"><label class="form-label">Ciudad</label><input class="form-control" id="edit-client-ciudad" type="text"></div>
+        <div class="form-group"><label class="form-label">Estado</label><input class="form-control" id="edit-client-estado" type="text"></div>
+        <div class="form-group"><label class="form-label">C.P.</label><input class="form-control" id="edit-client-cp" type="text" maxlength="5"></div>
+      </div>
+      <div id="edit-client-error" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:var(--danger);margin-top:8px;">
+        <i class="fa-solid fa-triangle-exclamation"></i> <span id="edit-client-error-msg"></span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-click="closeModal" data-click-arg="modal-editar-cliente">Cancelar</button>
+      <button class="btn btn-primary" id="btn-save-edit-client" data-click="clientsUpdate">
+        <i class="fa-solid fa-check"></i> Guardar Cambios
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Ledger de Crédito -->
+<div class="modal-backdrop" id="modal-ledger">
+  <div class="modal" style="width:680px;max-width:95vw;">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa-solid fa-clock-rotate-left" style="color:var(--info);margin-right:8px;"></i>Ledger de Crédito — <span id="ledger-client-name"></span></div>
+      <button class="modal-close" data-click="closeModal" data-click-arg="modal-ledger"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div id="ledger-balance-display" style="display:none;font-weight:700;color:var(--success);font-size:13px;background:#f0fdf4;padding:8px 16px;margin:10px 20px 0;border-radius:8px;"></div>
+    <div class="modal-body" style="max-height:45vh;overflow-y:auto;" id="ledger-body">
+      <div class="loading-state"><div class="spinner"></div><div class="loading-text">Cargando...</div></div>
+    </div>
+    <!-- Registrar Anticipo desde CRM -->
+    <div style="padding:12px 20px;border-top:1px solid var(--border);background:var(--surface-2,#f8fafc);">
+      <div style="font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Registrar Anticipo</div>
+      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
+        <div>
+          <label style="font-size:10px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:3px;">Monto</label>
+          <input id="crm-anticipo-amount" type="number" min="0.01" step="0.01" placeholder="0.00"
+            style="width:120px;border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:13px;font-weight:700;" />
+        </div>
+        <div>
+          <label style="font-size:10px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:3px;">Forma de Pago</label>
+          <select id="crm-anticipo-method"
+            style="border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:13px;font-weight:700;background:white;">
+            <option value="efectivo">Efectivo</option>
+            <option value="transferencia">Transferencia</option>
+            <option value="tarjeta">Tarjeta</option>
+            <option value="cheque">Cheque</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:150px;">
+          <label style="font-size:10px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:3px;">Descripción (opcional)</label>
+          <input id="crm-anticipo-desc" type="text" placeholder="Ej: Anticipo pedido especial"
+            style="width:100%;border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:13px;" />
+        </div>
+        <button data-click="clientsRegistrarAnticipoCRM" class="btn btn-primary btn-sm">
+          <i class="fa-solid fa-plus" style="margin-right:4px;"></i>Registrar
+        </button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-click="closeModal" data-click-arg="modal-ledger">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Apartados del Cliente (CRM) -->
+<div class="modal-backdrop" id="modal-apartados-crm">
+  <div class="modal" style="width:820px;max-width:96vw;">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="fa-solid fa-bookmark" style="color:var(--warning);margin-right:8px;"></i>Apartados — <span id="apartados-crm-client-name"></span>
+      </div>
+      <button class="modal-close" data-click="closeModal" data-click-arg="modal-apartados-crm"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="max-height:60vh;overflow-y:auto;" id="apartados-crm-body">
+      <div class="loading-state"><div class="spinner"></div><div class="loading-text">Cargando...</div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-click="closeModal" data-click-arg="modal-apartados-crm">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Registrar Abono (CRM) -->
+<div class="modal-backdrop" id="modal-abono-crm">
+  <div class="modal" style="width:400px;max-width:95vw;">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="fa-solid fa-circle-plus" style="color:var(--success);margin-right:8px;"></i>Registrar Abono — <span id="abono-crm-folio"></span>
+      </div>
+      <button class="modal-close" data-click="closeModal" data-click-arg="modal-abono-crm"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Monto</label>
+        <input id="abono-crm-monto" type="number" min="0.01" step="0.01" class="form-control" placeholder="0.00">
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">
+          Pendiente: <strong id="abono-crm-pendiente" style="color:var(--danger);">$0.00</strong>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Método de Pago</label>
+        <select id="abono-crm-metodo" class="form-control">
+          <option value="efectivo">Efectivo</option>
+          <option value="tarjeta">Tarjeta</option>
+          <option value="transferencia">Transferencia</option>
+          <option value="cheque">Cheque</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-click="closeModal" data-click-arg="modal-abono-crm">Cancelar</button>
+      <button class="btn btn-primary" data-click="_submitAbonoFromCRM">
+        <i class="fa-solid fa-check"></i> Confirmar Abono
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Script: Save / Update logic -->

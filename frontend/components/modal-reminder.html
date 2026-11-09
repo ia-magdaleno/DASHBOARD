@@ -1,0 +1,33 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden select-none" id="modal-reminder">
+<div class="bg-white rounded-3xl border border-amber-200 shadow-2xl w-[480px] font-montserrat">
+<div class="bg-gradient-to-r from-amber-500 to-amber-600 px-5 py-4 flex items-center justify-between rounded-t-3xl">
+<div class="flex items-center gap-2">
+<i class="w-5 h-5 text-white" data-lucide="bell"></i>
+<h3 class="font-black text-white text-sm uppercase">Recordatorio</h3>
+</div>
+<button class="text-amber-100 hover:text-white" onclick="closeModal('modal-reminder')"><i class="w-5 h-5" data-lucide="x"></i></button>
+</div>
+<div class="p-6 space-y-4 text-xs font-bold">
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-slate-400 mb-1 uppercase">Fecha del Recordatorio</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm font-semibold text-slate-800 focus:outline-none" id="reminder-date" type="date"/>
+</div>
+<div>
+<label class="block text-slate-400 mb-1 uppercase">Hora</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm font-semibold text-slate-800 focus:outline-none" id="reminder-time" type="time"/>
+</div>
+</div>
+<div>
+<label class="block text-slate-400 mb-1 uppercase">Mensaje del Recordatorio</label>
+<textarea class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm font-semibold text-slate-800 focus:outline-none resize-none" id="reminder-message" placeholder="ej. Llamar a cliente para cobranza de factura vencida..." rows="3"></textarea>
+</div>
+<div class="flex justify-end gap-3">
+<button class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-5 py-2.5 rounded-xl transition" onclick="closeModal('modal-reminder')">Cancelar</button>
+<button class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2.5 rounded-xl transition flex items-center gap-1.5" onclick="saveReminder()">
+<i class="w-4 h-4" data-lucide="bell"></i> Guardar Recordatorio
+          </button>
+</div>
+</div>
+</div>
+</div>

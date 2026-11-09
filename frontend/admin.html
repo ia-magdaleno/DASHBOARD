@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CALEBSYS - Panel de Administración</title>
+    <link href="css/inter.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/all.min.css">
+    
+    <style>
+        /* Variables Corporativas y Reset */
+        :root {
+            --bg-body: #F4F7FE;          /* Fondo general gris muy sutil */
+            --sidebar-bg: #0B1437;      /* Azul oscuro corporativo para menú */
+            --sidebar-hover: rgba(255, 255, 255, 0.08);
+            --bg-card: #FFFFFF;         /* Blanco puro para tarjetas */
+            --text-main: #1E293B;       /* Títulos oscuros */
+            --text-muted: #64748B;      /* Textos secundarios */
+            --primary: #1A56DB;         /* Azul vibrante Calebsys */
+            --border: #E2E8F0;          /* Líneas divisorias suaves */
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+            --shadow-hover: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.04);
+            
+            /* Paleta de Colores de Módulos (Fondo claro + Texto fuerte) */
+            --c-blue: #3B82F6; --bg-blue: #EFF6FF;
+            --c-green: #10B981; --bg-green: #ECFDF5;
+            --c-orange: #F59E0B; --bg-orange: #FFFBEB;
+            --c-purple: #8B5CF6; --bg-purple: #F5F3FF;
+            --c-red: #EF4444; --bg-red: #FEF2F2;
+            --c-teal: #14B8A6; --bg-teal: #F0FDFA;
+            --c-indigo: #6366F1; --bg-indigo: #EEF2FF;
+            --c-gray: #64748B; --bg-gray: #F1F5F9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+
+        /* Barra de scroll invisible y moderna */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+        /* ================= SIDEBAR (Panel Izquierdo) ================= */
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); color: #FFF; display: flex; flex-direction: column; flex-shrink: 0; z-index: 20; }
+        .logo-area { height: 75px; display: flex; align-items: center; padding: 0 24px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .logo-area i { color: var(--c-blue); font-size: 24px; margin-right: 12px; }
+        .logo-area span { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+        
+        .menu-list { flex: 1; overflow-y: auto; padding: 20px 16px; display: flex; flex-direction: column; gap: 4px; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; color: #94A3B8; text-decoration: none; font-size: 14px; font-weight: 500; transition: 0.2s; cursor: pointer; }
+        .menu-item:hover { background-color: var(--sidebar-hover); color: #FFF; }
+        .menu-item.active { background-color: var(--primary); color: #FFF; font-weight: 600; box-shadow: 0 4px 12px rgba(26, 86, 219, 0.4); }
+        .menu-item i { font-size: 16px; width: 20px; text-align: center; }
+
+        .sidebar-footer { padding: 20px 16px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .server-status { background: rgba(255,255,255,0.05); padding: 12px 16px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); transition: 0.2s;}
+        .server-status:hover { background: rgba(255,255,255,0.08); }
+        .status-info { display: flex; align-items: center; gap: 12px; }
+        .status-info i { color: #10B981; font-size: 18px; }
+        .status-text p { font-size: 12px; font-weight: 600; color: #FFF; margin-bottom: 2px;}
+        .status-text span { font-size: 10px; color: #10B981; }
+
+        /* ================= CONTENEDOR PRINCIPAL ================= */
+        .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* HEADER (Barra superior blanca) */
+        .topbar { height: 75px; background: var(--bg-card); padding: 0 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 10; }
+        .topbar-left { display: flex; align-items: center; gap: 16px; font-size: 16px; font-weight: 700; color: var(--text-main); }
+        .topbar-left i { color: var(--text-muted); cursor: pointer; }
+        
+        .topbar-right { display: flex; align-items: center; gap: 24px; }
+        .search-box { background: var(--bg-body); padding: 10px 16px; border-radius: 30px; display: flex; align-items: center; gap: 10px; width: 300px; border: 1px solid var(--border); transition: 0.2s;}
+        .search-box:focus-within { border-color: var(--primary); background: var(--bg-card); }
+        .search-box input { border: none; outline: none; background: transparent; width: 100%; font-size: 13px; color: var(--text-main); }
+        .search-box i { color: var(--text-muted); font-size: 14px;}
+        
+        .notification-btn { position: relative; color: var(--text-muted); font-size: 20px; cursor: pointer; transition: 0.2s;}
+        .notification-btn:hover { color: var(--primary); }
+        .badge { position: absolute; top: -5px; right: -5px; background: var(--primary); color: #FFF; font-size: 10px; font-weight: bold; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bg-card); }
+        
+        .user-profile { display: flex; align-items: center; gap: 12px; cursor: pointer; border-left: 1px solid var(--border); padding-left: 24px; }
+        .user-profile img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover;}
+        .user-info p { font-size: 13px; font-weight: 700; color: var(--text-main); line-height: 1.2;}
+        .user-info span { font-size: 11px; color: var(--text-muted); font-weight: 500;}
+
+        /* ÁREA DE TRABAJO (DASHBOARD) */
+        .dashboard-body { flex: 1; display: flex; overflow: hidden; }
+        .content-area { flex: 1; padding: 32px; overflow-y: auto; }
+        .right-sidebar { width: 340px; background: var(--bg-card); border-left: 1px solid var(--border); padding: 32px 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; flex-shrink: 0; }
+        
+        .section-header { margin-bottom: 20px; }
+        .section-title { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-main); margin-bottom: 4px; }
+        .section-subtitle { font-size: 13px; color: var(--text-muted); }
+
+        /* GRID DE MÓDULOS (La evolución de los botones F1-F12) */
+        .modules-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .module-card { background: var(--bg-card); padding: 24px; border-radius: 16px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); cursor: pointer; transition: 0.2s; position: relative; }
+        .module-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: #CBD5E1; }
+        
+        .module-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px; }
+        .module-card h3 { font-size: 15px; font-weight: 700; color: var(--text-main); margin-bottom: 6px;}
+        .module-card p { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+        
+        .arrow-icon { position: absolute; top: 24px; right: 24px; color: #CBD5E1; font-size: 12px; transition: 0.2s; }
+        .module-card:hover .arrow-icon { color: var(--primary); transform: translateX(3px); }
+
+        /* ACCESOS RÁPIDOS */
+        .quick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 16px; margin-bottom: 40px; }
+        .quick-btn { background: var(--bg-card); border-radius: 12px; padding: 20px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
+        .quick-btn:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .quick-btn i { font-size: 24px; }
+        .quick-btn span { font-size: 11px; font-weight: 600; text-align: center; color: var(--text-muted); line-height: 1.3;}
+
+        /* ACTIVIDAD RECIENTE */
+        .activity-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .link-primary { font-size: 12px; font-weight: 600; color: var(--primary); text-decoration: none; }
+        .link-primary:hover { text-decoration: underline; }
+        
+        .activity-list { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 0 24px; }
+        .activity-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--border); }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-left { display: flex; align-items: center; gap: 16px; }
+        .activity-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .activity-text { font-size: 13px; color: var(--text-main); }
+        .activity-text strong { font-weight: 600; }
+        .activity-time { font-size: 11px; font-weight: 500; color: var(--text-muted); }
+
+        /* ================= WIDGETS DERECHOS ================= */
+        .widget-title { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;}
+        
+        /* Widget: Fecha y Hora */
+        .date-widget { display: flex; align-items: center; gap: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: var(--shadow-sm); }
+        .date-widget .icon-box { width: 48px; height: 48px; border-radius: 12px; background: var(--bg-blue); color: var(--c-blue); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .date-widget p { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;}
+        .date-widget h2 { font-size: 18px; font-weight: 700; color: var(--text-main);}
+
+        /* Widget: Resumen */
+        .summary-list { display: flex; flex-direction: column; gap: 16px; }
+        .summary-item { display: flex; justify-content: space-between; align-items: center; }
+        .summary-label { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 500; color: var(--text-muted); }
+        .summary-label i { font-size: 16px; width: 20px; text-align: center;}
+        .summary-val { font-size: 14px; font-weight: 700; color: var(--text-main);}
+
+        /* Widget: Alertas */
+        .alert-list { display: flex; flex-direction: column; gap: 20px; }
+        .alert-item { display: flex; gap: 12px; align-items: flex-start;}
+        .alert-badge { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: #FFF; flex-shrink: 0; }
+        .alert-text h4 { font-size: 13px; font-weight: 600; margin-bottom: 2px; color: var(--text-main);}
+        .alert-text p { font-size: 11px; color: var(--text-muted); }
+
+        /* Widget: Sistema Info */
+        .sys-info { background: var(--bg-body); border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
+        .sys-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 13px; }
+        .sys-item:last-child { margin-bottom: 0; }
+        .sys-label { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-weight: 500; }
+        .btn-outline { width: 100%; padding: 10px; border: 1px solid var(--border); background: var(--bg-card); border-radius: 8px; color: var(--primary); font-size: 12px; font-weight: 600; margin-top: 16px; cursor: pointer; transition: 0.2s;}
+        .btn-outline:hover { border-color: var(--primary); background: var(--bg-blue); }
+
+        /* ================= FOOTER ================= */
+        .footer { height: 45px; background: var(--bg-card); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; font-size: 11px; color: var(--text-muted); border-top: 1px solid var(--border); flex-shrink: 0; z-index: 10; }
+        .footer-info { display: flex; gap: 24px; }
+        .footer-info span { font-weight: 500; }
+        .footer-info b { color: var(--primary); font-weight: 600; margin-left: 4px;}
+
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo-area">
+            <i class="fa-solid fa-cube"></i> <span>CALEBSYS</span>
+        </div>
+        
+        <nav class="menu-list">
+            <a class="menu-item active"><i class="fa-solid fa-house"></i> Menú Principal</a>
+            <a class="menu-item"><i class="fa-solid fa-box"></i> Inventario</a>
+            <a class="menu-item"><i class="fa-solid fa-cart-shopping"></i> Compras</a>
+            <a class="menu-item"><i class="fa-solid fa-tag"></i> Ventas</a>
+            <a class="menu-item"><i class="fa-solid fa-users"></i> Clientes</a>
+            <a class="menu-item"><i class="fa-solid fa-truck-fast"></i> Proveedores</a>
+            <a class="menu-item"><i class="fa-solid fa-store"></i> Sucursales</a>
+            <a class="menu-item"><i class="fa-solid fa-chart-simple"></i> Reportes</a>
+            <a class="menu-item"><i class="fa-solid fa-money-bill-trend-up"></i> Finanzas</a>
+            <a class="menu-item"><i class="fa-solid fa-cash-register"></i> Cortes de Caja</a>
+            <div style="height: 1px; background: rgba(255,255,255,0.05); margin: 8px 0;"></div>
+            <a class="menu-item"><i class="fa-solid fa-cloud"></i> Nube</a>
+            <a class="menu-item"><i class="fa-solid fa-database"></i> Respaldos</a>
+            <a class="menu-item"><i class="fa-solid fa-gear"></i> Sistema</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="server-status" style="margin-bottom: 12px;">
+                <div class="status-info">
+                    <i class="fa-solid fa-cloud"></i>
+                    <div class="status-text">
+                        <p>Servidor en la Nube</p>
+                        <span>Conectado correctamente</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-right" style="color: #64748B; font-size: 12px;"></i>
+            </div>
+            
+            <div id="os-back-btn" style="
+              background:rgba(15,23,42,.92);
+              border:1px solid rgba(59,130,246,.5);
+              border-radius:12px;
+              padding:8px 16px 8px 12px;
+              display:flex;
+              align-items:center;
+              gap:8px;
+              cursor:pointer;
+              box-shadow:0 4px 20px rgba(0,0,0,.4);
+              transition:transform .15s, box-shadow .15s;
+              font-family:'Inter',sans-serif;
+              justify-content: center;
+            " onclick="location.href='/os'"
+               onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 28px rgba(0,0,0,.5)'"
+               onmouseout="this.style.transform='none';this.style.boxShadow='0 4px 20px rgba(0,0,0,.4)'">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+              <span style="font-size:.72rem;font-weight:700;color:#e0f2fe;letter-spacing:.04em">OS</span>
+              <span style="font-size:.62rem;color:rgba(255,255,255,.4);letter-spacing:.06em">CALEBSYS</span>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-wrapper">
+        
+        <header class="topbar">
+            <div class="topbar-left">
+                <i class="fa-solid fa-bars"></i> ADMINISTRACIÓN GENERAL
+            </div>
+            
+            <div class="topbar-right">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Buscar en el sistema...">
+                </div>
+                
+                <div class="notification-btn">
+                    <i class="fa-regular fa-bell"></i>
+                    <div class="badge">3</div>
+                </div>
+                
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Antonio+M&background=1A56DB&color=fff&bold=true" alt="Perfil">
+                    <div class="user-info">
+                        <p>Antonio M.</p>
+                        <span>Administrador</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 10px; margin-left: 6px;"></i>
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard-body">
+            
+            <div class="content-area">
+                
+                <div class="section-header">
+                    <h2 class="section-title">MENÚ PRINCIPAL</h2>
+                    <p class="section-subtitle">Selecciona el módulo al que deseas acceder</p>
+                </div>
+
+                <div class="modules-grid">
+                    
+                    <div class="module-card">
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                        <div class="icon-box" style="background: var(--bg-blue); color: var(--c-blue);"><i class="fa-solid fa-box"></i></div>
+                        <h3>Inventario</h3>
+                        <p>Control de productos, existencias y ubicaciones.</p>
+                    </div>
+
+                    <div class="module-card">
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                        <div class="icon-box" style="background: var(--bg-green); color: var(--c-green);"><i class="fa-solid fa-cart-shopping"></i></div>
+                        <h3>Compras</h3>
+                        <p>Órdenes, proveedores y control de compras.</p>
+                    </div>
+
+                    <div class="module-card">
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                        <div class="icon-box" style="background: var(--bg-orange); color: var(--c-orange);"><i class="fa-solid fa-tag"></i></div>
+                        <h3>Ventas</h3>
+                        <p>Cotizaciones, pedidos y facturación.</p>
+                    </div>
+
+                    <div class="module-card">
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                        <div class="icon-box" style="background: var(--bg-purple); color: var(--c-purple);"><i class="fa-solid fa-user-group"></i></div>
+                        <h3>Clientes</h3>
+                        <p>Administración de clientes, créditos y cuentas.</p>
+                    </div>
+
+                    <div class="module-card">
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                        <div class="icon-box" style="background: var(--bg-red); color: var(--c-red);"><i class="fa-solid fa-truck-fast"></i></div>
+                        <h3>Proveedores</h3>
+                        <p>Control de proveedores y productos.</p>
+                    </div>
+
+                    <div class="module-card">
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                        <div class="icon-box" style="background: var(--bg-teal); color: var(--c-teal);"><i class="fa-solid fa-store"></i></div>
+                        <h3>Sucursales</h3>
+                        <p>Administración de sucursales y transferencias.</p>
+                    </div>
+
+                    <div class="module-card">
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                        <div class="icon-box" style="background: var(--bg-orange); color: var(--c-orange);"><i class="fa-solid fa-cash-register"></i></div>
+                        <h3>Cortes de Caja</h3>
+                        <p>Cierres de caja, ingresos y movimientos.</p>
+                    </div>
+
+                    <div class="module-card">
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                        <div class="icon-box" style="background: var(--bg-indigo); color: var(--c-indigo);"><i class="fa-solid fa-chart-simple"></i></div>
+                        <h3>Reportes</h3>
+                        <p>Reportes de inventario, ventas, compras y más.</p>
+                    </div>
+
+                    <div class="module-card">
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                        <div class="icon-box" style="background: var(--bg-green); color: var(--c-green);"><i class="fa-solid fa-money-bill-trend-up"></i></div>
+                        <h3>Finanzas</h3>
+                        <p>Control de créditos, pagos y cuentas.</p>
+                    </div>
+
+                    <div class="module-card">
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                        <div class="icon-box" style="background: var(--bg-blue); color: var(--c-blue);"><i class="fa-solid fa-cloud"></i></div>
+                        <h3>Nube</h3>
+                        <p>Accede a tu información desde cualquier lugar.</p>
+                    </div>
+
+                    <div class="module-card">
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                        <div class="icon-box" style="background: var(--bg-purple); color: var(--c-purple);"><i class="fa-solid fa-database"></i></div>
+                        <h3>Respaldos</h3>
+                        <p>Respaldos automáticos y restauración.</p>
+                    </div>
+
+                    <div class="module-card">
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                        <div class="icon-box" style="background: var(--bg-gray); color: var(--c-gray);"><i class="fa-solid fa-gear"></i></div>
+                        <h3>Sistema</h3>
+                        <p>Configuración general del sistema.</p>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h2 class="section-title">ACCESOS RÁPIDOS</h2>
+                </div>
+                <div class="quick-grid">
+                    <div class="quick-card">
+                        <i class="fa-solid fa-box-open" style="color: var(--c-blue);"></i>
+                        <span>Nuevo<br>Producto</span>
+                    </div>
+                    <div class="quick-card">
+                        <i class="fa-solid fa-cart-plus" style="color: var(--c-green);"></i>
+                        <span>Nueva<br>Compra</span>
+                    </div>
+                    <div class="quick-card">
+                        <i class="fa-solid fa-user-plus" style="color: var(--c-red);"></i>
+                        <span>Nuevo<br>Cliente</span>
+                    </div>
+                    <div class="quick-card">
+                        <i class="fa-solid fa-truck-moving" style="color: var(--c-red);"></i>
+                        <span>Nuevo<br>Proveedor</span>
+                    </div>
+                    <div class="quick-card">
+                        <i class="fa-solid fa-building-circle-check" style="color: var(--c-teal);"></i>
+                        <span>Nueva<br>Sucursal</span>
+                    </div>
+                    <div class="quick-card">
+                        <i class="fa-solid fa-clipboard-check" style="color: var(--c-purple);"></i>
+                        <span>Inventario<br>Físico</span>
+                    </div>
+                    <div class="quick-card">
+                        <i class="fa-solid fa-cloud-arrow-up" style="color: var(--c-blue);"></i>
+                        <span>Respaldar<br>Ahora</span>
+                    </div>
+                    <div class="quick-card">
+                        <i class="fa-solid fa-chart-pie" style="color: var(--c-green);"></i>
+                        <span>Reporte<br>Diario</span>
+                    </div>
+                </div>
+
+                <div class="activity-header">
+                    <h2 class="section-title" style="margin: 0;">ACTIVIDAD RECIENTE</h2>
+                    <a href="#" class="link-primary">Ver todo</a>
+                </div>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-left">
+                            <div class="activity-icon" style="background: var(--bg-blue); color: var(--c-blue);"><i class="fa-solid fa-box"></i></div>
+                            <div class="activity-text"><strong>Juan Pérez</strong> agregó un nuevo producto: <strong>Cemento Gris</strong></div>
+                        </div>
+                        <div class="activity-time">Hoy 11:45 AM</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-left">
+                            <div class="activity-icon" style="background: var(--bg-green); color: var(--c-green);"><i class="fa-solid fa-cart-shopping"></i></div>
+                            <div class="activity-text"><strong>María López</strong> creó la compra <strong>#C-00452</strong> a <strong>FerreMAX</strong></div>
+                        </div>
+                        <div class="activity-time">Hoy 10:22 AM</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-left">
+                            <div class="activity-icon" style="background: var(--bg-orange); color: var(--c-orange);"><i class="fa-solid fa-user"></i></div>
+                            <div class="activity-text"><strong>Antonio M.</strong> actualizó los datos del cliente <strong>Constructora del Norte</strong></div>
+                        </div>
+                        <div class="activity-time">Ayer 04:35 PM</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-left">
+                            <div class="activity-icon" style="background: var(--bg-teal); color: var(--c-teal);"><i class="fa-solid fa-store"></i></div>
+                            <div class="activity-text"><strong>Sucursal CENTRO</strong> realizó una transferencia a <strong>Sucursal NORTE</strong></div>
+                        </div>
+                        <div class="activity-time">Ayer 02:15 PM</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-left">
+                            <div class="activity-icon" style="background: var(--bg-purple); color: var(--c-purple);"><i class="fa-solid fa-database"></i></div>
+                            <div class="activity-text">Respaldo automático completado correctamente</div>
+                        </div>
+                        <div class="activity-time">Ayer 01:00 AM</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="right-sidebar">
+                
+                <div class="date-widget">
+                    <div class="icon-box"><i class="fa-regular fa-calendar"></i></div>
+                    <div>
+                        <p>Sábado, 18 de Mayo de 2026</p>
+                        <h2>12:00 PM</h2>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="widget-title">RESUMEN DEL DÍA</div>
+                    <div class="summary-list">
+                        <div class="summary-item">
+                            <div class="summary-label"><i class="fa-solid fa-bag-shopping" style="color: var(--c-blue);"></i> Ventas del día</div>
+                            <div class="summary-val">$ 126,430.50</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label"><i class="fa-solid fa-cart-arrow-down" style="color: var(--c-green);"></i> Compras del día</div>
+                            <div class="summary-val">$ 78,250.00</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label"><i class="fa-solid fa-user-group" style="color: var(--c-orange);"></i> Clientes nuevos</div>
+                            <div class="summary-val">8</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label"><i class="fa-solid fa-box-open" style="color: var(--c-purple);"></i> Productos agregados</div>
+                            <div class="summary-val">15</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="widget-title">
+                        ALERTAS IMPORTANTES
+                        <a href="#" class="link-primary">Ver todas</a>
+                    </div>
+                    <div class="alert-list">
+                        <div class="alert-item">
+                            <div class="alert-badge" style="background: var(--c-red);">12</div>
+                            <div class="alert-info">
+                                <h4>Productos agotados</h4>
+                                <p>Requieren atención</p>
+                            </div>
+                        </div>
+                        <div class="alert-item">
+                            <div class="alert-badge" style="background: var(--c-orange);">5</div>
+                            <div class="alert-info">
+                                <h4>Compras pendientes</h4>
+                                <p>Por autorizar</p>
+                            </div>
+                        </div>
+                        <div class="alert-item">
+                            <div class="alert-badge" style="background: var(--c-orange);">3</div>
+                            <div class="alert-info">
+                                <h4>Sucursales sin sincronizar</h4>
+                                <p><a href="#" style="color: var(--text-muted); text-decoration: underline;">Ver detalles</a></p>
+                            </div>
+                        </div>
+                        <div class="alert-item">
+                            <div class="alert-badge" style="background: var(--c-blue);">8</div>
+                            <div class="alert-info">
+                                <h4>Cuentas por cobrar vencidas</h4>
+                                <p><a href="#" style="color: var(--text-muted); text-decoration: underline;">Ver detalles</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="widget-title">INFORMACIÓN DEL SISTEMA</div>
+                    <div class="sys-info">
+                        <div class="sys-item">
+                            <div class="sys-label"><i class="fa-regular fa-clock" style="width: 16px;"></i> Versión del Sistema</div>
+                            <div style="font-weight: 600; color: var(--text-main);">v2.5.0</div>
+                        </div>
+                        <div class="sys-item">
+                            <div class="sys-label"><i class="fa-solid fa-shield-halved" style="width: 16px;"></i> Licencia</div>
+                            <div style="font-weight: 600; color: var(--c-green);">Activa</div>
+                        </div>
+                        <div class="sys-item">
+                            <div class="sys-label"><i class="fa-solid fa-cloud" style="width: 16px;"></i> Servidor en la Nube</div>
+                            <div style="font-weight: 600; color: var(--c-green);">Conectado</div>
+                        </div>
+                        <div class="sys-item">
+                            <div class="sys-label"><i class="fa-regular fa-calendar-check" style="width: 16px;"></i> Último Respaldo</div>
+                            <div style="font-weight: 600; color: var(--text-main);">Hoy 02:15 AM</div>
+                        </div>
+                        <button class="btn-outline">Ver Estado del Sistema</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div>© 2026 CALEBSYS | Todos los derechos reservados</div>
+            <div class="footer-info">
+                <span>Sucursal: <b>MATRIZ</b></span>
+                <span>Caja: <b>1</b></span>
+                <span>Usuario: <b>ANTONIO M.</b></span>
+                <span>Folio: <b>12345678</b></span>
+            </div>
+        </footer>
+
+    </main>
+</body>
+</html>

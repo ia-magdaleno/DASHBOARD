@@ -1,0 +1,55 @@
+<div aria-labelledby="modal-paquete-title" aria-modal="true" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm hidden" id="modal-armar-paquete" role="dialog">
+<div class="bg-white rounded-2xl shadow-2xl w-[480px] max-w-full p-6 flex flex-col gap-4 font-montserrat">
+<!-- Header -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<i class="w-5 h-5 text-blue-600" data-lucide="package-plus"></i>
+<h2 class="text-sm font-extrabold text-slate-800 uppercase tracking-wide" id="modal-paquete-title">Arma tu Paquete</h2>
+<span class="bg-blue-100 text-blue-700 text-[9px] font-bold px-2 py-0.5 rounded uppercase">F4</span>
+</div>
+<button class="text-slate-400 hover:text-slate-700 transition" onclick="closeArmarPaqueteModal()" title="Cerrar (ESC)">
+<i class="w-5 h-5" data-lucide="x"></i>
+</button>
+</div>
+<!-- Info Banner -->
+<div class="bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5 text-[10px] text-amber-800 font-medium leading-relaxed">
+<i class="w-3.5 h-3.5 inline mr-1 text-amber-500" data-lucide="info"></i>
+            El paquete se formará con los artículos <strong>actualmente seleccionados</strong> en la tabla y se <strong>auto-ocultará</strong> si el inventario de algún componente llega a cero.
+          </div>
+<!-- Nombre del Paquete -->
+<div class="flex flex-col gap-1">
+<label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider" for="paquete-nombre">Nombre del Paquete</label>
+<input class="border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none bg-slate-50 focus:bg-white transition" id="paquete-nombre" placeholder="ej. POSTE DE LUZ COMPLETO" type="text"/>
+</div>
+<!-- Descuento + Escala -->
+<div class="grid grid-cols-2 gap-3">
+<div class="flex flex-col gap-1">
+<label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider" for="paquete-descuento">Descuento Adicional (%)</label>
+<input class="border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-blue-400 outline-none bg-slate-50 focus:bg-white transition" id="paquete-descuento" max="100" min="0" placeholder="0" type="number"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider" for="paquete-escala">Escala de Precios</label>
+<select class="border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-blue-400 outline-none bg-slate-50 focus:bg-white transition" id="paquete-escala">
+<option value="menudeo">Menudeo</option>
+<option value="mayoreo">Mayoreo</option>
+<option value="especial">Especial</option>
+</select>
+</div>
+</div>
+<!-- Preview de artículos seleccionados -->
+<div class="bg-slate-50 rounded-xl px-3 py-2.5 border border-slate-100">
+<span class="text-[9px] font-black text-slate-400 uppercase tracking-wider">Componentes del Kit</span>
+<div class="mt-1.5 text-[10px] text-slate-600 font-semibold space-y-0.5" id="paquete-items-preview">
+<span class="text-slate-400 italic">Sin artículos seleccionados en la tabla.</span>
+</div>
+</div>
+<!-- Footer Buttons -->
+<div class="flex gap-2 pt-1">
+<button class="flex-1 border border-slate-200 text-slate-600 font-bold text-xs py-2.5 rounded-xl hover:bg-slate-50 transition" onclick="closeArmarPaqueteModal()">Cancelar</button>
+<button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-2.5 rounded-xl shadow-sm transition flex items-center justify-center gap-2" onclick="guardarPaquete()">
+<i class="w-4 h-4" data-lucide="save"></i>
+              GUARDAR PAQUETE
+            </button>
+</div>
+</div>
+</div>

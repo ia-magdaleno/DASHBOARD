@@ -1,0 +1,46 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden select-none" id="modal-articles">
+<div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-[700px] max-w-full max-h-[85vh] flex flex-col overflow-hidden">
+<!-- Modal Header -->
+<div class="bg-slate-50 border-b border-slate-200 px-5 py-4 flex items-center justify-between font-montserrat font-bold">
+<div class="flex items-center gap-2">
+<i class="w-5 h-5 text-slate-500" data-lucide="shopping-bag"></i>
+<h3 class="font-bold text-slate-700 text-sm">Buscar Artículos (INS)</h3>
+</div>
+<span class="bg-slate-200 text-slate-600 font-bold text-[9px] px-2 py-0.5 rounded">ESC para salir</span>
+</div>
+<!-- Modal Body -->
+<div class="p-5 flex-1 flex flex-col overflow-hidden font-bold">
+<div class="relative mb-4">
+<input class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-base font-semibold focus:bg-white text-slate-800 pl-11 shadow-inner font-montserrat" id="article-search-input" placeholder="Buscar por SKU, nombre, etc..." type="text"/>
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<i class="w-4 h-4 text-slate-400" data-lucide="search"></i>
+</div>
+</div>
+<!-- Results Table -->
+<div class="flex-1 overflow-auto custom-scrollbar border border-slate-200 rounded-2xl">
+<table class="w-full border-collapse text-left text-sm relative">
+<thead class="bg-slate-50 border-b border-slate-200 sticky top-0 z-10 font-montserrat font-bold">
+<tr>
+<th class="py-2 px-3 font-bold text-slate-400 text-xs uppercase" scope="col">SKU</th>
+<th class="py-2 px-3 font-bold text-slate-400 text-xs uppercase" scope="col">Descripción</th>
+<th class="py-2 px-3 font-bold text-slate-400 text-xs uppercase text-right w-24" scope="col">Precio</th>
+<th class="py-2 px-3 font-bold text-slate-400 text-xs uppercase text-right w-24" scope="col">Stock</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 font-montserrat font-bold" id="article-results-body">
+<!-- Dynamically populated -->
+</tbody>
+</table>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="bg-slate-50 border-t border-slate-200 px-5 py-3 flex items-center justify-between text-xs text-slate-500 font-montserrat font-bold">
+<div>
+<span>Usa <kbd class="bg-white border px-1 rounded font-bold">↑</kbd> <kbd class="bg-white border px-1 rounded font-bold">↓</kbd> para navegar, <kbd class="bg-white border px-1.5 rounded font-bold">Enter</kbd> para seleccionar</span>
+</div>
+<button class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-2 rounded-xl transition font-montserrat" onclick="closeModal('modal-articles')">
+          Cerrar
+        </button>
+</div>
+</div>
+</div>

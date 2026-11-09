@@ -1,0 +1,24 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden select-none" id="modal-puntos">
+<div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-[480px] max-w-full flex flex-col overflow-hidden font-montserrat font-bold">
+<!-- Header -->
+<div class="bg-slate-50 border-b border-slate-200 px-5 py-4 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<i class="w-5 h-5 text-slate-500" data-lucide="award"></i>
+<h3 class="font-bold text-slate-700 text-sm">Puntos Acumulados de Clientes (F3)</h3>
+</div>
+<span class="bg-slate-200 text-slate-600 font-bold text-[9px] px-2 py-0.5 rounded">ESC para salir</span>
+</div>
+<!-- Body -->
+<div class="p-5 space-y-4 text-xs font-semibold text-slate-600">
+<div class="bg-blue-50 border border-blue-100 rounded-2xl p-4 text-blue-900 leading-relaxed">
+          Cliente: <span class="font-black text-blue-950" id="puntos-client-name">PUBLICO EN GENERAL</span><br/>
+          Saldo de Puntos: <span class="font-black text-blue-950 text-base" id="puntos-client-balance">0 pts</span>
+</div>
+<p class="text-[10px] text-slate-400">Los puntos se acumulan a una tasa de 1 punto por cada $100.00 de compra en efectivo.</p>
+</div>
+<!-- Footer -->
+<div class="bg-slate-50 border-t border-slate-200 px-5 py-3 flex justify-end">
+<button class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-2 rounded-xl transition" onclick="closeModal('modal-puntos')">Cerrar</button>
+</div>
+</div>
+</div>

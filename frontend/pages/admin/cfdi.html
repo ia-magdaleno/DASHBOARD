@@ -1,0 +1,307 @@
+<!-- PAGE: CFDI — COMPROBANTES FISCALES DIGITALES GENERADOS -->
+<style>
+  /* Botones de pestaña: estilo tarjeta, ≈46px de alto */
+  .cf-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 4px 0 16px; }
+  .cf-tab { height: 46px; display: flex; align-items: center; gap: 9px; padding: 0 10px 0 8px; min-width: 0;
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md, 12px);
+    color: var(--text-primary); font-family: inherit; text-align: left; cursor: pointer; transition: var(--t-fast, .15s); }
+  .cf-tab:hover { border-color: rgba(59,130,246,0.35); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .cf-tab-ico { width: 30px; height: 30px; flex: 0 0 auto; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+  .cf-tab-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.15; }
+  .cf-tab-lbl { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cf-tab-key { font-size: 9.5px; font-weight: 700; letter-spacing: .4px; color: var(--text-muted); }
+  .cf-tab-count { flex: 0 0 auto; min-width: 22px; padding: 1px 7px; border-radius: 999px; text-align: center; font-size: 11px; font-weight: 700;
+    background: var(--bg-card-2); color: var(--text-secondary); border: 1px solid var(--border); }
+  .cf-tab.active { border-color: var(--brand-500); background: var(--brand-500); color: #fff; box-shadow: 0 4px 14px rgba(59,130,246,0.30); }
+  .cf-tab.active .cf-tab-key { color: rgba(255,255,255,0.8); }
+  .cf-tab.active .cf-tab-ico { background: rgba(255,255,255,0.2) !important; color: #fff !important; }
+  .cf-tab.active .cf-tab-count { background: rgba(255,255,255,0.22); color: #fff; border-color: transparent; }
+
+  @media (max-width: 1100px) { .cf-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 700px)  { .cf-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  /* Filtro de sucursal (lista navegable con flechas + Enter) */
+  .cf-suc { position: relative; }
+  .cf-suc-btn { height: 32px; min-width: 210px; max-width: 300px; display: inline-flex; align-items: center; gap: 7px; padding: 0 10px;
+    border-radius: var(--radius-sm, 8px); border: 1px solid var(--border); background: var(--bg-card-2); color: var(--text-primary);
+    font-size: 12px; font-family: inherit; cursor: pointer; text-align: left; }
+  .cf-suc-btn:focus { outline: none; border-color: var(--brand-400); box-shadow: 0 0 0 3px rgba(59,130,246,0.18); }
+  .cf-suc-btn > i:first-child { color: var(--brand-400); }
+  .cf-suc-btn .cf-suc-lbl { color: var(--text-secondary); font-size: 11px; }
+  .cf-suc-btn .cf-suc-val { flex: 1; min-width: 0; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cf-suc-btn .fa-chevron-down { font-size: 10px; color: var(--text-muted); }
+  .cf-suc-list { position: absolute; top: calc(100% + 4px); left: 0; z-index: 50; min-width: 100%; max-height: 300px; overflow: auto;
+    margin: 0; padding: 4px; list-style: none; display: none; background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 10px; box-shadow: 0 12px 30px rgba(0,0,0,0.25); }
+  .cf-suc.open .cf-suc-list { display: block; }
+  .cf-suc-opt { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 7px 10px; border-radius: 7px;
+    font-size: 12.5px; color: var(--text-primary); cursor: pointer; white-space: nowrap; }
+  .cf-suc-opt.hl { background: var(--bg-hover); outline: 1px solid var(--brand-400); }
+  .cf-suc-opt.sel { font-weight: 700; color: var(--brand-400); }
+  .cf-suc-opt .cf-suc-serie { font-size: 10.5px; font-weight: 700; padding: 1px 7px; border-radius: 999px;
+    background: var(--bg-card-2); border: 1px solid var(--border); color: var(--text-secondary); }
+  .cf-suc-hint { padding: 6px 10px 3px; font-size: 10px; color: var(--text-muted); border-top: 1px solid var(--border); margin-top: 4px; }
+
+  .cf-filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .cf-filters select, .cf-filters input[type="date"] {
+    height: 32px; padding: 0 10px; border-radius: var(--radius-sm, 8px); border: 1px solid var(--border);
+    background: var(--bg-card-2); color: var(--text-primary); font-size: 12px; font-family: inherit; }
+  .cf-filters label { font-size: 11px; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 6px; }
+
+  .cf-table { width: 100%; border-collapse: collapse; }
+  .cf-table th { text-align: left; font-size: 10.5px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
+    color: var(--text-secondary); background: var(--bg-card-2); padding: 10px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .cf-table td { padding: 9px 12px; font-size: 12.5px; color: var(--text-primary); border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .cf-table tr:hover td { background: var(--bg-hover); }
+  .cf-table tbody tr.cf-row { cursor: pointer; }
+  .cf-table tbody tr.cf-new td { animation: cfNew 3s ease-out; }
+  @keyframes cfNew { 0%, 30% { background: rgba(16,185,129,0.28); } 100% { background: transparent; } }
+  .cf-table tbody tr.cf-row.sel td { background: rgba(59,130,246,0.16); }
+  html[data-theme="light"] .cf-table tbody tr.cf-row.sel td { background: #dbeafe; }
+  .cf-chk-col { width: 34px; text-align: center !important; padding-left: 10px !important; padding-right: 4px !important; }
+  .cf-chk { width: 15px; height: 15px; accent-color: var(--brand-500); cursor: pointer; vertical-align: middle; }
+  .cf-set-pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; border-radius: 6px;
+    font-size: 10.5px; font-weight: 700; background: rgba(16,185,129,0.14); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+  .cf-act-set { width: auto !important; padding: 0 8px; gap: 4px; font-size: 10.5px !important; font-weight: 700; color: var(--brand-400) !important; }
+
+  /* Contador de timbres (encabezado) */
+  .cf-stamps { display: flex; flex-direction: column; align-items: stretch; gap: 5px; min-width: 210px; }
+  .cf-stamps-box { display: flex; align-items: center; gap: 10px; padding: 7px 12px; background: var(--bg-card);
+    border: 1px solid var(--border); border-radius: var(--radius-md, 12px); }
+  .cf-stamps-ico { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center;
+    background: rgba(16,185,129,0.15); color: var(--success); font-size: 14px; flex: 0 0 auto; }
+  .cf-stamps-box.low .cf-stamps-ico { background: rgba(245,158,11,0.15); color: var(--warning); }
+  .cf-stamps-box.empty .cf-stamps-ico { background: rgba(239,68,68,0.15); color: var(--danger); }
+  .cf-stamps-lbl { font-size: 10px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: var(--text-secondary); }
+  .cf-stamps-num { font-size: 20px; font-weight: 800; line-height: 1.05; color: var(--text-primary); }
+  .cf-buy { height: 24px; padding: 0 10px; border-radius: 7px; border: 1px solid var(--brand-500); background: transparent;
+    color: var(--brand-400); font-size: 10.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 5px; font-family: inherit; }
+  .cf-buy:hover { background: var(--brand-500); color: #fff; }
+
+  /* Barra inferior de acciones */
+  .cf-bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 12px;
+    padding: 10px 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md, 12px); }
+  .cf-bottom-sel { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .cf-bottom-sel b { color: var(--text-primary); }
+  .cf-bottom-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .cf-bbtn { height: 36px; padding: 0 14px; border-radius: 9px; border: 1px solid var(--border); background: var(--bg-card-2);
+    color: var(--text-primary); font-size: 12.5px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: inherit; }
+  .cf-bbtn:hover { border-color: var(--brand-400); }
+  .cf-bbtn i { font-size: 14px; }
+  .cf-bbtn.print i { color: var(--brand-400); }
+  .cf-bbtn.pack i  { color: var(--warning); }
+  .cf-bbtn.mail i  { color: var(--info); }
+  .cf-bbtn.wa i    { color: #25d366; }
+  .cf-bbtn .cf-pair-tag { font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 5px;
+    background: rgba(16,185,129,0.16); color: var(--success); border: 1px solid rgba(16,185,129,0.32); }
+
+  /* Paquetes de timbres */
+  .cf-pkgs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 16px 18px; }
+  .cf-pkg { padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg-card-2); cursor: pointer; text-align: left; font-family: inherit; color: var(--text-primary); }
+  .cf-pkg:hover, .cf-pkg.sel { border-color: var(--brand-500); box-shadow: 0 0 0 2px rgba(59,130,246,0.25); }
+  .cf-pkg b { display: block; font-size: 16px; }
+  .cf-pkg span { font-size: 11px; color: var(--text-secondary); }
+  .cf-table .cf-num { text-align: right; }
+  .cf-mono { font-family: ui-monospace, Consolas, monospace; font-size: 11.5px; color: var(--text-secondary); }
+  .cf-strong { font-weight: 600; }
+  .cf-actions { display: flex; gap: 4px; align-items: center; }
+  .cf-act { width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--border); background: var(--bg-card-2);
+    color: var(--text-secondary); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-family: inherit; }
+  .cf-act:hover { border-color: var(--brand-400); color: var(--brand-400); }
+  .cf-act.danger:hover { border-color: var(--danger); color: var(--danger); }
+
+  /* Modal detalle y envío */
+  .cf-modal-bg { position: fixed; inset: 0; z-index: 1200; background: rgba(2, 6, 23, 0.6); display: none; align-items: center; justify-content: center; padding: 20px; }
+  .cf-modal { width: 100%; max-width: 640px; max-height: 90vh; overflow: auto; background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.35); }
+  .cf-modal-hd { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--border); }
+  .cf-modal-hd h3 { margin: 0; font-size: 15px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+  .cf-modal-hd h3 i { color: var(--brand-400); }
+  .cf-modal-bd { padding: 16px 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 18px; }
+  .cf-field span { display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: var(--text-secondary); margin-bottom: 2px; }
+  .cf-field div { font-size: 13px; color: var(--text-primary); word-break: break-all; }
+  .cf-field.full { grid-column: 1 / -1; }
+  .cf-modal-ft { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 18px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+
+  /* Modal de envío (Juego Completo PDF + XML) */
+  .cf-send-bd { padding: 16px 18px; }
+  .cf-send-banner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 10px;
+    background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.32); color: var(--text-primary); font-size: 12px; margin-bottom: 12px; }
+  .cf-send-banner i { font-size: 18px; color: var(--success); flex: 0 0 auto; }
+  .cf-send-list { max-height: 170px; overflow: auto; border: 1px solid var(--border); border-radius: 10px; background: var(--bg-card-2); padding: 6px 10px; margin-bottom: 12px; }
+  .cf-send-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 2px; border-bottom: 1px solid var(--border); font-size: 12px; }
+  .cf-send-item:last-child { border-bottom: none; }
+  .cf-send-files { display: inline-flex; gap: 5px; flex: 0 0 auto; }
+  .cf-file-tag { padding: 2px 6px; border-radius: 5px; font-size: 10px; font-weight: 800; letter-spacing: .3px; }
+  .cf-file-tag.pdf { background: rgba(239,68,68,0.16); color: #ef4444; border: 1px solid rgba(239,68,68,0.35); }
+  .cf-file-tag.xml { background: rgba(59,130,246,0.16); color: #3b82f6; border: 1px solid rgba(59,130,246,0.35); }
+  .cf-send-form label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px; }
+  .cf-send-form input, .cf-send-form textarea { width: 100%; box-sizing: border-box; padding: 8px 11px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--bg-card-2); color: var(--text-primary); font-size: 13px; font-family: inherit; margin-bottom: 10px; }
+  .cf-send-form textarea { text-transform: uppercase; resize: vertical; min-height: 54px; }
+  @media (max-width: 700px) { .cf-modal-bd { grid-template-columns: 1fr; } }
+</style>
+
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">CFDI</h1>
+    <p class="page-subtitle">Detalle de todos los comprobantes fiscales digitales generados</p>
+  </div>
+  <div class="page-header-actions">
+    <div class="cf-stamps">
+      <div class="cf-stamps-box" id="cf-stamps-box" title="Timbres disponibles con tu PAC">
+        <div class="cf-stamps-ico"><i class="fa-solid fa-stamp"></i></div>
+        <div>
+          <div class="cf-stamps-lbl">Timbres disponibles</div>
+          <div class="cf-stamps-num" id="cf-stamps-num">—</div>
+        </div>
+      </div>
+      <button type="button" class="cf-buy" data-click="cfdiOpenBuy"><i class="fa-solid fa-cart-shopping"></i> Comprar paquete de timbres</button>
+    </div>
+  </div>
+</div>
+
+<!-- Pestañas -->
+<div class="cf-tabs" id="cf-tabs">
+  <button type="button" class="cf-tab active" data-cf-tab="facturas" data-click="cfdiSetTab" data-click-arg="facturas" title="Facturas (F1)">
+    <span class="cf-tab-ico" style="background:rgba(99,102,241,0.15);color:var(--info)"><i class="fa-solid fa-file-invoice-dollar"></i></span>
+    <span class="cf-tab-txt"><span class="cf-tab-lbl">Facturas</span><span class="cf-tab-key">F1</span></span>
+    <span class="cf-tab-count" id="cf-count-facturas">0</span>
+  </button>
+  <button type="button" class="cf-tab" data-cf-tab="pagos" data-click="cfdiSetTab" data-click-arg="pagos" title="Complemento de Pagos (F2)">
+    <span class="cf-tab-ico" style="background:rgba(16,185,129,0.15);color:var(--success)"><i class="fa-solid fa-money-check-dollar"></i></span>
+    <span class="cf-tab-txt"><span class="cf-tab-lbl">Complemento de Pagos</span><span class="cf-tab-key">F2</span></span>
+    <span class="cf-tab-count" id="cf-count-pagos">0</span>
+  </button>
+  <button type="button" class="cf-tab" data-cf-tab="notas" data-click="cfdiSetTab" data-click-arg="notas" title="Notas de Crédito (F3)">
+    <span class="cf-tab-ico" style="background:rgba(239,68,68,0.15);color:var(--danger)"><i class="fa-solid fa-file-circle-minus"></i></span>
+    <span class="cf-tab-txt"><span class="cf-tab-lbl">Notas de Crédito</span><span class="cf-tab-key">F3</span></span>
+    <span class="cf-tab-count" id="cf-count-notas">0</span>
+  </button>
+  <button type="button" class="cf-tab" data-cf-tab="carta" data-click="cfdiSetTab" data-click-arg="carta" title="Carta Porte (F4)">
+    <span class="cf-tab-ico" style="background:rgba(245,158,11,0.15);color:var(--warning)"><i class="fa-solid fa-truck-fast"></i></span>
+    <span class="cf-tab-txt"><span class="cf-tab-lbl">Carta Porte</span><span class="cf-tab-key">F4</span></span>
+    <span class="cf-tab-count" id="cf-count-carta">0</span>
+  </button>
+</div>
+
+<!-- Tabla -->
+<div class="table-wrapper">
+  <div class="table-toolbar">
+    <div class="table-toolbar-title">
+      <span id="cf-table-title">Facturas</span>
+      <span class="badge badge-neutral" id="cf-count">Cargando...</span>
+    </div>
+    <div class="cf-filters">
+      <div class="cf-suc" id="cf-suc">
+        <button type="button" class="cf-suc-btn" id="cf-suc-btn" aria-haspopup="listbox" aria-expanded="false" title="Filtrar por sucursal (flechas para navegar, Enter para elegir)">
+          <i class="fa-solid fa-store"></i><span class="cf-suc-lbl">Sucursal</span><span class="cf-suc-val" id="cf-suc-val">Todas</span><i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <ul class="cf-suc-list" id="cf-suc-list" role="listbox"></ul>
+      </div>
+      <label>Estado
+        <select id="cf-f-status" data-change="cfdiFilterChange">
+          <option value="">Todos</option>
+          <option value="TIMBRADO">Timbrado</option>
+          <option value="PENDIENTE">Por timbrar (POS)</option>
+          <option value="CANCELADO">Cancelado</option>
+          <option value="BORRADOR">Borrador</option>
+          <option value="ERROR">Error</option>
+        </select>
+      </label>
+      <label>Desde <input type="date" id="cf-f-desde" data-change="cfdiFilterChange"></label>
+      <label>Hasta <input type="date" id="cf-f-hasta" data-change="cfdiFilterChange"></label>
+      <div class="table-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="cf-search" data-input="cfdiSearch" placeholder="Buscar folio, UUID, RFC o razón social...">
+      </div>
+    </div>
+  </div>
+  <div style="overflow:auto;">
+    <div id="cf-table-body">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <div class="loading-text">Conectando con /api/cfdi...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Barra inferior: Imprimir / Enviar (Siempre Juego Completo PDF + XML) -->
+<div class="cf-bottom">
+  <div class="cf-bottom-sel" id="cf-sel-info">
+    <i class="fa-regular fa-hand-pointer"></i> Selecciona Facturas, Complementos de Pago o Notas de Crédito para enviar su <b>juego completo (PDF + XML)</b>
+  </div>
+  <div class="cf-bottom-btns">
+    <button type="button" class="cf-bbtn print" data-click="cfdiPrint"><i class="fa-solid fa-print"></i> Imprimir</button>
+    <button type="button" class="cf-bbtn pack" data-click="cfdiDownloadSelectedSet"><i class="fa-solid fa-box-archive"></i> Descargar <span class="cf-pair-tag">PDF + XML</span></button>
+    <button type="button" class="cf-bbtn mail" data-click="cfdiSendEmail"><i class="fa-solid fa-envelope"></i> Enviar Email <span class="cf-pair-tag">PDF + XML</span></button>
+    <button type="button" class="cf-bbtn wa" data-click="cfdiSendWhatsApp"><i class="fa-brands fa-whatsapp"></i> Enviar WhatsApp <span class="cf-pair-tag">PDF + XML</span></button>
+  </div>
+</div>
+
+<!-- Modal detalle CFDI -->
+<div class="cf-modal-bg" id="cf-modal" data-click="cfdiCloseDetail" data-click-self-target="true">
+  <div class="cf-modal">
+    <div class="cf-modal-hd">
+      <h3><i class="fa-solid fa-file-invoice"></i> <span id="cf-modal-title">Detalle del CFDI</span></h3>
+      <button type="button" class="cf-act" data-click="cfdiCloseDetail" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="cf-modal-bd" id="cf-modal-body"></div>
+    <div class="cf-modal-ft" id="cf-modal-ft">
+      <button type="button" class="btn btn-secondary btn-sm" data-click="cfdiCloseDetail">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Enviar Juego Completo (PDF + XML) por Email o WhatsApp -->
+<div class="cf-modal-bg" id="cf-send-modal" data-click="cfdiCloseSendModal" data-click-self-target="true">
+  <div class="cf-modal" style="max-width:560px;">
+    <div class="cf-modal-hd">
+      <h3><i class="fa-solid fa-paper-plane" id="cf-send-ico"></i> <span id="cf-send-title">Enviar Juego Completo (PDF + XML)</span></h3>
+      <button type="button" class="cf-act" data-click="cfdiCloseSendModal" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="cf-send-bd">
+      <div class="cf-send-banner">
+        <i class="fa-solid fa-file-shield"></i>
+        <div>
+          <b>Envío de Juego Completo obligatorio (PDF + XML)</b><br>
+          <span>Se adjuntarán juntos la representación impresa (<b>.PDF</b>) y el comprobante fiscal (<b>.XML</b>) de cada documento seleccionado.</span>
+        </div>
+      </div>
+      <div class="cf-send-list" id="cf-send-list"></div>
+      <div class="cf-send-form">
+        <label id="cf-send-dest-lbl" for="cf-send-dest">Correo electrónico del destinatario</label>
+        <input type="text" id="cf-send-dest" placeholder="cliente@dominio.com">
+        <label for="cf-send-msg">Observaciones / Mensaje adicional (opcional)</label>
+        <textarea id="cf-send-msg" placeholder="SE ADJUNTA JUEGO COMPLETO DE COMPROBANTE FISCAL (PDF Y XML)..."></textarea>
+      </div>
+    </div>
+    <div class="cf-modal-ft">
+      <button type="button" class="btn btn-secondary btn-sm" data-click="cfdiCloseSendModal">Cancelar</button>
+      <button type="button" class="btn btn-primary btn-sm" id="cf-send-confirm-btn" data-click="cfdiConfirmSend">
+        <i class="fa-solid fa-paper-plane"></i> Enviar PDF + XML
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Comprar paquete de timbres -->
+<div class="cf-modal-bg" id="cf-buy-modal" data-click="cfdiCloseBuy" data-click-self-target="true">
+  <div class="cf-modal" style="max-width:520px;">
+    <div class="cf-modal-hd">
+      <h3><i class="fa-solid fa-cart-shopping"></i> Comprar paquete de timbres</h3>
+      <button type="button" class="cf-act" data-click="cfdiCloseBuy" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="cf-pkgs" id="cf-pkgs">
+      <button type="button" class="cf-pkg" data-click="cfdiPickPkg" data-click-arg="100"><b>100 timbres</b><span>Ideal para negocios pequeños</span></button>
+      <button type="button" class="cf-pkg sel" data-click="cfdiPickPkg" data-click-arg="500"><b>500 timbres</b><span>El más solicitado</span></button>
+      <button type="button" class="cf-pkg" data-click="cfdiPickPkg" data-click-arg="1000"><b>1,000 timbres</b><span>Operación mediana</span></button>
+      <button type="button" class="cf-pkg" data-click="cfdiPickPkg" data-click-arg="5000"><b>5,000 timbres</b><span>Alto volumen / multisucursal</span></button>
+    </div>
+    <div class="cf-modal-ft">
+      <button type="button" class="btn btn-secondary btn-sm" data-click="cfdiCloseBuy">Cancelar</button>
+      <button type="button" class="btn btn-primary btn-sm" data-click="cfdiRequestPkg"><i class="fa-brands fa-whatsapp"></i> Solicitar paquete</button>
+    </div>
+  </div>
+</div>

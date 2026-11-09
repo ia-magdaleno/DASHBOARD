@@ -1,0 +1,68 @@
+<!-- PAGE: CONTRACTORS — conectado a /api/contractors -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Contratistas</h1>
+    <p class="page-subtitle">Intermediarios que recomiendan clientes a la empresa</p>
+  </div>
+  <div class="page-header-right">
+    <button class="btn btn-primary btn-sm" data-click="openContractorForm">
+      <i class="fa-solid fa-plus"></i> Nuevo Contratista
+    </button>
+  </div>
+</div>
+
+<!-- Formulario alta/edición -->
+<div class="card" id="contractor-form-card" style="display:none;margin-bottom:16px;">
+  <div class="card-title" id="contractor-form-title">Nuevo Contratista</div>
+  <input type="hidden" id="contractor-id">
+  <div class="grid-2">
+    <div class="form-group">
+      <label class="form-label">Nombre *</label>
+      <input class="form-control" type="text" id="contractor-nombre" placeholder="Nombre completo o empresa">
+    </div>
+    <div class="form-group">
+      <label class="form-label">RFC</label>
+      <input class="form-control" type="text" id="contractor-rfc" placeholder="RFC (opcional)">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Teléfono</label>
+      <input class="form-control" type="text" id="contractor-phone" placeholder="10 dígitos">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-control" type="email" id="contractor-email" placeholder="correo@ejemplo.com">
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Notas</label>
+    <textarea class="form-control" id="contractor-notas" rows="2" placeholder="Observaciones..."></textarea>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <button class="btn btn-primary btn-sm" data-click="saveContractor">Guardar</button>
+    <button class="btn btn-sm" data-click="closeContractorForm" style="background:var(--bg-tertiary);">Cancelar</button>
+  </div>
+  <div id="contractor-msg" style="display:none;margin-top:8px;font-size:0.75rem;padding:6px 10px;border-radius:8px;"></div>
+</div>
+
+<!-- Tabla -->
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <div class="card-title" style="margin-bottom:0">Lista de Contratistas</div>
+    <select class="form-control" id="contractor-status-filter" style="width:140px;font-size:0.78rem;"
+      data-change="loadContractors">
+      <option value="">Todos</option>
+      <option value="activo" selected>Activos</option>
+      <option value="inactivo">Inactivos</option>
+    </select>
+  </div>
+  <div style="overflow-x:auto;">
+    <table class="data-table" id="contractors-table">
+      <thead><tr>
+        <th>Nombre</th><th>RFC</th><th>Teléfono</th><th>Email</th><th>Estado</th><th>Acciones</th>
+      </tr></thead>
+      <tbody id="contractors-tbody">
+        <tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-secondary);">Cargando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

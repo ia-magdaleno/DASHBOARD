@@ -1,0 +1,85 @@
+<!-- PAGE: RECEPCIÓN DE MERCANCÍA (COMPRAS) -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Recepción de Mercancía</h1>
+    <p class="page-subtitle">Entradas de compra al almacén · costo promedio ponderado automático</p>
+  </div>
+  <div class="page-header-actions">
+    <button class="btn btn-primary btn-sm" data-click="openModalCompra">
+      <i class="fa-solid fa-truck-ramp-box"></i> Nueva Entrada
+    </button>
+  </div>
+</div>
+
+<div class="table-wrapper">
+  <div class="table-toolbar">
+    <div class="table-toolbar-title">
+      Historial de Entradas
+      <span class="badge badge-neutral" id="compras-count"></span>
+    </div>
+    <div class="table-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Buscar proveedor, SKU, referencia..." id="compras-search">
+    </div>
+  </div>
+  <div id="compras-table-body">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <div class="loading-text">Conectando con /api/kardex/v2?movement_type=COMPRA...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Nueva Entrada de Mercancía -->
+<div class="modal-backdrop" id="modal-compra">
+  <div class="modal" style="max-width:600px;">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa-solid fa-truck-ramp-box"></i> Nueva Entrada de Mercancía</div>
+      <button class="modal-close" data-click="closeModalCompra">&times;</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:16px;">
+
+      <!-- Cabecera de la entrada -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label">Bodega receptora *</label>
+          <select id="compra-warehouse" class="form-input">
+            <option value="">Seleccionar bodega...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Proveedor</label>
+          <input type="text" id="compra-proveedor" class="form-input" placeholder="Nombre del proveedor">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Factura / Remisión</label>
+          <input type="text" id="compra-referencia" class="form-input" placeholder="Núm. de documento">
+        </div>
+      </div>
+
+      <!-- Renglones de productos -->
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <label class="form-label" style="margin:0;">Productos *</label>
+          <button class="btn btn-secondary btn-sm" data-click="addCompraItem">
+            <i class="fa-solid fa-plus"></i> Agregar renglón
+          </button>
+        </div>
+        <div id="compra-items" style="display:flex;flex-direction:column;gap:8px;">
+          <!-- renglones dinámicos -->
+        </div>
+      </div>
+
+      <div id="compra-total" style="text-align:right;font-weight:700;font-size:15px;color:var(--success);">
+        Total: $0.00
+      </div>
+      <div id="compra-error" style="color:var(--danger);font-size:13px;display:none;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-click="closeModalCompra">Cancelar</button>
+      <button class="btn btn-primary" id="btn-confirmar-compra" data-click="confirmarCompra">
+        <i class="fa-solid fa-check"></i> Registrar Entrada
+      </button>
+    </div>
+  </div>
+</div>

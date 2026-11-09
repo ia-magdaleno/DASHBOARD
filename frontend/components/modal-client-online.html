@@ -1,0 +1,34 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden select-none" id="modal-client-online">
+<div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-[700px] max-h-[85vh] flex flex-col overflow-hidden font-montserrat">
+<div class="bg-gradient-to-r from-cyan-600 to-cyan-700 px-5 py-4 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<i class="w-5 h-5 text-white" data-lucide="shopping-cart"></i>
+<h3 class="font-black text-white text-sm uppercase">Ventas Online del Cliente</h3>
+<span class="bg-cyan-800 text-cyan-200 font-bold text-[9px] px-2 py-0.5 rounded">F9</span>
+</div>
+<button class="text-cyan-200 hover:text-white" onclick="closeModal('modal-client-online')"><i class="w-5 h-5" data-lucide="x"></i></button>
+</div>
+<div class="p-5 flex-1 overflow-y-auto">
+<div class="border border-slate-100 rounded-2xl overflow-hidden">
+<table class="w-full text-xs border-collapse text-left">
+<thead class="bg-slate-50 text-slate-400 font-bold border-b border-slate-100">
+<tr>
+<th class="py-2.5 px-4">PEDIDO #</th>
+<th class="py-2.5 px-4">FECHA</th>
+<th class="py-2.5 px-4">CANAL</th>
+<th class="py-2.5 px-4">ARTÍCULOS</th>
+<th class="py-2.5 px-4 text-right">TOTAL</th>
+<th class="py-2.5 px-4 text-center">ESTADO</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-50 font-bold text-slate-700" id="online-sales-body">
+<tr><td class="text-center py-6 text-slate-400" colspan="6">Sin ventas online registradas</td></tr>
+</tbody>
+</table>
+</div>
+<div class="mt-4 flex justify-end">
+<button class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-5 py-2.5 rounded-xl transition text-xs" onclick="closeModal('modal-client-online')">Cerrar (Esc)</button>
+</div>
+</div>
+</div>
+</div>

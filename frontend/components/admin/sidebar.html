@@ -1,0 +1,31 @@
+<!-- COMPONENT: Sidebar -->
+<!-- This is a reference file. The sidebar is embedded directly in admin_shell.html -->
+<!-- for performance (no fetch needed on load). This file serves as documentation. -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><i class="fa-solid fa-bolt"></i></div>
+    <div class="logo-text">
+      <div class="name">CALEBSYS</div>
+      <div class="tagline">Admin Enterprise</div>
+    </div>
+  </div>
+  <div class="tenant-badge">
+    <div class="dot"></div>
+    <div class="info">
+      <div class="tname" id="sidebar-tenant-name">Tenant</div>
+      <div class="tsub">Tenant Activo · MATRIZ</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav" id="sidebar-nav">
+    <div class="nav-group-label">Principal</div>
+    <div class="nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')"><span class="nav-icon"><i class="fa-solid fa-grid-2"></i></span> Dashboard</div>
+    <!-- Additional nav items... -->
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-card" onclick="openModal('modal-user')">
+      <div class="user-avatar" id="user-avatar-initials">AD</div>
+      <div class="user-info"><div class="uname" id="sidebar-user-name">Admin</div><div class="urole" id="sidebar-user-role">ADMIN</div></div>
+      <i class="fa-solid fa-ellipsis-vertical chevron"></i>
+    </div>
+  </div>
+</aside>

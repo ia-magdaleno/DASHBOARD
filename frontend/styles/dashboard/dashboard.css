@@ -1,0 +1,1993 @@
+/* ==========================================================================
+   CALEBSYS ERP — DASHBOARD PRINCIPAL STYLES (COMPACT SINGLE-WINDOW + DARK/LIGHT)
+   Archivo: frontend/styles/dashboard/dashboard.css
+   Optimizado para:
+   1. Ajustar las 4 filas + Hero Banner en una sola ventana (1080p/900p/768p)
+   2. Permitir desplazamiento vertical fluido hacia arriba y hacia abajo
+   3. Adaptarse automáticamente a Modo Oscuro y Modo Claro del Admin Shell
+   ========================================================================== */
+
+/* Reducir padding del contenedor padre cuando muestra el Dashboard para aprovechar toda la ventana */
+.content-area:has(#calebsys-dashboard-root) {
+  padding: 8px 12px 18px 12px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scroll-behavior: smooth;
+}
+
+/* Scrollbar visible y estilizado tanto en modo oscuro como en modo claro */
+:root[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.35);
+}
+:root[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.55);
+}
+
+#calebsys-dashboard-root {
+  background: var(--dash-bg-canvas);
+  color: var(--dash-text-primary);
+  font-family: var(--dash-font-sans);
+  min-height: calc(100vh - var(--topbar-h, 68px) - 20px);
+  padding: 10px 12px 20px 12px;
+  border-radius: var(--dash-radius-md);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: background 0.25s ease, color 0.2s ease;
+}
+
+/* ── 1. BARRA SUPERIOR CONTEXTUAL COMPACTA ────────────────────────────────── */
+.dash-context-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--dash-surface-1);
+  border: 1px solid var(--dash-border);
+  border-radius: var(--dash-radius-sm);
+  box-shadow: var(--dash-shadow-card);
+  flex-shrink: 0;
+}
+
+.dash-context-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.dash-tenant-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  background: rgba(37, 99, 235, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.32);
+  border-radius: 8px;
+}
+
+.dash-tenant-pill i {
+  font-size: 14px;
+  color: var(--dash-accent-blue-light);
+}
+
+.dash-tenant-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dash-text-primary);
+  line-height: 1.15;
+}
+
+.dash-tenant-sub {
+  font-size: 11px;
+  color: var(--dash-text-muted);
+}
+
+.dash-layout-selector-wrap {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dash-select {
+  height: 30px;
+  padding: 0 9px;
+  border-radius: 7px;
+  border: 1px solid var(--dash-border);
+  background: var(--dash-surface-2);
+  color: var(--dash-text-primary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.dash-select:hover,
+.dash-select:focus {
+  border-color: var(--dash-border-strong);
+}
+
+/* Buscador global del Dashboard */
+.dash-search-box {
+  position: relative;
+  flex: 1;
+  max-width: 340px;
+  min-width: 190px;
+}
+.dash-search-box input {
+  width: 100%;
+  height: 30px;
+  padding: 0 60px 0 32px;
+  border-radius: 999px;
+  border: 1px solid var(--dash-border);
+  background: var(--dash-surface-2);
+  color: var(--dash-text-primary);
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.dash-search-box input:focus {
+  border-color: var(--dash-accent-blue-light);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+.dash-search-box .search-icon {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--dash-text-muted);
+  font-size: 12px;
+  pointer-events: none;
+}
+.dash-search-box .search-kbd {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 5px;
+  background: var(--dash-surface-inset);
+  color: var(--dash-text-muted);
+  border: 1px solid var(--dash-border-subtle);
+  pointer-events: none;
+}
+
+.dash-search-results {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  min-width: 540px;
+  max-width: 90vw;
+  background: var(--dash-surface-1);
+  border: 1px solid var(--dash-border-strong);
+  border-radius: var(--dash-radius-md);
+  box-shadow: var(--dash-shadow-modal);
+  max-height: 440px;
+  overflow-y: auto;
+  z-index: 1200;
+  padding: 8px;
+}
+.dash-search-results[hidden] {
+  display: none !important;
+}
+.dash-search-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 9px 11px;
+  border-radius: 8px;
+  border-bottom: 1px solid var(--dash-border-subtle);
+  color: var(--dash-text-primary);
+  font-size: 12.5px;
+  transition: background 0.15s;
+}
+.dash-search-item:hover {
+  background: var(--dash-surface-hover);
+}
+.dash-search-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+}
+.dash-search-opts-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-left: 20px;
+}
+.dash-search-opt-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(37, 99, 235, 0.14);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  color: var(--dash-text-primary);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.dash-search-opt-btn:hover {
+  background: var(--dash-accent-blue);
+  color: #ffffff;
+  border-color: var(--dash-accent-blue-light);
+}
+.dash-search-item small {
+  color: var(--dash-text-muted);
+  font-size: 11px;
+}
+
+.dash-context-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.dash-btn-ai {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(192, 132, 252, 0.6);
+  background: linear-gradient(135deg, #6d28d9 0%, #4c1d95 50%, #7c3aed 100%);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(124, 58, 237, 0.38);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.dash-btn-ai:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 16px rgba(139, 92, 246, 0.55);
+}
+
+.dash-btn {
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 7px;
+  border: 1px solid var(--dash-border);
+  background: var(--dash-surface-2);
+  color: var(--dash-text-primary);
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.dash-btn:hover {
+  background: var(--dash-surface-hover);
+  border-color: var(--dash-border-strong);
+}
+.dash-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.dash-btn-primary {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  border-color: #60a5fa;
+  color: #ffffff;
+}
+.dash-btn-primary:hover {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #ffffff;
+}
+.dash-btn-success {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  border-color: #34d399;
+  color: #ffffff;
+}
+.dash-btn-danger {
+  background: rgba(239, 68, 68, 0.14);
+  border-color: rgba(248, 113, 113, 0.45);
+  color: var(--dash-accent-red-text);
+}
+
+/* ── 2. ENCABEZADO HERO / BANNER EMPRESARIAL COMPACTO (Oscuro y Claro) ─────── */
+.dash-hero-banner {
+  position: relative;
+  border-radius: var(--dash-radius-md);
+  border: 1px solid var(--dash-border-strong);
+  overflow: hidden;
+  min-height: 92px;
+  height: 92px;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  padding: 0;
+  background: #071330;
+  box-shadow: var(--dash-shadow-card);
+  flex-shrink: 0;
+}
+
+/* Hero Banner adaptado a Modo Claro */
+#calebsys-dashboard-root[data-dash-theme="light"] .dash-hero-banner {
+  background: #ffffff;
+  border-color: rgba(37, 99, 235, 0.32);
+}
+
+.dash-hero-banner[data-hero-mode="compact"] {
+  min-height: 54px;
+  height: auto;
+  padding: 8px 18px;
+  background: var(--dash-surface-1);
+}
+
+.dash-hero-banner[data-hero-mode="executive"] {
+  min-height: 62px;
+  height: auto;
+  padding: 10px 18px;
+  background: var(--dash-surface-2);
+}
+
+.dash-hero-banner[data-hero-mode="compact"] .dash-hero-img-el,
+.dash-hero-banner[data-hero-mode="compact"] .dash-hero-visual-fade,
+.dash-hero-banner[data-hero-mode="compact"] .dash-hero-img-tools,
+.dash-hero-banner[data-hero-mode="executive"] .dash-hero-img-el,
+.dash-hero-banner[data-hero-mode="executive"] .dash-hero-visual-fade,
+.dash-hero-banner[data-hero-mode="executive"] .dash-hero-img-tools {
+  display: none !important;
+}
+
+.dash-hero-banner[data-hero-mode="hidden"] {
+  display: none !important;
+}
+
+/* Bloque izquierdo de texto: llega únicamente hasta donde termina el saludo */
+.dash-hero-content {
+  position: relative;
+  z-index: 3;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px 14px 10px 20px;
+  background: #071330;
+  white-space: nowrap;
+}
+
+#calebsys-dashboard-root[data-dash-theme="light"] .dash-hero-content {
+  background: #ffffff;
+}
+
+.dash-hero-banner:not([data-hero-mode="illustrated"]) .dash-hero-content {
+  background: transparent;
+  padding: 0;
+}
+
+/* Zona visual derecha: empieza inmediatamente donde acaba el saludo y abarca casi todo el panel */
+.dash-hero-visual {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px 16px;
+  overflow: hidden;
+}
+
+.dash-hero-img-el {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+  z-index: 1;
+  filter: brightness(1.06) contrast(1.04);
+  transition: transform 0.35s ease;
+}
+
+.dash-hero-img-el[data-custom-cropped="true"] {
+  object-fit: fill;
+  object-position: center center;
+  filter: none;
+}
+
+/* Fundido suave únicamente en la unión izquierda con el bloque de saludo */
+.dash-hero-visual-fade {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 54px;
+  background: linear-gradient(90deg, #071330 0%, rgba(7, 19, 48, 0.55) 45%, rgba(7, 19, 48, 0) 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+#calebsys-dashboard-root[data-dash-theme="light"] .dash-hero-visual-fade {
+  background: linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0.65) 45%, rgba(255, 255, 255, 0) 100%);
+}
+
+.dash-hero-greeting {
+  font-family: var(--dash-font-display);
+  font-size: 21px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 2px 0;
+  letter-spacing: -0.3px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+}
+
+#calebsys-dashboard-root[data-dash-theme="light"] .dash-hero-greeting {
+  color: #0f172a;
+  text-shadow: none;
+}
+
+.dash-hero-subtitle {
+  font-size: 12.5px;
+  color: #e2e8f0;
+  margin: 0;
+  opacity: 0.92;
+}
+
+#calebsys-dashboard-root[data-dash-theme="light"] .dash-hero-subtitle {
+  color: #334155;
+}
+
+.dash-hero-right {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.dash-hero-img-tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dash-hero-cam-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 8px;
+  background: rgba(10, 19, 44, 0.82);
+  border: 1px solid rgba(96, 165, 250, 0.5);
+  color: #f8fafc;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+
+.dash-hero-cam-btn:hover {
+  background: rgba(37, 99, 235, 0.92);
+  border-color: #93c5fd;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.dash-hero-cam-btn i {
+  color: #60a5fa;
+}
+.dash-hero-cam-btn:hover i {
+  color: #ffffff;
+}
+
+#calebsys-dashboard-root[data-dash-theme="light"] .dash-hero-cam-btn {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(37, 99, 235, 0.4);
+  color: #0f172a;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1);
+}
+#calebsys-dashboard-root[data-dash-theme="light"] .dash-hero-cam-btn:hover {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.dash-hero-cam-btn[hidden] {
+  display: none !important;
+}
+
+.dash-date-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 11px;
+  border-radius: 8px;
+  background: rgba(10, 19, 44, 0.85);
+  border: 1px solid rgba(96, 165, 250, 0.45);
+  color: #f8fafc;
+  font-size: 12px;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+}
+.dash-date-pill i {
+  color: #60a5fa;
+}
+
+#calebsys-dashboard-root[data-dash-theme="light"] .dash-date-pill {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(37, 99, 235, 0.35);
+  color: #0f172a;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+
+.dash-sync-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #cbd5e1;
+  background: rgba(6, 13, 31, 0.65);
+  padding: 4px 9px;
+  border-radius: 999px;
+}
+#calebsys-dashboard-root[data-dash-theme="light"] .dash-sync-meta {
+  background: rgba(255, 255, 255, 0.92);
+  color: #334155;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+.dash-sync-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+}
+
+/* ── 3. BARRA GLOBAL DE FILTROS COMPACTA ──────────────────────────────────── */
+.dash-global-filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 5px 10px;
+  background: var(--dash-surface-1);
+  border: 1px solid var(--dash-border-subtle);
+  border-radius: var(--dash-radius-sm);
+  flex-shrink: 0;
+}
+
+.dash-period-pills {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-wrap: wrap;
+  background: var(--dash-surface-inset);
+  padding: 3px;
+  border-radius: 8px;
+  border: 1px solid var(--dash-border-subtle);
+}
+
+.dash-period-btn {
+  padding: 3px 9px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--dash-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.dash-period-btn:hover {
+  color: var(--dash-text-primary);
+  background: rgba(59, 130, 246, 0.12);
+}
+.dash-period-btn.active {
+  background: var(--dash-accent-blue);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.38);
+}
+
+.dash-filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.dash-custom-dates {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.dash-custom-dates[hidden] {
+  display: none !important;
+}
+.dash-date-input {
+  height: 28px;
+  padding: 0 7px;
+  border-radius: 6px;
+  border: 1px solid var(--dash-border);
+  background: var(--dash-surface-2);
+  color: var(--dash-text-primary);
+  font-size: 11.5px;
+}
+
+/* ── 4. BARRA DE MODO PERSONALIZACIÓN ─────────────────────────────────────── */
+.dash-edit-toolbar {
+  position: sticky;
+  top: 4px;
+  z-index: 950;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--dash-surface-2);
+  border: 1.5px solid var(--dash-accent-blue-light);
+  border-radius: var(--dash-radius-sm);
+  box-shadow: var(--dash-shadow-hover);
+  backdrop-filter: blur(12px);
+}
+.dash-edit-toolbar[hidden] {
+  display: none !important;
+}
+
+.dash-edit-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.2);
+  border: 1px solid var(--dash-accent-blue-light);
+  color: var(--dash-text-primary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dash-edit-tools-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* ── 5. MOTOR DE REJILLA DE 12 COLUMNAS (TODO EN UNA SOLA VENTANA) ────────── */
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  /* 12 unidades verticales caben exactamente en la altura restante de la pantalla */
+  grid-auto-rows: minmax(36px, calc((100vh - 260px) / 12));
+  gap: 8px;
+  position: relative;
+  flex: 1;
+}
+
+/* Modo Vista Expandida para quien desee módulos más altos y hacer scroll más amplio */
+#calebsys-dashboard-root[data-fit-window="expanded"] .dash-grid {
+  grid-auto-rows: minmax(58px, auto);
+  gap: 12px;
+}
+#calebsys-dashboard-root[data-fit-window="expanded"] .dash-hero-banner {
+  min-height: 96px;
+  padding: 16px 22px;
+}
+
+#calebsys-dashboard-root.is-editing .dash-grid {
+  background-image: linear-gradient(to right, rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
+  background-size: calc(100% / 12) 44px;
+  padding: 6px;
+  border: 1px dashed var(--dash-border-strong);
+  border-radius: var(--dash-radius-md);
+}
+
+@media (max-width: 1280px) {
+  .dash-grid {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    grid-auto-rows: minmax(42px, auto);
+  }
+}
+@media (max-width: 960px) {
+  .dash-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .dash-hero-content {
+    max-width: 100%;
+  }
+}
+@media (max-width: 680px) {
+  .dash-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .dash-hero-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+/* ── 6. TARJETA DE WIDGET INDIVIDUAL COMPACTA ─────────────────────────────── */
+.dash-widget {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--dash-surface-glass);
+  border: 1px solid var(--dash-border);
+  border-radius: var(--dash-radius-md);
+  padding: 10px 14px;
+  box-shadow: var(--dash-shadow-card);
+  overflow: hidden;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  user-select: none;
+}
+
+.dash-widget:hover {
+  border-color: var(--dash-border-strong);
+}
+
+#calebsys-dashboard-root:not(.is-editing) .dash-widget.is-clickable:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--dash-shadow-hover);
+}
+
+#calebsys-dashboard-root.is-editing .dash-widget {
+  cursor: grab;
+  border-color: var(--dash-border-strong);
+}
+#calebsys-dashboard-root.is-editing .dash-widget.is-locked {
+  cursor: default;
+  border-color: rgba(245, 158, 11, 0.65);
+}
+#calebsys-dashboard-root.is-editing .dash-widget.is-dragging {
+  opacity: 0.82;
+  cursor: grabbing;
+  z-index: 900;
+  transform: scale(1.01);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6), 0 0 0 2px #3b82f6;
+}
+
+.dash-widget-edit-bar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 3px 8px;
+  margin: -10px -14px 6px -14px;
+  background: var(--dash-surface-2);
+  border-bottom: 1px solid var(--dash-border-strong);
+  z-index: 20;
+}
+#calebsys-dashboard-root.is-editing .dash-widget-edit-bar {
+  display: flex;
+}
+
+.dash-widget-drag-handle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--dash-accent-blue-light);
+  cursor: grab;
+}
+
+.dash-widget-edit-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.dash-w-icon-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  background: var(--dash-surface-inset);
+  color: var(--dash-text-secondary);
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.dash-w-icon-btn:hover {
+  background: rgba(59, 130, 246, 0.25);
+  color: var(--dash-text-primary);
+}
+.dash-w-icon-btn.danger:hover {
+  background: rgba(239, 68, 68, 0.28);
+  color: var(--dash-accent-red-text);
+}
+
+.dash-widget-resize-handle {
+  display: none;
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 18px;
+  height: 18px;
+  cursor: nwse-resize;
+  color: var(--dash-accent-blue-light);
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  z-index: 25;
+  border-radius: 4px;
+  background: var(--dash-surface-2);
+}
+#calebsys-dashboard-root.is-editing .dash-widget:not(.is-locked) .dash-widget-resize-handle {
+  display: inline-flex;
+}
+
+/* Encabezado estándar de widget */
+.dash-widget-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+}
+
+.dash-widget-title-group {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.dash-widget-title-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: rgba(59, 130, 246, 0.14);
+  color: var(--dash-accent-blue-light);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.dash-widget-title {
+  font-family: var(--dash-font-display);
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--dash-text-primary);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-widget-badge-override {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(245, 158, 11, 0.18);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  color: #d97706;
+  font-weight: 700;
+}
+
+.dash-widget-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ── 7. WIDGET TIPO KPI CON SPARKLINE (Fila 1 Compacta) ───────────────────── */
+.dash-kpi-card-layout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  height: 100%;
+}
+
+.dash-kpi-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.dash-kpi-icon-orb {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+  flex-shrink: 0;
+  color: #ffffff;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+.dash-widget[data-accent="green"] .dash-kpi-icon-orb {
+  background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
+}
+.dash-widget[data-accent="blue"] .dash-kpi-icon-orb,
+.dash-widget[data-accent="cyan"] .dash-kpi-icon-orb {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+.dash-widget[data-accent="purple"] .dash-kpi-icon-orb {
+  background: linear-gradient(135deg, #a855f7 0%, #6d28d9 100%);
+}
+.dash-widget[data-accent="orange"] .dash-kpi-icon-orb {
+  background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+}
+.dash-widget[data-accent="red"] .dash-kpi-icon-orb {
+  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+}
+
+.dash-kpi-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.dash-kpi-label-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dash-kpi-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--dash-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-kpi-value {
+  font-family: var(--dash-font-display);
+  font-size: 23px;
+  font-weight: 800;
+  color: var(--dash-text-primary);
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  margin: 1px 0 2px 0;
+}
+
+.dash-kpi-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.dash-kpi-delta.positive {
+  color: var(--dash-accent-green-text);
+}
+.dash-kpi-delta.negative {
+  color: var(--dash-accent-red-text);
+}
+.dash-kpi-delta.neutral {
+  color: var(--dash-text-muted);
+}
+
+.dash-kpi-sparkline {
+  width: 78px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+/* ── 8. TENDENCIA DE VENTAS (Combo Bar + Line SVG) ────────────────────────── */
+.dash-chart-tabs {
+  display: inline-flex;
+  background: var(--dash-surface-inset);
+  padding: 2px;
+  border-radius: 7px;
+  border: 1px solid var(--dash-border-subtle);
+  gap: 2px;
+}
+.dash-chart-tab {
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 5px;
+  border: none;
+  background: transparent;
+  color: var(--dash-text-secondary);
+  cursor: pointer;
+}
+.dash-chart-tab.active {
+  background: var(--dash-accent-blue);
+  color: #ffffff;
+}
+
+.dash-svg-chart-wrap {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  min-height: 118px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dash-svg-chart-wrap svg {
+  width: 100%;
+  height: 100%;
+  max-height: 155px;
+  overflow: visible;
+}
+
+/* ── 9. VENTAS POR DEPARTAMENTO (Donut + Leyenda Derecha Compacta) ────────── */
+.dash-donut-layout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex: 1;
+  min-height: 118px;
+}
+
+.dash-donut-svg-box {
+  position: relative;
+  width: 124px;
+  height: 124px;
+  flex-shrink: 0;
+}
+.dash-donut-svg-box svg {
+  width: 100%;
+  height: 100%;
+}
+
+.dash-donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+  padding: 8px;
+}
+.dash-donut-center-val {
+  font-family: var(--dash-font-display);
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--dash-text-primary);
+  line-height: 1.1;
+}
+.dash-donut-center-lbl {
+  font-size: 10.5px;
+  color: var(--dash-text-muted);
+}
+
+.dash-donut-legend {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.dash-donut-legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 12px;
+}
+.dash-donut-legend-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--dash-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dash-donut-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dash-donut-legend-pct {
+  font-weight: 700;
+  color: var(--dash-text-primary);
+}
+
+/* ── 10. VENTAS POR SUCURSAL (Barras de Progreso + Total General) ─────────── */
+.dash-branch-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  justify-content: space-between;
+}
+.dash-branch-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+.dash-branch-item:hover {
+  background: var(--dash-surface-hover);
+}
+.dash-branch-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 12.5px;
+}
+.dash-branch-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: var(--dash-text-primary);
+}
+.dash-branch-name i {
+  color: var(--dash-accent-blue-light);
+}
+.dash-branch-figures {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dash-branch-amount {
+  font-weight: 700;
+  color: var(--dash-text-primary);
+}
+.dash-branch-pct {
+  font-size: 11px;
+  color: var(--dash-text-muted);
+  min-width: 34px;
+  text-align: right;
+}
+.dash-branch-bar-bg {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--dash-surface-inset);
+  overflow: hidden;
+}
+.dash-branch-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+.dash-branch-total-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 11px;
+  margin-top: 2px;
+  background: var(--dash-surface-inset);
+  border: 1px solid var(--dash-border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dash-text-primary);
+}
+
+/* ── 11. ACCESOS RÁPIDOS (8 Botones Horizontales Compactos) ───────────────── */
+.dash-quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 8px;
+  align-items: stretch;
+  height: 100%;
+}
+@media (max-width: 1200px) {
+  .dash-quick-actions-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .dash-quick-actions-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.dash-qa-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px 6px;
+  border-radius: 10px;
+  border: 1px solid var(--dash-border);
+  background: var(--dash-surface-2);
+  color: var(--dash-text-primary);
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+.dash-qa-btn:hover {
+  transform: translateY(-1px);
+  border-color: var(--dash-accent-blue-light);
+  box-shadow: var(--dash-shadow-hover);
+}
+.dash-qa-btn.qa-green {
+  background: linear-gradient(180deg, rgba(6, 95, 70, 0.75) 0%, rgba(6, 78, 59, 0.92) 100%);
+  border-color: rgba(52, 211, 153, 0.5);
+  color: #ffffff;
+}
+#calebsys-dashboard-root[data-dash-theme="light"] .dash-qa-btn.qa-green {
+  background: linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%);
+  border-color: #34d399;
+  color: #065f46;
+}
+.dash-qa-icon {
+  font-size: 17px;
+}
+.dash-qa-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.15;
+}
+.dash-qa-shortcut {
+  font-size: 10px;
+  color: var(--dash-text-muted);
+}
+
+/* ── 12. ALERTAS Y PENDIENTES (Fila 4 Izquierda Compacta) ─────────────────── */
+.dash-alert-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.dash-alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+.dash-alert-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  background: var(--dash-surface-row);
+  border: 1px solid var(--dash-border-subtle);
+  font-size: 12px;
+  color: var(--dash-text-primary);
+}
+.dash-alert-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.dash-alert-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 11.5px;
+}
+.dash-alert-ver-btn {
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--dash-border);
+  background: var(--dash-surface-2);
+  color: var(--dash-text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.dash-alert-ver-btn:hover {
+  border-color: var(--dash-accent-blue-light);
+  color: var(--dash-text-primary);
+}
+
+/* ── 13. TOP PRODUCTOS DEL DÍA (Fila 4 Centro Compacta) ───────────────────── */
+.dash-top-products-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.dash-top-products-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dash-text-muted);
+  padding: 2px 4px 5px;
+  border-bottom: 1px solid var(--dash-border-subtle);
+}
+.dash-top-products-table td {
+  padding: 4px 4px;
+  border-bottom: 1px solid var(--dash-border-subtle);
+  color: var(--dash-text-primary);
+}
+.dash-top-rank {
+  font-weight: 700;
+  color: var(--dash-text-muted);
+  width: 18px;
+}
+.dash-prod-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+.dash-prod-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  background: rgba(59, 130, 246, 0.14);
+  color: var(--dash-accent-blue-light);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10.5px;
+  flex-shrink: 0;
+}
+.dash-widget-footer-link {
+  margin-top: 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--dash-accent-blue-light);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.dash-widget-footer-link:hover {
+  text-decoration: underline;
+}
+
+/* ── 14. RESUMEN FINANCIERO DEL MES (Fila 4 Derecha Compacta) ─────────────── */
+.dash-fin-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  justify-content: space-between;
+}
+.dash-fin-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--dash-border-subtle);
+}
+.dash-fin-label {
+  color: var(--dash-text-secondary);
+}
+.dash-fin-val {
+  font-family: var(--dash-font-display);
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--dash-text-primary);
+}
+.dash-fin-val.gross-profit {
+  color: var(--dash-accent-green-text);
+}
+.dash-fin-net-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 7px 11px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.35) 0%, rgba(16, 185, 129, 0.28) 100%);
+  border: 1px solid rgba(96, 165, 250, 0.45);
+}
+#calebsys-dashboard-root[data-dash-theme="light"] .dash-fin-net-banner {
+  background: linear-gradient(90deg, #1d4ed8 0%, #047857 100%);
+  border-color: #2563eb;
+}
+.dash-fin-net-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #ffffff;
+}
+.dash-fin-net-amount {
+  font-family: var(--dash-font-display);
+  font-size: 15.5px;
+  font-weight: 800;
+  color: #ffffff;
+}
+.dash-fin-margin-pill {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #6ee7b7;
+}
+
+/* ── 15. MODALES Y DRAWERS ────────────────────────────────────────────────── */
+.dash-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.65);
+  backdrop-filter: blur(5px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.dash-modal-backdrop[hidden] {
+  display: none !important;
+}
+
+.dash-modal-card {
+  width: 100%;
+  max-width: 800px;
+  max-height: 86vh;
+  background: var(--dash-surface-1);
+  border: 1px solid var(--dash-border-strong);
+  border-radius: var(--dash-radius-lg);
+  box-shadow: var(--dash-shadow-modal);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--dash-text-primary);
+}
+
+.dash-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--dash-border-subtle);
+  background: var(--dash-surface-2);
+}
+.dash-modal-title {
+  font-family: var(--dash-font-display);
+  font-size: 16px;
+  font-weight: 800;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dash-modal-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+.dash-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--dash-border-subtle);
+  background: var(--dash-surface-2);
+}
+
+.dash-catalog-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.dash-catalog-search-wrap {
+  position: relative;
+  flex: 1 1 320px;
+}
+.dash-catalog-search-wrap i {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--dash-text-muted);
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.dash-catalog-mode-pills {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dash-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+.dash-catalog-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--dash-surface-2);
+  border: 1px solid var(--dash-border-subtle);
+}
+.dash-catalog-item:hover {
+  border-color: var(--dash-accent-blue-light);
+}
+
+.dash-window-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 13px 14px;
+  border-radius: 12px;
+  background: var(--dash-surface-2);
+  border: 1px solid var(--dash-border);
+  box-shadow: var(--dash-shadow-card);
+}
+.dash-window-card:hover {
+  border-color: var(--dash-accent-blue-light);
+}
+
+.dash-window-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--dash-border-subtle);
+}
+
+.dash-window-route-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(37, 99, 235, 0.14);
+  color: var(--dash-accent-blue-light);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.dash-window-opts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.dash-window-opt-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--dash-surface-1);
+  border: 1px solid var(--dash-border-subtle);
+  transition: border-color 0.15s, background 0.15s;
+}
+.dash-window-opt-row:hover {
+  border-color: var(--dash-accent-blue-light);
+  background: var(--dash-surface-hover);
+}
+
+.dash-window-opt-info {
+  flex: 1;
+  min-width: 0;
+}
+.dash-window-opt-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--dash-text-primary);
+  margin-bottom: 2px;
+}
+.dash-window-opt-desc {
+  font-size: 11px;
+  color: var(--dash-text-muted);
+  line-height: 1.3;
+}
+
+.dash-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.5);
+  z-index: 2100;
+  display: flex;
+  justify-content: flex-end;
+}
+.dash-drawer-backdrop[hidden] {
+  display: none !important;
+}
+.dash-drawer {
+  width: 380px;
+  max-width: 92vw;
+  height: 100%;
+  background: var(--dash-surface-1);
+  border-left: 1px solid var(--dash-border-strong);
+  box-shadow: var(--dash-shadow-modal);
+  display: flex;
+  flex-direction: column;
+  color: var(--dash-text-primary);
+}
+
+.dash-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+.dash-form-group label {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--dash-text-muted);
+}
+.dash-input {
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 7px;
+  border: 1px solid var(--dash-border);
+  background: var(--dash-surface-2);
+  color: var(--dash-text-primary);
+  font-size: 13px;
+}
+
+.dash-widget-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 12px;
+  gap: 6px;
+  flex: 1;
+  color: var(--dash-text-muted);
+  font-size: 12px;
+}
+.dash-skeleton-line {
+  width: 100%;
+  height: 14px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, rgba(148, 163, 184, 0.1) 25%, rgba(148, 163, 184, 0.24) 50%, rgba(148, 163, 184, 0.1) 75%);
+  background-size: 200% 100%;
+  animation: dashShimmer 1.5s infinite;
+}
+@keyframes dashShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── 16. CONTROL FLOTANTE DE DESPLAZAMIENTO VERTICAL (SUBIR ▲ / BAJAR ▼) ─── */
+.dash-scroll-navigator {
+  position: fixed;
+  right: 14px;
+  bottom: 18px;
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--dash-surface-1);
+  border: 1px solid var(--dash-border-strong);
+  box-shadow: var(--dash-shadow-hover);
+  backdrop-filter: blur(8px);
+}
+
+.dash-scroll-nav-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--dash-border-subtle);
+  background: var(--dash-surface-2);
+  color: var(--dash-text-primary);
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, transform 0.15s;
+}
+
+.dash-scroll-nav-btn:hover {
+  background: var(--dash-accent-blue);
+  color: #ffffff;
+  border-color: var(--dash-accent-blue-light);
+  transform: scale(1.06);
+}
+
+/* ── 17. MODAL DE AJUSTE Y ENCUADRE MANUAL DE IMAGEN DEL BANNER ─────────── */
+.dash-cropper-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.dash-cropper-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--dash-text-secondary);
+  background: var(--dash-surface-2);
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--dash-border-subtle);
+}
+.dash-cropper-hint i {
+  color: #60a5fa;
+  font-size: 14px;
+}
+
+.dash-cropper-preview-shell {
+  display: flex;
+  align-items: stretch;
+  border-radius: 12px;
+  border: 2px solid var(--dash-accent-blue-light);
+  background: #071330;
+  overflow: hidden;
+  min-height: 72px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  margin-bottom: 12px;
+}
+
+#calebsys-dashboard-root[data-dash-theme="light"] .dash-cropper-preview-shell {
+  background: #ffffff;
+}
+
+.dash-cropper-greeting-preview {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8px 14px 8px 18px;
+  background: #071330;
+  user-select: none;
+}
+
+#calebsys-dashboard-root[data-dash-theme="light"] .dash-cropper-greeting-preview {
+  background: #ffffff;
+}
+
+.dash-cropper-greeting-title {
+  font-family: var(--dash-font-display);
+  font-size: 16.5px;
+  font-weight: 800;
+  color: #ffffff;
+  white-space: nowrap;
+}
+#calebsys-dashboard-root[data-dash-theme="light"] .dash-cropper-greeting-title {
+  color: #0f172a;
+}
+
+.dash-cropper-greeting-sub {
+  font-size: 10.5px;
+  color: #cbd5e1;
+  white-space: nowrap;
+}
+#calebsys-dashboard-root[data-dash-theme="light"] .dash-cropper-greeting-sub {
+  color: #475569;
+}
+
+.dash-cropper-stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  background: repeating-conic-gradient(#0b1736 0% 25%, #071026 0% 50%) 50% / 18px 18px;
+  cursor: grab;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dash-cropper-stage:active {
+  cursor: grabbing;
+}
+
+#dash-cropper-canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.dash-cropper-left-fade {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 44px;
+  background: linear-gradient(90deg, #071330 0%, rgba(7, 19, 48, 0.55) 45%, rgba(7, 19, 48, 0) 100%);
+  pointer-events: none;
+}
+#calebsys-dashboard-root[data-dash-theme="light"] .dash-cropper-left-fade {
+  background: linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0.65) 45%, rgba(255, 255, 255, 0) 100%);
+}
+
+.dash-cropper-grid-guide {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.14) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+  background-size: 33.333% 33.333%;
+  border: 1px dashed rgba(96, 165, 250, 0.65);
+}
+
+.dash-cropper-right-overlay-guide {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+  opacity: 0.72;
+}
+
+.dash-cropper-ghost-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 600;
+  background: rgba(10, 19, 44, 0.82);
+  border: 1px solid rgba(96, 165, 250, 0.45);
+  color: #e2e8f0;
+}
+.dash-cropper-ghost-pill i {
+  color: #60a5fa;
+}
+
+.dash-cropper-quick-modes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.dash-cropper-controls-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  background: var(--dash-surface-2);
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--dash-border-subtle);
+}
+
+@media (max-width: 680px) {
+  .dash-cropper-controls-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dash-cropper-control-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dash-cropper-control-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--dash-text-secondary);
+}
+.dash-cropper-control-label strong {
+  color: var(--dash-accent-blue-light);
+  font-family: var(--dash-font-display);
+}
+.dash-cropper-control-item input[type="range"] {
+  width: 100%;
+  accent-color: #3b82f6;
+  cursor: pointer;
+}
+
+.dash-widget-route-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  background: rgba(37, 99, 235, 0.14);
+  color: var(--dash-accent-blue-light);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  cursor: pointer;
+  white-space: nowrap;
+  max-width: 165px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.dash-widget-route-chip:hover {
+  background: rgba(37, 99, 235, 0.28);
+  border-color: var(--dash-accent-blue-light);
+  color: #ffffff;
+}
+
+/* ── 18. PANEL DE CONEXIÓN ABIERTA PARA NUEVOS MÓDULOS Y WIDGETS (PLUG & PLAY) ── */
+.dash-open-connector-panel {
+  margin-bottom: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--dash-surface-2);
+  border: 1px solid rgba(52, 211, 153, 0.45);
+  box-shadow: var(--dash-shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dash-open-connector-panel[hidden] {
+  display: none !important;
+}
+.dash-open-connector-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--dash-border-subtle);
+}
+.dash-open-connector-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px 12px;
+}
+@media (max-width: 820px) {
+  .dash-open-connector-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.dash-open-connector-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--dash-border-subtle);
+}
+
+
+
+

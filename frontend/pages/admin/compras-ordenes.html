@@ -1,0 +1,125 @@
+<!-- PAGE: ÓRDENES DE COMPRA — /api/purchase-orders -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Órdenes de Compra</h1>
+    <p class="page-subtitle">Creación, seguimiento y autorización de OC</p>
+  </div>
+  <div class="page-header-actions">
+    <button class="btn btn-primary btn-sm" data-click="ocNueva">
+      <i class="fa-solid fa-plus"></i> Nueva OC
+    </button>
+  </div>
+</div>
+
+<!-- KPI strip -->
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;">
+  <div class="kpi-card"><div class="kpi-label">Borradores</div><div class="kpi-value" id="oc-kpi-draft" style="color:var(--color-text-muted)">—</div></div>
+  <div class="kpi-card"><div class="kpi-label">Enviadas</div><div class="kpi-value" id="oc-kpi-sent" style="color:var(--color-warning)">—</div></div>
+  <div class="kpi-card"><div class="kpi-label">Parciales</div><div class="kpi-value" id="oc-kpi-partial" style="color:var(--color-info,#3b82f6)">—</div></div>
+  <div class="kpi-card"><div class="kpi-label">Completadas</div><div class="kpi-value" id="oc-kpi-done" style="color:var(--color-success)">—</div></div>
+</div>
+
+<!-- Filtros + tabla -->
+<div class="card">
+  <div class="card-toolbar" style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+    <input type="text" class="form-input" id="oc-search" placeholder="Buscar folio / proveedor…"
+           data-input="ocFiltrar" style="max-width:260px;">
+    <select class="form-select" id="oc-filter-status" data-change="ocFiltrar" style="max-width:160px;">
+      <option value="">Todos los estados</option>
+      <option value="DRAFT">Borrador</option>
+      <option value="SENT">Enviada</option>
+      <option value="PARTIAL">Parcial</option>
+      <option value="COMPLETED">Completada</option>
+      <option value="CANCELLED">Cancelada</option>
+    </select>
+    <button class="btn btn-ghost btn-sm" data-click="ocCargar"><i class="fa-solid fa-arrows-rotate"></i></button>
+  </div>
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Folio</th><th>Proveedor</th><th>Fecha</th>
+          <th style="text-align:right;">Total</th><th>Estado</th><th style="width:100px;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="oc-tbody">
+        <tr><td colspan="6" style="text-align:center;padding:32px;"><i class="fa-solid fa-spinner fa-spin"></i> Cargando…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL: Nueva OC (multi-ítem) -->
+<div class="modal-backdrop" id="modal-oc" style="display:none;" data-click="ocCerrarModal" data-click-self-target="true">
+  <div class="modal" style="max-width:680px;max-height:90vh;overflow-y:auto;">
+    <div class="modal-header">
+      <h3 class="modal-title">Nueva Orden de Compra</h3>
+      <button class="modal-close" data-click="ocCerrarModal"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">Proveedor *</label>
+          <select class="form-select" id="oc-supplier-id">
+            <option value="">— Selecciona proveedor —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fecha esperada de entrega</label>
+          <input type="date" class="form-input" id="oc-expected-date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notas / condiciones</label>
+          <input type="text" class="form-input" id="oc-notes" placeholder="Flete incluido, etc.">
+        </div>
+      </div>
+
+      <!-- Grid de ítems -->
+      <div style="margin-bottom:8px;font-weight:600;font-size:14px;">Ítems de la orden</div>
+      <div style="overflow-x:auto;">
+        <table class="data-table" id="oc-items-table" style="min-width:560px;">
+          <thead>
+            <tr>
+              <th>SKU</th><th>Descripción</th>
+              <th style="width:90px;">Cant.</th>
+              <th style="width:110px;">Costo unit.</th>
+              <th style="width:100px;text-align:right;">Subtotal</th>
+              <th style="width:40px;"></th>
+            </tr>
+          </thead>
+          <tbody id="oc-items-tbody"></tbody>
+        </table>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:8px;" data-click="ocAgregarItem">
+        <i class="fa-solid fa-plus"></i> Agregar ítem
+      </button>
+
+      <!-- Totales -->
+      <div style="margin-top:16px;text-align:right;font-size:14px;">
+        <span>Subtotal: </span><strong id="oc-subtotal-display">$0.00</strong> &nbsp;
+        <span>IVA 16%: </span><strong id="oc-tax-display">$0.00</strong> &nbsp;
+        <span style="font-size:16px;">Total: </span>
+        <strong id="oc-total-display" style="font-size:18px;color:var(--color-primary)">$0.00</strong>
+      </div>
+      <div id="oc-modal-error" style="display:none;color:var(--color-danger);margin-top:8px;font-size:13px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-click="ocCerrarModal">Cancelar</button>
+      <button class="btn btn-primary" id="oc-btn-guardar" data-click="ocGuardar">
+        <i class="fa-solid fa-floppy-disk"></i> Guardar Borrador
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Detalle / Acciones de OC -->
+<div class="modal-backdrop" id="modal-oc-detalle" style="display:none;" data-click="ocCerrarDetalle" data-click-self-target="true">
+  <div class="modal" style="max-width:580px;max-height:90vh;overflow-y:auto;">
+    <div class="modal-header">
+      <h3 class="modal-title" id="oc-det-title">OC-2026-0001</h3>
+      <button class="modal-close" data-click="ocCerrarDetalle"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" id="oc-det-body"></div>
+    <div class="modal-footer" id="oc-det-footer"></div>
+  </div>
+</div>

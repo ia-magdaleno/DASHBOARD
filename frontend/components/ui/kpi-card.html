@@ -1,0 +1,25 @@
+<!-- COMPONENT: KPI Card -->
+<!-- Usage: Place inside .kpi-grid -->
+<div class="kpi-grid">
+  <!-- Variant: Loading -->
+  <div class="kpi-card">
+    <div class="kpi-info">
+      <div class="kpi-label">Ventas Hoy</div>
+      <div class="kpi-value" id="kpi-ventas-hoy">—</div>
+      <div class="kpi-trend"><i class="fa-solid fa-circle-notch fa-spin"></i> Cargando...</div>
+    </div>
+    <div class="kpi-icon" style="background:rgba(59,130,246,0.15);color:var(--brand-400);">
+      <i class="fa-solid fa-dollar-sign"></i>
+    </div>
+  </div>
+  <!-- Variant: Pending endpoint -->
+  <div class="kpi-card">
+    <div class="kpi-info">
+      <div class="kpi-label">Total Bodegas</div>
+      <div class="kpi-value pending">Pendiente de endpoint</div>
+    </div>
+    <div class="kpi-icon" style="background:rgba(99,102,241,0.15);color:var(--info);">
+      <i class="fa-solid fa-warehouse"></i>
+    </div>
+  </div>
+</div>

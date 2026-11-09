@@ -1,0 +1,55 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden select-none" id="modal-client-cxc">
+<div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-[700px] max-h-[85vh] flex flex-col overflow-hidden font-montserrat">
+<div class="bg-gradient-to-r from-blue-700 to-blue-800 px-5 py-4 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<i class="w-5 h-5 text-[#8afcfd]" data-lucide="credit-card"></i>
+<h3 class="font-black text-white text-sm uppercase">Cuentas por Cobrar</h3>
+<span class="bg-blue-900 text-blue-200 font-bold text-[9px] px-2 py-0.5 rounded">F4</span>
+</div>
+<span class="text-blue-200 font-bold text-xs" id="cxc-client-name-header">-</span>
+<button class="text-blue-200 hover:text-white" onclick="closeModal('modal-client-cxc')"><i class="w-5 h-5" data-lucide="x"></i></button>
+</div>
+<div class="p-5 flex-1 overflow-y-auto">
+<!-- Summary row -->
+<div class="grid grid-cols-3 gap-4 mb-4 text-center">
+<div class="bg-slate-50 border border-slate-100 rounded-2xl p-4">
+<p class="text-2xl font-black text-slate-800" id="cxc-total-debt">$0.00</p>
+<p class="text-[10px] text-slate-400 font-bold uppercase mt-1">Total Adeudo</p>
+</div>
+<div class="bg-green-50 border border-green-100 rounded-2xl p-4">
+<p class="text-2xl font-black text-green-700" id="cxc-credit-avail">$0.00</p>
+<p class="text-[10px] text-slate-400 font-bold uppercase mt-1">Disponible</p>
+</div>
+<div class="bg-blue-50 border border-blue-100 rounded-2xl p-4">
+<p class="text-2xl font-black text-blue-700" id="cxc-credit-limit">$0.00</p>
+<p class="text-[10px] text-slate-400 font-bold uppercase mt-1">Límite Crédito</p>
+</div>
+</div>
+<!-- Accounts table -->
+<div class="border border-slate-100 rounded-2xl overflow-hidden">
+<table class="w-full text-xs border-collapse text-left">
+<thead class="bg-slate-50 text-slate-400 font-bold border-b border-slate-100">
+<tr>
+<th class="py-2.5 px-4">FOLIO</th>
+<th class="py-2.5 px-4">FECHA</th>
+<th class="py-2.5 px-4">CONCEPTO</th>
+<th class="py-2.5 px-4 text-right">MONTO</th>
+<th class="py-2.5 px-4 text-center">ESTADO</th>
+<th class="py-2.5 px-4 text-center">ACCIÓN</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-50 font-bold text-slate-700" id="cxc-table-body">
+<tr><td class="text-center py-6 text-slate-400" colspan="6">Sin cuentas por cobrar</td></tr>
+</tbody>
+</table>
+</div>
+<!-- Pay button -->
+<div class="mt-4 flex justify-end gap-3">
+<button class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-5 py-2.5 rounded-xl transition text-xs" onclick="closeModal('modal-client-cxc')">Cerrar</button>
+<button class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-xl transition text-xs flex items-center gap-2" onclick="makePaymentFromCxC()">
+<i class="w-4 h-4" data-lucide="banknote"></i> Registrar Abono
+          </button>
+</div>
+</div>
+</div>
+</div>

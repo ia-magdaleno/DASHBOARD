@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Ruta — CalebSys</title>
+  <style>
+    :root {
+      --bg:      #f4f6fb;
+      --card:    #ffffff;
+      --border:  #e2e8f0;
+      --text:    #1e293b;
+      --muted:   #64748b;
+      --accent:  #2563eb;
+      --success: #16a34a;
+      --warn:    #d97706;
+      --danger:  #dc2626;
+      --radius:  12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: system-ui, sans-serif;
+           min-height: 100dvh; }
+
+    header {
+      background: var(--accent); color: #fff;
+      padding: 14px 16px 10px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    header h1 { font-size: 1.05rem; font-weight: 700; flex: 1; }
+    #status-badge {
+      font-size: 0.7rem; font-weight: 600; padding: 3px 9px;
+      border-radius: 20px; background: rgba(255,255,255,0.25);
+    }
+
+    #route-meta {
+      padding: 12px 16px;
+      font-size: 0.78rem; color: var(--muted);
+    }
+    #route-meta strong { color: var(--text); }
+
+    #gps-bar {
+      margin: 0 16px 12px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 10px 14px;
+      font-size: 0.78rem; display: flex; align-items: center; gap: 8px;
+    }
+    #gps-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
+    #gps-dot.active  { background: var(--success); animation: pulse 1.8s infinite; }
+    #gps-dot.deviated { background: var(--danger); }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    #stops-list { padding: 0 16px 32px; display: flex; flex-direction: column; gap: 10px; }
+
+    .stop-card {
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: var(--radius); padding: 14px;
+    }
+    .stop-card.arrived  { border-color: var(--warn); }
+    .stop-card.delivered { border-color: var(--success); opacity: .7; }
+    .stop-card.skipped  { border-color: var(--muted); opacity: .55; }
+
+    .stop-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .stop-seq {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--accent); color: #fff;
+      font-size: 0.72rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .stop-label { font-weight: 600; font-size: 0.9rem; flex: 1; }
+    .stop-status-chip {
+      font-size: 0.65rem; font-weight: 700; padding: 2px 7px;
+      border-radius: 20px; text-transform: uppercase;
+    }
+    .chip-pending   { background: #e2e8f0; color: var(--muted); }
+    .chip-arrived   { background: #fef3c7; color: var(--warn); }
+    .chip-delivered { background: #dcfce7; color: var(--success); }
+    .chip-skipped   { background: #fee2e2; color: var(--danger); }
+
+    .stop-address { font-size: 0.78rem; color: var(--muted); margin-bottom: 10px; }
+
+    .stop-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .stop-btn {
+      flex: 1; min-width: 80px; padding: 8px 6px;
+      border: none; border-radius: 8px; font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; transition: opacity .15s;
+    }
+    .stop-btn:disabled { opacity: .4; cursor: default; }
+    .btn-arrived   { background: #fef3c7; color: var(--warn); }
+    .btn-delivered { background: #dcfce7; color: var(--success); }
+    .btn-skipped   { background: #fee2e2; color: var(--danger); }
+
+    #empty-msg { text-align: center; color: var(--muted); margin-top: 40px; font-size: 0.9rem; }
+    #error-msg { margin: 16px; padding: 12px; background: #fee2e2; border-radius: 8px;
+                 color: var(--danger); font-size: 0.82rem; display: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Mi Ruta del Día</h1>
+  <span id="status-badge">—</span>
+</header>
+
+<div id="route-meta">Cargando ruta…</div>
+<div id="gps-bar">
+  <div id="gps-dot"></div>
+  <span id="gps-label">GPS inactivo</span>
+</div>
+<div id="error-msg"></div>
+<div id="stops-list"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var API   = '';
+  var routeId = null;
+  var watchId = null;
+  var isDeviated = false;
+
+  // Leer JWT y empresa del sessionStorage (puesto por login.js)
+  function _headers() {
+    return { 'Content-Type': 'application/json' };
+  }
+
+  function _showError(msg) {
+    var el = document.getElementById('error-msg');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function _chipClass(status) {
+    return { pending: 'chip-pending', arrived: 'chip-arrived',
+             delivered: 'chip-delivered', skipped: 'chip-skipped' }[status] || 'chip-pending';
+  }
+
+  function _chipLabel(status) {
+    return { pending: 'Pendiente', arrived: 'En lugar', delivered: 'Entregado',
+             skipped: 'Omitida' }[status] || status;
+  }
+
+  function _renderStop(stop) {
+    var card = document.createElement('div');
+    card.className = 'stop-card ' + (stop.status !== 'pending' ? stop.status : '');
+    card.id = 'stop-' + stop.id;
+
+    var done = (stop.status === 'delivered' || stop.status === 'skipped');
+
+    card.innerHTML = [
+      '<div class="stop-header">',
+        '<div class="stop-seq">' + stop.seq + '</div>',
+        '<span class="stop-label">' + (stop.label || 'Parada ' + stop.seq) + '</span>',
+        '<span class="stop-status-chip ' + _chipClass(stop.status) + '">' + _chipLabel(stop.status) + '</span>',
+      '</div>',
+      stop.address ? '<div class="stop-address">' + stop.address + '</div>' : '',
+      '<div class="stop-actions">',
+        '<button class="stop-btn btn-arrived"'  + (done ? ' disabled' : '') + ' data-id="' + stop.id + '" data-st="arrived">Llegué</button>',
+        '<button class="stop-btn btn-delivered"' + (done ? ' disabled' : '') + ' data-id="' + stop.id + '" data-st="delivered">Entregado</button>',
+        '<button class="stop-btn btn-skipped"'  + (done ? ' disabled' : '') + ' data-id="' + stop.id + '" data-st="skipped">Omitir</button>',
+      '</div>',
+    ].join('');
+
+    card.querySelectorAll('.stop-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () { _patchStop(stop.id, btn.dataset.st); });
+    });
+    return card;
+  }
+
+  function _renderRoute(route) {
+    document.getElementById('status-badge').textContent = route.status;
+    document.getElementById('route-meta').innerHTML =
+      'Fecha: <strong>' + route.route_date + '</strong> &nbsp;|&nbsp; ' +
+      'Paradas: <strong>' + (route.stops || []).length + '</strong>';
+
+    var list = document.getElementById('stops-list');
+    list.innerHTML = '';
+
+    if (!route.stops || !route.stops.length) {
+      list.innerHTML = '<div id="empty-msg">Sin paradas asignadas.</div>';
+      return;
+    }
+
+    var sorted = route.stops.slice().sort(function (a, b) { return a.seq - b.seq; });
+    sorted.forEach(function (s) { list.appendChild(_renderStop(s)); });
+  }
+
+  async function _patchStop(stopId, status) {
+    if (!routeId) return;
+    try {
+      var r = await fetch(API + '/api/routes/' + routeId + '/stops/' + stopId, {
+        method: 'PATCH', headers: _headers(), credentials: 'include',
+        body: JSON.stringify({ status: status }),
+      });
+      if (!r.ok) { _showError('Error al actualizar parada'); return; }
+      var stop = await r.json();
+      var old = document.getElementById('stop-' + stopId);
+      if (old) old.replaceWith(_renderStop(stop));
+    } catch (e) { _showError('Error de red'); }
+  }
+
+  function _startGPS() {
+    if (!navigator.geolocation || !routeId) return;
+    var dot   = document.getElementById('gps-dot');
+    var label = document.getElementById('gps-label');
+
+    dot.className   = 'active';
+    label.textContent = 'GPS activo';
+
+    watchId = navigator.geolocation.watchPosition(
+      async function (pos) {
+        var payload = {
+          route_id:    routeId,
+          lat:         pos.coords.latitude,
+          lng:         pos.coords.longitude,
+          accuracy_m:  pos.coords.accuracy,
+          speed_kmh:   pos.coords.speed != null ? pos.coords.speed * 3.6 : null,
+          recorded_at: new Date(pos.timestamp).toISOString(),
+        };
+        try {
+          var r = await fetch(API + '/api/gps/ping', {
+            method: 'POST', headers: _headers(), credentials: 'include',
+            body: JSON.stringify(payload),
+          });
+          if (r.ok) {
+            var data = await r.json();
+            isDeviated = data.is_deviated;
+            dot.className = isDeviated ? 'deviated' : 'active';
+            label.textContent = isDeviated
+              ? '⚠ Desviado ' + (data.deviation_m != null ? Math.round(data.deviation_m) + ' m' : '')
+              : 'GPS activo · en ruta';
+          }
+        } catch (e) { /* ping silencioso */ }
+      },
+      function (err) {
+        dot.className = '';
+        label.textContent = 'GPS: ' + (err.message || 'sin permiso');
+      },
+      { enableHighAccuracy: true, timeout: 30000, maximumAge: 15000 }
+    );
+  }
+
+  async function _load() {
+    // Obtener ruta del query param ?route=<id> o la del día para el usuario actual
+    var params = new URLSearchParams(location.search);
+    routeId    = params.get('route');
+
+    if (!routeId) {
+      // Buscar la ruta del día asignada a este usuario
+      try {
+        var today = new Date().toISOString().slice(0, 10);
+        var r = await fetch(API + '/api/routes?route_date=' + today, {
+          credentials: 'include' });
+        if (r.ok) {
+          var rows = await r.json();
+          var mine = rows.find(function (rt) { return rt.status !== 'completed'; });
+          if (mine) routeId = mine.id;
+        }
+      } catch (e) {}
+    }
+
+    if (!routeId) {
+      document.getElementById('route-meta').textContent = 'No hay ruta asignada para hoy.';
+      return;
+    }
+
+    try {
+      var res = await fetch(API + '/api/routes/' + routeId, { credentials: 'include' });
+      if (!res.ok) { _showError('No se pudo cargar la ruta'); return; }
+      var route = await res.json();
+      _renderRoute(route);
+      if (route.status !== 'completed' && route.status !== 'cancelled') {
+        _startGPS();
+      }
+    } catch (e) { _showError('Error de red al cargar la ruta'); }
+  }
+
+  _load();
+})();
+</script>
+</body>
+</html>

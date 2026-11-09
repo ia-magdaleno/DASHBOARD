@@ -1,0 +1,43 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden select-none" id="modal-client-contactar">
+<div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-[500px] font-montserrat">
+<div class="bg-gradient-to-r from-green-600 to-green-700 px-5 py-4 flex items-center justify-between rounded-t-3xl">
+<div class="flex items-center gap-2">
+<i class="w-5 h-5 text-white" data-lucide="phone"></i>
+<h3 class="font-black text-white text-sm uppercase">Contactar Cliente</h3>
+</div>
+<button class="text-green-200 hover:text-white" onclick="closeModal('modal-client-contactar')"><i class="w-5 h-5" data-lucide="x"></i></button>
+</div>
+<div class="p-6 space-y-4 text-xs font-bold">
+<div class="bg-green-50 border border-green-100 rounded-2xl p-4 flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center font-black text-base" id="contactar-avatar">- -</div>
+<div>
+<p class="font-black text-slate-800" id="contactar-client-name">-</p>
+<p class="text-slate-500" id="contactar-client-phone">-</p>
+<p class="text-slate-400" id="contactar-client-email">-</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<a class="bg-green-500 hover:bg-green-600 text-white font-black py-3 rounded-2xl flex items-center justify-center gap-2 transition text-xs" href="#" id="contactar-whatsapp-link" onclick="return openWhatsApp()" target="_blank">
+<i class="w-4 h-4" data-lucide="message-circle"></i> WhatsApp
+          </a>
+<a class="bg-blue-500 hover:bg-blue-600 text-white font-black py-3 rounded-2xl flex items-center justify-center gap-2 transition text-xs" href="#" id="contactar-phone-link">
+<i class="w-4 h-4" data-lucide="phone"></i> Llamar
+          </a>
+<a class="bg-slate-500 hover:bg-slate-600 text-white font-black py-3 rounded-2xl flex items-center justify-center gap-2 transition text-xs col-span-2" href="#" id="contactar-email-link">
+<i class="w-4 h-4" data-lucide="mail"></i> Enviar Correo
+          </a>
+</div>
+<!-- Quick note -->
+<div>
+<label class="block text-slate-400 mb-1 uppercase text-[10px]">Nota rápida de cobranza</label>
+<textarea class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs font-semibold text-slate-800 focus:outline-none resize-none" id="contactar-note" placeholder="ej. Llamar para recordar pago de factura..." rows="2"></textarea>
+</div>
+<div class="flex justify-end gap-3">
+<button class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-5 py-2.5 rounded-xl transition" onclick="closeModal('modal-client-contactar')">Cerrar</button>
+<button class="bg-green-600 hover:bg-green-700 text-white font-bold px-5 py-2.5 rounded-xl transition flex items-center gap-1.5" onclick="saveContactNote()">
+<i class="w-4 h-4" data-lucide="save"></i> Guardar Nota
+          </button>
+</div>
+</div>
+</div>
+</div>

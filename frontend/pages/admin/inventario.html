@@ -1,0 +1,107 @@
+<!-- PAGE: INVENTARIO MULTIBODEGA -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Inventario Multibodega</h1>
+    <p class="page-subtitle">Existencias en tiempo real por producto y bodega</p>
+  </div>
+  <div class="page-header-actions">
+    <select id="inv-filter-warehouse" class="btn btn-secondary btn-sm" style="cursor:pointer;">
+      <option value="">Todas las bodegas</option>
+    </select>
+    <button class="btn btn-secondary btn-sm" data-click="loadInventario">
+      <i class="fa-solid fa-rotate-right"></i> Actualizar
+    </button>
+    <button class="btn btn-primary btn-sm" data-click="__navHash" data-click-arg="almacen-ajuste">
+      <i class="fa-solid fa-sliders"></i> Ajuste de Inventario
+    </button>
+  </div>
+</div>
+
+<div class="kpi-grid" id="inv-kpis">
+  <div class="kpi-card" style="cursor:pointer;" data-click="invKpiFilter" data-click-arg="todos" data-kpi="todos" title="Ver todas las existencias">
+    <div class="kpi-info">
+      <div class="kpi-label">Productos activos</div>
+      <div class="kpi-value" id="inv-kpi-productos">—</div>
+    </div>
+    <div class="kpi-icon" style="background:rgba(16,185,129,0.15);color:var(--success)">
+      <i class="fa-solid fa-boxes-stacked"></i>
+    </div>
+  </div>
+  <div class="kpi-card" style="cursor:pointer;" data-click="invKpiFilter" data-click-arg="bodegas" data-kpi="bodegas" title="Existencias agrupadas por bodega">
+    <div class="kpi-info">
+      <div class="kpi-label">Bodegas activas</div>
+      <div class="kpi-value" id="inv-kpi-bodegas">—</div>
+    </div>
+    <div class="kpi-icon" style="background:rgba(99,102,241,0.15);color:var(--info)">
+      <i class="fa-solid fa-warehouse"></i>
+    </div>
+  </div>
+  <div class="kpi-card" style="cursor:pointer;" data-click="invKpiFilter" data-click-arg="valor" data-kpi="valor" title="Líneas ordenadas por valor en stock">
+    <div class="kpi-info">
+      <div class="kpi-label">Valor total en stock</div>
+      <div class="kpi-value" id="inv-kpi-valor">—</div>
+    </div>
+    <div class="kpi-icon" style="background:rgba(245,158,11,0.15);color:var(--warning)">
+      <i class="fa-solid fa-dollar-sign"></i>
+    </div>
+  </div>
+  <div class="kpi-card" style="cursor:pointer;" data-click="invKpiFilter" data-click-arg="sin-stock" data-kpi="sin-stock" title="Productos sin existencia">
+    <div class="kpi-info">
+      <div class="kpi-label">Sin stock</div>
+      <div class="kpi-value" id="inv-kpi-sin-stock">—</div>
+    </div>
+    <div class="kpi-icon" style="background:rgba(239,68,68,0.15);color:var(--danger)">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+    </div>
+  </div>
+  <div class="kpi-card" style="cursor:pointer;" data-click="invKpiFilter" data-click-arg="resguardos" data-kpi="resguardos" title="Items en resguardo pendientes de surtir">
+    <div class="kpi-info">
+      <div class="kpi-label">Resguardos</div>
+      <div class="kpi-value" id="inv-kpi-resguardos">—</div>
+    </div>
+    <div class="kpi-icon" style="background:rgba(245,158,11,0.15);color:var(--warning)">
+      <i class="fa-solid fa-box-archive"></i>
+    </div>
+  </div>
+  <div class="kpi-card" style="cursor:pointer;" data-click="invKpiFilter" data-click-arg="apartados" data-kpi="apartados" title="Total histórico de apartados / resguardos">
+    <div class="kpi-info">
+      <div class="kpi-label">Apartados</div>
+      <div class="kpi-value" id="inv-kpi-apartados">—</div>
+    </div>
+    <div class="kpi-icon" style="background:rgba(99,102,241,0.15);color:var(--info)">
+      <i class="fa-solid fa-bookmark"></i>
+    </div>
+  </div>
+</div>
+
+<div class="table-wrapper">
+  <div class="table-toolbar">
+    <div class="table-toolbar-title">
+      Existencias por Bodega
+      <span class="badge badge-neutral" id="inv-count">Cargando...</span>
+    </div>
+    <div class="table-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Buscar SKU o producto..." id="inv-search">
+    </div>
+  </div>
+  <div id="inv-table-body">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <div class="loading-text">Conectando con /api/warehouse-stock...</div>
+    </div>
+  </div>
+</div>
+
+<div class="table-wrapper" id="inv-detail-panel" style="display:none;margin-top:16px;">
+  <div class="table-toolbar">
+    <div class="table-toolbar-title">
+      <span id="inv-detail-title">Detalle</span>
+      <span class="badge badge-neutral" id="inv-detail-count"></span>
+    </div>
+    <button class="btn btn-secondary btn-sm" data-click="invKpiFilter" data-click-arg="null" data-click-arg-type="null">
+      <i class="fa-solid fa-xmark"></i> Cerrar
+    </button>
+  </div>
+  <div id="inv-detail-body"></div>
+</div>

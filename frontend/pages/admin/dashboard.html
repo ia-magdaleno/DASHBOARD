@@ -1,0 +1,592 @@
+<!-- ==========================================================================
+     PAGE: DASHBOARD PRINCIPAL ERP CALEBSYS — MODULAR, CONFIGURABLE Y BASADO EN WIDGETS
+     Conectado a /api/dashboard/* (context, layouts, snapshot, widgets, templates, search)
+     Cumple 100% CSP script-src 'self' y img-src 'self' data: blob:
+     ========================================================================== -->
+
+<section id="calebsys-dashboard-root" data-dash-theme="dark" data-dash-density="comfortable">
+
+  <!-- ── 1. BARRA SUPERIOR CONTEXTUAL DEL DASHBOARD ─────────────────────── -->
+  <div class="dash-context-bar" role="region" aria-label="Contexto y herramientas del Dashboard">
+    <div class="dash-context-left">
+      <div class="dash-tenant-pill">
+        <i class="fa-solid fa-store"></i>
+        <div>
+          <div class="dash-tenant-title" id="dash-ctx-company-name">Cargando empresa…</div>
+          <div class="dash-tenant-sub" id="dash-ctx-branch-sub">Matriz · Sincronizado</div>
+        </div>
+      </div>
+
+      <div class="dash-layout-selector-wrap">
+        <label for="dash-active-layout-select" style="font-size:12px;color:var(--dash-text-muted);font-weight:600;">Vista:</label>
+        <select id="dash-active-layout-select" class="dash-select" aria-label="Seleccionar distribución de dashboard">
+          <option value="">Dashboard Ejecutivo Principal</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Buscador Global del Dashboard (Ctrl + K) -->
+    <div class="dash-search-box">
+      <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      <input type="search" id="dash-global-search-input" placeholder="Buscar en CALEBSYS (productos, clientes, folios, módulos)…" autocomplete="off">
+      <span class="search-kbd">Ctrl + K</span>
+      <div id="dash-global-search-results" class="dash-search-results" hidden></div>
+    </div>
+
+    <div class="dash-context-actions">
+      <button type="button" id="dash-btn-fit-window" class="dash-btn" data-fit-active="true" title="Alternar entre ajustar todo en una sola ventana o vista expandida con desplazamiento">
+        <i class="fa-solid fa-compress"></i>
+        <span id="dash-btn-fit-window-label">1 Ventana</span>
+      </button>
+
+      <button type="button" id="dash-btn-open-ai" class="dash-btn-ai" title="Abrir Copiloto Ejecutivo IA">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <span>Asistente IA</span>
+      </button>
+
+      <button type="button" id="dash-btn-refresh" class="dash-btn" title="Actualizar indicadores ahora">
+        <i class="fa-solid fa-rotate-right"></i>
+        <span>Actualizar</span>
+      </button>
+
+      <button type="button" id="dash-btn-toggle-customize" class="dash-btn dash-btn-primary" title="Personalizar módulos, diseño y plantillas">
+        <i class="fa-solid fa-sliders"></i>
+        <span>Personalizar dashboard</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── 2. ENCABEZADO HERO / BANNER EMPRESARIAL CONFIGURABLE ───────────── -->
+  <header id="dash-hero-banner" class="dash-hero-banner" data-hero-mode="illustrated">
+    <div class="dash-hero-content">
+      <h1 class="dash-hero-greeting" id="dash-hero-greeting">¡Buenos días, Administrador!</h1>
+      <p class="dash-hero-subtitle" id="dash-hero-subtitle">Visión global de tu negocio en tiempo real.</p>
+    </div>
+
+    <div class="dash-hero-visual" id="dash-hero-visual">
+      <img id="dash-hero-img-el" class="dash-hero-img-el" src="/assets/dashboard/hero-store.jpg?v=20261108" alt="Portada empresarial">
+      <div class="dash-hero-visual-fade"></div>
+
+      <div class="dash-hero-right">
+        <div class="dash-hero-img-tools">
+          <input type="file" id="dash-hero-file-input" accept="image/jpeg,image/png,image/webp" hidden>
+          <button type="button" id="dash-btn-change-hero-img" class="dash-hero-cam-btn" title="Cambiar imagen del banner empresarial">
+            <i class="fa-solid fa-camera"></i>
+            <span>Cambiar imagen</span>
+          </button>
+          <button type="button" id="dash-btn-reset-hero-img" class="dash-hero-cam-btn dash-hero-cam-reset" title="Restaurar imagen original del banner" hidden>
+            <i class="fa-solid fa-rotate-left"></i>
+          </button>
+        </div>
+        <div class="dash-date-pill">
+          <i class="fa-solid fa-calendar-day"></i>
+          <span id="dash-hero-date-label">Hoy</span>
+        </div>
+        <div class="dash-sync-meta">
+          <span class="dash-sync-dot"></span>
+          <span id="dash-sync-status-text">Sincronizado en tiempo real</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── 3. BARRA GLOBAL DE FILTROS ─────────────────────────────────────── -->
+  <div class="dash-global-filters" role="toolbar" aria-label="Filtros globales del dashboard">
+    <div class="dash-period-pills" role="group" aria-label="Periodo de consulta">
+      <button type="button" class="dash-period-btn active" data-period="today">Hoy</button>
+      <button type="button" class="dash-period-btn" data-period="yesterday">Ayer</button>
+      <button type="button" class="dash-period-btn" data-period="7d">7 días</button>
+      <button type="button" class="dash-period-btn" data-period="30d">30 días</button>
+      <button type="button" class="dash-period-btn" data-period="month">Mes actual</button>
+      <button type="button" class="dash-period-btn" data-period="prev_month">Mes anterior</button>
+      <button type="button" class="dash-period-btn" data-period="year">Año actual</button>
+      <button type="button" class="dash-period-btn" data-period="custom">Personalizado</button>
+    </div>
+
+    <div id="dash-custom-dates-wrap" class="dash-custom-dates" hidden>
+      <input type="date" id="dash-date-from" class="dash-date-input" aria-label="Fecha inicial">
+      <span style="font-size:12px;color:var(--dash-text-muted);">a</span>
+      <input type="date" id="dash-date-to" class="dash-date-input" aria-label="Fecha final">
+      <button type="button" id="dash-btn-apply-custom-dates" class="dash-btn dash-btn-primary" style="height:32px;font-size:12px;">Aplicar</button>
+    </div>
+
+    <div class="dash-filter-controls">
+      <select id="dash-branch-filter-select" class="dash-select" aria-label="Filtrar por sucursal">
+        <option value="ALL">Todas las sucursales</option>
+      </select>
+
+      <select id="dash-compare-filter-select" class="dash-select" aria-label="Modo de comparación">
+        <option value="prev_period">vs. Periodo anterior</option>
+        <option value="prev_year">vs. Mismo periodo año ant.</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ── 4. BARRA DE HERRAMIENTAS DE MODO PERSONALIZACIÓN ───────────────── -->
+  <div id="dash-edit-toolbar" class="dash-edit-toolbar" hidden>
+    <div class="dash-edit-tools-group">
+      <span class="dash-edit-badge">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <span>Modo Personalización</span>
+      </span>
+
+      <button type="button" id="dash-btn-add-widget" class="dash-btn dash-btn-primary">
+        <i class="fa-solid fa-plus"></i>
+        <span>Agregar módulo</span>
+      </button>
+
+      <button type="button" id="dash-btn-open-templates" class="dash-btn">
+        <i class="fa-solid fa-layer-group"></i>
+        <span>Plantillas (7)</span>
+      </button>
+
+      <select id="dash-edit-theme-select" class="dash-select" title="Tema visual del dashboard">
+        <option value="dark">Tema: Oscuro CALEBSYS</option>
+        <option value="light">Tema: Claro Empresarial</option>
+        <option value="executive">Tema: Ejecutivo Sobrio</option>
+        <option value="compact">Tema: Operativo Compacto</option>
+        <option value="high_contrast">Tema: Alto Contraste</option>
+      </select>
+
+      <select id="dash-edit-density-select" class="dash-select" title="Densidad de información">
+        <option value="comfortable">Densidad: Cómoda</option>
+        <option value="compact">Densidad: Compacta</option>
+      </select>
+
+      <select id="dash-edit-hero-select" class="dash-select" title="Estilo del encabezado superior">
+        <option value="illustrated">Banner: Ilustrado Negocio</option>
+        <option value="executive">Banner: Ejecutivo Sobrio</option>
+        <option value="compact">Banner: Compacto</option>
+        <option value="hidden">Banner: Oculto</option>
+      </select>
+    </div>
+
+    <div class="dash-edit-tools-group">
+      <button type="button" id="dash-btn-undo" class="dash-btn" title="Deshacer cambio" disabled>
+        <i class="fa-solid fa-rotate-left"></i>
+      </button>
+      <button type="button" id="dash-btn-redo" class="dash-btn" title="Rehacer cambio" disabled>
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+
+      <button type="button" id="dash-btn-preview" class="dash-btn">
+        <i class="fa-solid fa-eye"></i>
+        <span>Vista previa</span>
+      </button>
+
+      <button type="button" id="dash-btn-export-json" class="dash-btn" title="Exportar o Importar JSON">
+        <i class="fa-solid fa-file-code"></i>
+        <span>JSON</span>
+      </button>
+
+      <button type="button" id="dash-btn-cancel-edit" class="dash-btn dash-btn-danger">
+        <i class="fa-solid fa-xmark"></i>
+        <span>Cancelar</span>
+      </button>
+
+      <button type="button" id="dash-btn-save-edit" class="dash-btn dash-btn-success">
+        <i class="fa-solid fa-floppy-disk"></i>
+        <span>Guardar cambios</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── 5. REJILLA PRINCIPAL DE 12 COLUMNAS DE WIDGETS ─────────────────── -->
+  <div id="dash-widgets-grid" class="dash-grid" role="region" aria-label="Módulos del Dashboard">
+    <div class="dash-widget-state" style="grid-column: 1 / -1; min-height: 280px;">
+      <div class="dash-skeleton-line" style="width:45%;height:24px;"></div>
+      <div class="dash-skeleton-line" style="width:70%;"></div>
+      <div class="dash-skeleton-line" style="width:55%;"></div>
+    </div>
+  </div>
+
+  <!-- ── CONTROL FLOTANTE DE DESPLAZAMIENTO VERTICAL (SUBIR ▲ / BAJAR ▼) ─── -->
+  <div class="dash-scroll-navigator" id="dash-scroll-navigator" aria-label="Navegación vertical del dashboard">
+    <button type="button" id="dash-btn-scroll-up" class="dash-scroll-nav-btn" title="Desplazar hacia arriba (Inicio / RePág)">
+      <i class="fa-solid fa-chevron-up"></i>
+    </button>
+    <button type="button" id="dash-btn-scroll-down" class="dash-scroll-nav-btn" title="Desplazar hacia abajo (Sección inferior / AvPág)">
+      <i class="fa-solid fa-chevron-down"></i>
+    </button>
+  </div>
+
+  <!-- ── 6. MODAL: CATÁLOGO DE MÓDULOS, VENTANAS, RUTAS Y PARÁMETROS ────── -->
+  <div id="dash-modal-catalog" class="dash-modal-backdrop" hidden>
+    <div class="dash-modal-card" role="dialog" aria-modal="true" aria-labelledby="dash-modal-catalog-title" style="max-width:1100px;width:95vw;">
+      <div class="dash-modal-header">
+        <h2 class="dash-modal-title" id="dash-modal-catalog-title">
+          <i class="fa-solid fa-cubes" style="color:#60a5fa;"></i>
+          <span>Explorador de Ventanas, Rutas y Parámetros para el Dashboard</span>
+        </h2>
+        <button type="button" class="dash-btn" data-close-target="dash-modal-catalog">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="dash-modal-body">
+        <div class="dash-catalog-toolbar">
+          <div class="dash-catalog-search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="search" id="dash-catalog-search-input" class="dash-input" style="width:100%;padding-left:34px;" placeholder="Buscar por ventana, ruta (ej. Operaciones > Recepción, /admin#inventario) o parámetro a poner…">
+          </div>
+          <select id="dash-catalog-window-select" class="dash-select" style="min-width:250px;height:34px;" aria-label="Filtrar por ventana y ruta">
+            <option value="ALL">📍 Todas las ventanas y rutas del sistema</option>
+          </select>
+          <div class="dash-catalog-mode-pills">
+            <button type="button" class="dash-btn dash-btn-primary" id="dash-cat-mode-windows" data-cat-mode="windows">
+              <i class="fa-solid fa-sitemap"></i> Por Ventana y Ruta
+            </button>
+            <button type="button" class="dash-btn" id="dash-cat-mode-widgets" data-cat-mode="widgets">
+              <i class="fa-solid fa-grip"></i> Módulos Directos
+            </button>
+            <button type="button" class="dash-btn dash-btn-success" id="dash-btn-toggle-new-module-form" title="Dejar conexión abierta y crear un nuevo módulo o widget (ej. Producción)">
+              <i class="fa-solid fa-plug-circle-plus"></i> + Conectar Nuevo Módulo / Widget
+            </button>
+          </div>
+        </div>
+
+        <!-- PANEL DE CONEXIÓN ABIERTA PARA NUEVOS MÓDULOS Y WIDGETS (EJ. PRODUCCIÓN) -->
+        <div id="dash-new-module-connector-panel" class="dash-open-connector-panel" hidden>
+          <div class="dash-open-connector-head">
+            <div>
+              <strong><i class="fa-solid fa-plug" style="color:#34d399;"></i> Conexión Abierta de Nuevos Módulos y Widgets (Plug &amp; Play)</strong>
+              <div style="font-size:11.5px;color:var(--dash-text-muted);margin-top:2px;">
+                Registra cualquier módulo nuevo (ej. <b>PRODUCCIÓN</b>, <b>MANTENIMIENTO</b>, <b>CALIDAD</b>, <b>FLOTILLA</b>) o agrega un widget nuevo a una ventana existente.
+              </div>
+            </div>
+            <button type="button" class="dash-btn" id="dash-btn-close-new-module-form" style="height:26px;font-size:11px;">Ocultar</button>
+          </div>
+          <div class="dash-open-connector-grid">
+            <div class="dash-form-group" style="margin-bottom:0;">
+              <label for="dash-conn-win-name">Nombre del Módulo / Ventana</label>
+              <input type="text" id="dash-conn-win-name" class="dash-input" style="text-transform:uppercase;" placeholder="EJ. PRODUCCIÓN Y MANUFACTURA" value="PRODUCCIÓN">
+            </div>
+            <div class="dash-form-group" style="margin-bottom:0;">
+              <label for="dash-conn-route-path">Ruta donde está en el sistema</label>
+              <input type="text" id="dash-conn-route-path" class="dash-input" style="text-transform:uppercase;" placeholder="EJ. OPERACIONES > PRODUCCIÓN" value="OPERACIONES > PRODUCCIÓN">
+            </div>
+            <div class="dash-form-group" style="margin-bottom:0;">
+              <label for="dash-conn-route-url">URL / Hash de la Ventana</label>
+              <input type="text" id="dash-conn-route-url" class="dash-input" placeholder="Ej. /admin#produccion" value="/admin#produccion">
+            </div>
+            <div class="dash-form-group" style="margin-bottom:0;">
+              <label for="dash-conn-param-title">Nombre del Widget / Parámetro a poner</label>
+              <input type="text" id="dash-conn-param-title" class="dash-input" style="text-transform:uppercase;" placeholder="EJ. ÓRDENES DE PRODUCCIÓN EN PROCESO">
+            </div>
+            <div class="dash-form-group" style="margin-bottom:0;">
+              <label for="dash-conn-param-desc">Descripción del Indicador</label>
+              <input type="text" id="dash-conn-param-desc" class="dash-input" style="text-transform:uppercase;" placeholder="EJ. CONTROL DE LOTES, MATERIA PRIMA Y PRODUCTO TERMINADO">
+            </div>
+            <div class="dash-form-group" style="margin-bottom:0;">
+              <label for="dash-conn-source-table">Tabla SQL / Origen de Datos (Opcional)</label>
+              <input type="text" id="dash-conn-source-table" class="dash-input" placeholder="Ej. production_orders (o dejar vacío)">
+            </div>
+          </div>
+          <div class="dash-open-connector-foot">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <label for="dash-conn-accent" style="font-size:11.5px;color:var(--dash-text-muted);font-weight:700;">COLOR DEL WIDGET:</label>
+              <select id="dash-conn-accent" class="dash-select" style="height:30px;">
+                <option value="orange">Naranja (Producción / Alertas)</option>
+                <option value="blue">Azul Eléctrico</option>
+                <option value="green">Verde Esmeralda</option>
+                <option value="purple">Morado (IA / Especial)</option>
+                <option value="cyan">Cian Operativo</option>
+                <option value="red">Rojo Crítico</option>
+              </select>
+            </div>
+            <button type="button" class="dash-btn dash-btn-primary" id="dash-btn-submit-new-module">
+              <i class="fa-solid fa-bolt"></i> Conectar Módulo y Poner Widget en el Dashboard
+            </button>
+          </div>
+        </div>
+
+        <div id="dash-catalog-items-grid" class="dash-catalog-grid"></div>
+      </div>
+      <div class="dash-modal-footer">
+        <button type="button" class="dash-btn" data-close-target="dash-modal-catalog">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 7. MODAL: PLANTILLAS PREDETERMINADAS (7 PLANTILLAS) ────────────── -->
+  <div id="dash-modal-templates" class="dash-modal-backdrop" hidden>
+    <div class="dash-modal-card" role="dialog" aria-modal="true" aria-labelledby="dash-modal-tpl-title">
+      <div class="dash-modal-header">
+        <h2 class="dash-modal-title" id="dash-modal-tpl-title">
+          <i class="fa-solid fa-layer-group" style="color:#a78bfa;"></i>
+          <span>Plantillas Oficiales CALEBSYS</span>
+        </h2>
+        <button type="button" class="dash-btn" data-close-target="dash-modal-templates">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="dash-modal-body">
+        <p style="margin:0 0 12px 0;font-size:13px;color:var(--dash-text-secondary);">
+          Selecciona una plantilla empresarial para configurar automáticamente la distribución de módulos:
+        </p>
+        <div id="dash-templates-grid" class="dash-catalog-grid"></div>
+      </div>
+      <div class="dash-modal-footer">
+        <button type="button" class="dash-btn" data-close-target="dash-modal-templates">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 8. MODAL: EXPORTAR / IMPORTAR JSON VALIDADO ────────────────────── -->
+  <div id="dash-modal-json" class="dash-modal-backdrop" hidden>
+    <div class="dash-modal-card" role="dialog" aria-modal="true">
+      <div class="dash-modal-header">
+        <h2 class="dash-modal-title">
+          <i class="fa-solid fa-file-code" style="color:#38bdf8;"></i>
+          <span>Exportar / Importar Configuración JSON</span>
+        </h2>
+        <button type="button" class="dash-btn" data-close-target="dash-modal-json">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="dash-modal-body">
+        <p style="font-size:13px;color:var(--dash-text-secondary);margin-top:0;">
+          Copia este JSON para respaldar tu diseño, o pega una configuración válida de CALEBSYS para importarla:
+        </p>
+        <textarea id="dash-json-textarea" rows="12" style="width:100%;font-family:monospace;font-size:12px;padding:12px;border-radius:10px;background:var(--dash-surface-1);color:var(--dash-text-primary);border:1px solid var(--dash-border);"></textarea>
+      </div>
+      <div class="dash-modal-footer">
+        <button type="button" class="dash-btn" data-close-target="dash-modal-json">Cerrar</button>
+        <button type="button" id="dash-btn-import-json-confirm" class="dash-btn dash-btn-primary">
+          <i class="fa-solid fa-upload"></i> Importar JSON
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 9. MODAL: COPILOTO EJECUTIVO IA ────────────────────────────────── -->
+  <div id="dash-modal-ai-copilot" class="dash-modal-backdrop" hidden>
+    <div class="dash-modal-card" role="dialog" aria-modal="true" style="max-width:640px;">
+      <div class="dash-modal-header">
+        <h2 class="dash-modal-title">
+          <i class="fa-solid fa-wand-magic-sparkles" style="color:#c084fc;"></i>
+          <span>Copiloto Ejecutivo IA · Análisis en Tiempo Real</span>
+        </h2>
+        <button type="button" class="dash-btn" data-close-target="dash-modal-ai-copilot">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="dash-modal-body" id="dash-ai-copilot-body"></div>
+      <div class="dash-modal-footer">
+        <button type="button" class="dash-btn" data-close-target="dash-modal-ai-copilot">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 10. MODAL: CONFLICTO DE VERSIÓN CONCURRENTE (HTTP 409) ─────────── -->
+  <div id="dash-modal-conflict" class="dash-modal-backdrop" hidden>
+    <div class="dash-modal-card" role="dialog" aria-modal="true" style="max-width:520px;">
+      <div class="dash-modal-header">
+        <h2 class="dash-modal-title">
+          <i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b;"></i>
+          <span>Conflicto de Versión Detectado</span>
+        </h2>
+      </div>
+      <div class="dash-modal-body">
+        <p id="dash-conflict-msg" style="font-size:14px;color:var(--dash-text-secondary);"></p>
+      </div>
+      <div class="dash-modal-footer">
+        <button type="button" id="dash-btn-conflict-reload" class="dash-btn">Recargar versión del servidor</button>
+        <button type="button" id="dash-btn-conflict-overwrite" class="dash-btn dash-btn-primary">Sobrescribir con mis cambios</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 11. DRAWER LATERAL: CONFIGURACIÓN INDIVIDUAL DE WIDGET ─────────── -->
+  <div id="dash-drawer-widget-config" class="dash-drawer-backdrop" hidden>
+    <aside class="dash-drawer" role="dialog" aria-label="Configurar Módulo">
+      <div class="dash-modal-header">
+        <h2 class="dash-modal-title">
+          <i class="fa-solid fa-sliders" style="color:#60a5fa;"></i>
+          <span>Configurar Módulo</span>
+        </h2>
+        <button type="button" class="dash-btn" data-close-target="dash-drawer-widget-config">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="dash-modal-body">
+        <div class="dash-form-group">
+          <label for="dash-cfg-window-param-select">📍 Ventana / Ruta y Parámetro a mostrar</label>
+          <select id="dash-cfg-window-param-select" class="dash-input">
+            <option value="">Mantener indicador actual</option>
+          </select>
+        </div>
+
+        <div class="dash-form-group">
+          <label for="dash-cfg-title-input">Título personalizado (MAYÚSCULAS)</label>
+          <input type="text" id="dash-cfg-title-input" class="dash-input" data-uppercase="true" style="text-transform:uppercase;" maxlength="80">
+        </div>
+
+        <div class="dash-form-group">
+          <label for="dash-cfg-variant-select">Estilo visual de tarjeta</label>
+          <select id="dash-cfg-variant-select" class="dash-input">
+            <option value="glass">Cristal / Glass CALEBSYS</option>
+            <option value="flat">Plano Oscuro</option>
+            <option value="outline">Borde Destacado</option>
+            <option value="solid">Sólido</option>
+            <option value="minimal">Minimalista</option>
+          </select>
+        </div>
+
+        <div class="dash-form-group">
+          <label for="dash-cfg-accent-select">Color de acento</label>
+          <select id="dash-cfg-accent-select" class="dash-input">
+            <option value="green">Verde Esmeralda</option>
+            <option value="blue">Azul Eléctrico</option>
+            <option value="cyan">Cian</option>
+            <option value="purple">Morado IA / CRM</option>
+            <option value="orange">Naranja / Ámbar</option>
+            <option value="red">Rojo Alerta</option>
+          </select>
+        </div>
+
+        <div class="dash-form-group">
+          <label for="dash-cfg-period-select">Periodo propio del módulo</label>
+          <select id="dash-cfg-period-select" class="dash-input">
+            <option value="">Heredar filtro global del dashboard</option>
+            <option value="today">Fijar en: Hoy</option>
+            <option value="7d">Fijar en: Últimos 7 días</option>
+            <option value="30d">Fijar en: Últimos 30 días</option>
+            <option value="month">Fijar en: Mes actual</option>
+            <option value="year">Fijar en: Año actual</option>
+          </select>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="dash-form-group">
+            <label for="dash-cfg-w-input">Ancho (Columnas 2-12)</label>
+            <input type="number" id="dash-cfg-w-input" class="dash-input" min="2" max="12" value="3">
+          </div>
+          <div class="dash-form-group">
+            <label for="dash-cfg-h-input">Alto (Filas 1-8)</label>
+            <input type="number" id="dash-cfg-h-input" class="dash-input" min="1" max="8" value="2">
+          </div>
+        </div>
+      </div>
+      <div class="dash-modal-footer">
+        <button type="button" class="dash-btn" data-close-target="dash-drawer-widget-config">Cancelar</button>
+        <button type="button" id="dash-btn-apply-widget-cfg" class="dash-btn dash-btn-primary">Aplicar al módulo</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ── 12. MODAL: AJUSTE Y ENCUADRE MANUAL DE IMAGEN DEL BANNER ───────── -->
+  <div id="dash-modal-hero-cropper" class="dash-modal-backdrop" hidden>
+    <div class="dash-modal-card" role="dialog" aria-modal="true" aria-labelledby="dash-modal-cropper-title" style="max-width:1180px;width:96vw;">
+      <div class="dash-modal-header">
+        <h2 class="dash-modal-title" id="dash-modal-cropper-title">
+          <i class="fa-solid fa-crop-simple" style="color:#60a5fa;"></i>
+          <span>Cambiar y Ajustar Imagen del Banner Empresarial (Vista Real 1:1)</span>
+        </h2>
+        <button type="button" class="dash-btn" data-close-target="dash-modal-hero-cropper">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="dash-modal-body">
+        <div class="dash-cropper-top-bar">
+          <div class="dash-cropper-hint">
+            <i class="fa-solid fa-hand-pointer"></i>
+            <span><strong>Arrastra la imagen con el mouse</strong> dentro del recuadro o usa la rueda/controles. <strong>Lo que ves en este recuadro es exactamente como se verá en el banner real.</strong></span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" id="dash-cropper-btn-browse" class="dash-btn dash-btn-primary">
+              <i class="fa-solid fa-folder-open"></i>
+              <span>Seleccionar foto de mi equipo…</span>
+            </button>
+            <button type="button" id="dash-cropper-btn-restore" class="dash-btn" title="Volver a cargar la fachada predeterminada">
+              <i class="fa-solid fa-rotate-left"></i>
+              <span>Imagen predeterminada</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- RECUADRO INTERACTIVO DE VISTA PREVIA Y ENCUADRE (PROPORCIÓN EXACTA DEL BANNER REAL) -->
+        <div class="dash-cropper-preview-shell" id="dash-cropper-preview-shell">
+          <div class="dash-cropper-greeting-preview" id="dash-cropper-greeting-preview">
+            <div class="dash-cropper-greeting-title" id="dash-cropper-greeting-sample">¡Buenas noches, Admin!</div>
+            <div class="dash-cropper-greeting-sub">Visión global de tu negocio en tiempo real.</div>
+          </div>
+          <div class="dash-cropper-stage" id="dash-cropper-stage" title="Arrastra con el mouse para mover la imagen · Rueda del mouse para hacer zoom">
+            <canvas id="dash-cropper-canvas" width="1320" height="92"></canvas>
+            <div class="dash-cropper-left-fade"></div>
+            <div class="dash-cropper-grid-guide"></div>
+            <div class="dash-cropper-right-overlay-guide">
+              <span class="dash-cropper-ghost-pill"><i class="fa-solid fa-camera"></i> Cambiar imagen</span>
+              <span class="dash-cropper-ghost-pill"><i class="fa-solid fa-calendar-day"></i> <span id="dash-cropper-date-sample">Hoy</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOTONES DE MODO DE ENCUADRE RÁPIDO -->
+        <div class="dash-cropper-quick-modes">
+          <span style="font-size:12px;font-weight:700;color:var(--dash-text-muted);">Ajuste rápido:</span>
+          <button type="button" class="dash-btn" id="dash-cropper-fit-cover" title="Llenar todo el ancho del recuadro manteniendo proporción">
+            <i class="fa-solid fa-expand"></i> Llenar recuadro
+          </button>
+          <button type="button" class="dash-btn" id="dash-cropper-fit-contain" title="Ver la imagen completa dentro del recuadro">
+            <i class="fa-solid fa-compress"></i> Imagen completa
+          </button>
+          <button type="button" class="dash-btn" id="dash-cropper-fit-stretch" title="Estirar exactamente de esquina a esquina">
+            <i class="fa-solid fa-arrows-left-right-to-line"></i> Estirar al panel
+          </button>
+          <button type="button" class="dash-btn" id="dash-cropper-btn-center" title="Centrar imagen en el recuadro">
+            <i class="fa-solid fa-crosshairs"></i> Centrar
+          </button>
+        </div>
+
+        <!-- CONTROLES DESLIZANTES MANUALES -->
+        <div class="dash-cropper-controls-grid">
+          <div class="dash-cropper-control-item">
+            <div class="dash-cropper-control-label">
+              <span><i class="fa-solid fa-magnifying-glass-plus"></i> Zoom / Tamaño</span>
+              <strong id="dash-cropper-zoom-val">100%</strong>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <button type="button" class="dash-btn" id="dash-cropper-zoom-out" style="height:26px;padding:0 8px;">-</button>
+              <input type="range" id="dash-cropper-zoom" min="25" max="350" step="1" value="100" style="flex:1;">
+              <button type="button" class="dash-btn" id="dash-cropper-zoom-in" style="height:26px;padding:0 8px;">+</button>
+            </div>
+          </div>
+
+          <div class="dash-cropper-control-item">
+            <div class="dash-cropper-control-label">
+              <span><i class="fa-solid fa-arrows-left-right"></i> Posición Horizontal (Izq / Der)</span>
+              <strong id="dash-cropper-pan-x-val">0 px</strong>
+            </div>
+            <input type="range" id="dash-cropper-pan-x" min="-700" max="700" step="1" value="0">
+          </div>
+
+          <div class="dash-cropper-control-item">
+            <div class="dash-cropper-control-label">
+              <span><i class="fa-solid fa-arrows-up-down"></i> Posición Vertical (Arriba / Abajo)</span>
+              <strong id="dash-cropper-pan-y-val">0 px</strong>
+            </div>
+            <input type="range" id="dash-cropper-pan-y" min="-500" max="500" step="1" value="0">
+          </div>
+
+          <div class="dash-cropper-control-item">
+            <div class="dash-cropper-control-label">
+              <span><i class="fa-solid fa-sun"></i> Brillo de Imagen</span>
+              <strong id="dash-cropper-brightness-val">100%</strong>
+            </div>
+            <input type="range" id="dash-cropper-brightness" min="55" max="150" step="1" value="100">
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-modal-footer">
+        <button type="button" class="dash-btn" data-close-target="dash-modal-hero-cropper">Cancelar</button>
+        <button type="button" id="dash-cropper-btn-save" class="dash-btn dash-btn-success">
+          <i class="fa-solid fa-check"></i>
+          <span>Aplicar y Guardar Imagen</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</section>

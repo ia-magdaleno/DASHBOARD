@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#020711" />
+  <title>Reloj Checador — Calebsys</title>
+  <meta name="description" content="Terminal de fichaje de asistencia Calebsys. Registra tu entrada o salida automáticamente." />
+
+  <!-- En desktop (>1024px) redirigir al OS donde vive el modal F7 -->
+  <script>
+    (function () {
+      var w = window.innerWidth || screen.width;
+      if (w > 1024) {
+        window.location.replace("/os");
+      } else {
+        /* Heredar tema guardado en localStorage */
+        var t = localStorage.getItem("calebsys_theme") || "dark";
+        document.documentElement.setAttribute("data-theme", t);
+      }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="/styles/reloj-checador.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    /* ── Standalone page: ocupa pantalla completa ────────────── */
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; }
+
+    .rc-standalone-page {
+      font-family: "Inter", system-ui, sans-serif;
+      min-height: 100dvh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 16px 12px env(safe-area-inset-bottom, 16px);
+      background:
+        radial-gradient(circle at 20% 0%,   rgba(47,133,255,0.38)  0%, transparent 55%),
+        radial-gradient(circle at 85% 90%,  rgba(0,209,255,0.18)   0%, transparent 50%),
+        linear-gradient(160deg, #020711 0%, #061521 100%);
+      -webkit-font-smoothing: antialiased;
+      box-sizing: border-box;
+    }
+
+    /* Tema claro en standalone */
+    [data-theme="light"] .rc-standalone-page {
+      background:
+        radial-gradient(circle at 15% 18%, rgba(59,130,246,0.12), transparent 28%),
+        radial-gradient(circle at 90% 82%, rgba(14,165,233,0.13),  transparent 32%),
+        linear-gradient(135deg, #f8fbff 0%, #eef6ff 46%, #ffffff 100%);
+    }
+
+    /* Card en standalone ocupa todo el ancho disponible */
+    .rc-standalone-page .rc-card {
+      width: 100%;
+      max-width: 460px;
+      margin: 0 auto;
+      /* sin max-height ni overflow-y aquí */
+      max-height: none;
+      overflow: visible;
+    }
+
+    /* Toast en standalone (position fixed, ya funciona) */
+    .rc-standalone-page .rc-toast {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      transform: translate(-50%, -120%);
+    }
+    .rc-standalone-page .rc-toast.show {
+      transform: translate(-50%, 0);
+    }
+    /* GAP-1: mensaje jornada cerrada — override standalone (full-width,
+       sin márgenes laterales). El estilo base vive en reloj-checador.css. */
+    .rc-standalone-page .rc-jornada-cerrada-msg {
+      width: 100%;
+      margin: 12px 0 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toast superior -->
+  <div id="rc-toast" class="rc-toast" role="alert" aria-live="assertive"></div>
+
+  <div class="rc-standalone-page">
+    <div class="rc-card">
+
+      <!-- HEADER -->
+      <header class="rc-header">
+        <div class="rc-logo-mark" aria-hidden="true">C</div>
+        <div class="rc-header-meta">
+          <div class="rc-header-empresa" id="rcEmpresa">Calebsys</div>
+          <div class="rc-header-sucursal" id="rcSucursal">Sucursal</div>
+        </div>
+        <div class="rc-status-dot" id="rcStatusDot" title="Conectado"></div>
+      </header>
+
+      <!-- ─── VISTA TECLADO ─────────────────────────────── -->
+      <div id="rc-keypad-view" class="rc-keypad-view">
+
+        <div class="rc-clock-block">
+          <div class="rc-time" id="rcTime" aria-live="polite">--<span class="rc-time-sep">:</span>--<span class="rc-time-sep">:</span>--</div>
+          <div class="rc-date" id="rcDate">Cargando fecha...</div>
+        </div>
+
+        <!-- Identidad del usuario (poblada desde JWT por hydrateUserInfo) -->
+        <div class="rc-user-identity">
+          <div class="rc-user-name" id="rcUserName">—</div>
+          <div class="rc-user-role" id="rcUserRole"></div>
+        </div>
+
+        <!-- RH-04: leyenda de acción detectada + botón único ACEPTAR -->
+        <div id="rcAccionLabel" class="rc-accion-label" hidden>Hora de Ingreso</div>
+        <button id="rcBtnAceptar" class="rc-btn-aceptar" type="button" hidden>ACEPTAR</button>
+
+        <!-- RH-04: salida temprana (&lt; 4 h) requiere autorización del admin -->
+        <div id="rcMsgAutorizacion" class="rc-jornada-cerrada-msg" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 1 21h22L12 2zm0 4.53L19.06 19H4.94L12 6.53zM11 10v4h2v-4h-2zm0 6v2h2v-2h-2z"/></svg>
+          <span>Tu salida requiere autorización del administrador.</span>
+        </div>
+
+        <!-- RH-04: ya fichó en dispositivo externo de control de acceso -->
+        <div id="rcMsgControlAcceso" class="rc-jornada-cerrada-msg rc-msg-info" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          <span>Ya registraste tu ingreso en el control de acceso.</span>
+        </div>
+
+        <!-- Overlay de carga mientras se registra la checada -->
+        <div class="rc-loading-block" id="rcLoading" hidden>
+          <span class="rc-spinner"></span>
+          <span class="rc-pending-label" id="rcPendingLabel">Registrando…</span>
+        </div>
+
+        <!-- Mensaje jornada cerrada -->
+        <div id="rcMsgJornadaCerrada" class="rc-jornada-cerrada-msg" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm-1-5h2v2h-2v-2Zm0-8h2v6h-2V7Z"/></svg>
+          <span>Jornada cerrada · Regresa mañana</span>
+        </div>
+
+        <div class="rc-result" id="rcResult" role="status" aria-live="assertive"></div>
+
+      </div><!-- /#rc-keypad-view -->
+
+      <!-- ─── VISTA ÉXITO ────────────────────────────────── -->
+      <div id="rc-success-view" class="rc-success-view" hidden>
+        <div class="rc-success-icon" id="rcSuccessIcon">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <h2 id="rc-success-title">¡Entrada registrada!</h2>
+        <div class="rc-success-user">
+          <div class="rc-success-photo-wrap">
+            <img id="rc-success-photo" class="rc-success-photo" alt="Foto del trabajador" hidden />
+            <div id="rc-success-avatar" class="rc-avatar-fallback">AM</div>
+          </div>
+          <div>
+            <strong id="rc-success-name">ADMINISTRADOR</strong>
+            <span id="rc-success-code">EMP-0001</span>
+          </div>
+        </div>
+        <div class="rc-success-divider"></div>
+        <p id="rc-success-date">Domingo, 28 de Junio de 2026</p>
+        <strong id="rc-success-time" class="rc-success-time">08:02:16 AM</strong>
+        <div id="rc-success-badge" class="rc-success-badge">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>Tu checada fue registrada correctamente</span>
+        </div>
+      </div><!-- /#rc-success-view -->
+
+    </div><!-- /.rc-card -->
+  </div><!-- /.rc-standalone-page -->
+
+  <script src="/scripts/reloj-checador.js"></script>
+
+</body>
+</html>

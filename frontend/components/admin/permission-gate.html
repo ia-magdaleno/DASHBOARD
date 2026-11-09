@@ -1,0 +1,13 @@
+<!-- COMPONENT: Permission Gate -->
+<!-- Usage: Replace page content when user lacks permission -->
+<div class="permission-gate">
+  <div class="gate-icon"><i class="fa-solid fa-lock"></i></div>
+  <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:8px;">Acceso Denegado</div>
+  <div style="font-size:13px;color:var(--text-muted);max-width:280px;">
+    Tu rol <strong>CAJERO</strong> no tiene permisos para acceder a este módulo.
+    Contacta al administrador del sistema.
+  </div>
+</div>
+<!-- Role check pattern:
+if (userRole !== 'ADMIN') { container.innerHTML = document.querySelector('#tpl-permission-gate').innerHTML; }
+-->

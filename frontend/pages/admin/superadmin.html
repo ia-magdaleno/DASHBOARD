@@ -1,0 +1,144 @@
+<!-- PAGE: SUPERADMIN — solo rol superadmin. /api/superadmin/tenants -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Consola SuperAdmin</h1>
+    <p class="page-subtitle">Alta y estado de tenants (clientes del sistema)</p>
+  </div>
+</div>
+
+<div class="card" id="card-nuevo-tenant">
+  <div class="card-title"><i class="fa-solid fa-building-circle-arrow-right"></i> Nuevo tenant</div>
+  <p class="page-subtitle" style="margin:4px 0 12px;">
+    Crea la empresa, su sucursal matriz (<code>AAA-001</code>) y el usuario
+    <b>admin / dueño</b>. Ese admin ya podrá iniciar sesión y terminar de
+    configurar su operación (Configuración → importar catálogos).
+  </p>
+  <div class="grid-2">
+    <div class="form-group">
+      <label class="form-label">Prefijo (3 letras)</label>
+      <input class="form-control" id="st-prefijo" maxlength="3" placeholder="FER" style="text-transform:uppercase;">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nombre del tenant</label>
+      <input class="form-control" id="st-nombre" placeholder="Ferretería y Materiales X">
+    </div>
+    <div class="form-group">
+      <label class="form-label">RFC <span style="color:var(--text-muted);">(opcional)</span></label>
+      <input class="form-control" id="st-rfc" placeholder="XXX010101XXX">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Plan</label>
+      <input class="form-control" id="st-plan" value="CalebSys MVP">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Usuario del admin</label>
+      <input class="form-control" id="st-admin-user" placeholder="don.antonio" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Contraseña del admin</label>
+      <input class="form-control" id="st-admin-pw" type="password" placeholder="mín. 6 caracteres" autocomplete="new-password">
+    </div>
+  </div>
+  <div id="st-msg" style="display:none;font-size:0.78rem;padding:6px 10px;border-radius:8px;margin-top:4px;"></div>
+  <button class="btn btn-primary btn-sm" style="margin-top:8px;" data-click="crearTenant">
+    <i class="fa-solid fa-plus"></i> Crear tenant
+  </button>
+</div>
+
+<div class="card" style="margin-top:20px;" id="card-tenants">
+  <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+    <span><i class="fa-solid fa-buildings"></i> Tenants</span>
+    <button class="btn btn-secondary btn-sm" data-click="loadTenants"><i class="fa-solid fa-rotate"></i> Actualizar</button>
+  </div>
+  <div style="overflow-x:auto;margin-top:8px;">
+    <table class="data-table" style="min-width:700px;">
+      <thead><tr>
+        <th>Tenant</th><th>Nombre</th><th>Plan</th><th>Usuarios</th><th>Sucursales</th>
+        <th>Productos</th><th>Clientes</th><th>Estado</th><th style="width:190px;"></th>
+      </tr></thead>
+      <tbody id="st-tbody"><tr><td colspan="9" style="text-align:center;padding:16px;color:var(--text-muted);">Cargando…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal: Configurar CFDI por tenant -->
+<div id="sa-cfdi-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;align-items:center;justify-content:center;">
+  <div style="background:var(--bg-card,#1e293b);border:1px solid var(--border,#334155);border-radius:14px;padding:24px 28px;width:min(560px,96vw);max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.4);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div>
+        <div style="font-size:1rem;font-weight:700;color:var(--text-primary);">
+          <i class="fa-solid fa-file-invoice" style="color:var(--primary);margin-right:6px;"></i>
+          Configuración CFDI — <span id="sa-cfdi-tenant-label" style="color:var(--primary);"></span>
+        </div>
+        <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px;">Facturama Multiemisor · Solo SUPERADMIN</div>
+      </div>
+      <button data-click="saCerrarCfdi" style="background:none;border:none;color:var(--text-muted);font-size:1.2rem;cursor:pointer;padding:4px 8px;">✕</button>
+    </div>
+
+    <div id="sa-cfdi-msg" style="display:none;font-size:0.75rem;padding:6px 10px;border-radius:8px;margin-bottom:10px;"></div>
+
+    <div class="grid-2" style="gap:12px;">
+      <div class="form-group">
+        <label class="form-label">RFC Emisor</label>
+        <input class="form-control" id="sa-cfdi-rfc" placeholder="MAMA840919AR1" style="text-transform:uppercase;">
+      </div>
+      <div class="form-group">
+        <label class="form-label">CP del Emisor <span style="color:var(--text-muted);font-size:0.7rem;">(Lugar de Expedición)</span></label>
+        <input class="form-control" id="sa-cfdi-lugar" placeholder="34000" maxlength="5">
+      </div>
+      <div class="form-group" style="grid-column:span 2;">
+        <label class="form-label">Nombre del Emisor</label>
+        <input class="form-control" id="sa-cfdi-nombre" placeholder="ANTONIOS MATERIALES SA DE CV">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Régimen Fiscal</label>
+        <input class="form-control" id="sa-cfdi-regimen" placeholder="601">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Modo PAC</label>
+        <select class="form-control" id="sa-cfdi-pac-mode" data-change="saOnPacModeChange">
+          <option value="platform">Platform (CalebSys gestiona)</option>
+          <option value="own">Own (tenant tiene cuenta propia)</option>
+          <option value="other">Other (PAC externo)</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="sa-cfdi-pac-section" style="margin-top:12px;padding:12px;background:var(--bg-app,#0f172a);border:1px solid var(--border,#334155);border-radius:8px;">
+      <div style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Credenciales Facturama</div>
+      <div class="grid-2" style="gap:10px;">
+        <div class="form-group">
+          <label class="form-label">Entorno</label>
+          <select class="form-control" id="sa-cfdi-environment">
+            <option value="sandbox">Sandbox (pruebas)</option>
+            <option value="production">Producción</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">API Mode</label>
+          <select class="form-control" id="sa-cfdi-api-mode">
+            <option value="multiemisor">Multiemisor</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">API User</label>
+          <input class="form-control" id="sa-cfdi-api-user" placeholder="usuario@facturama" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label class="form-label">API Password</label>
+          <input class="form-control" id="sa-cfdi-api-password" type="password" placeholder="••••••••" autocomplete="new-password">
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
+      <button class="btn btn-primary btn-sm" data-click="saGuardarCfdi">
+        <i class="fa-solid fa-floppy-disk"></i> Guardar
+      </button>
+      <button class="btn btn-secondary btn-sm" data-click="saProbarCfdi">
+        <i class="fa-solid fa-vial"></i> Probar timbrado
+      </button>
+      <button class="btn btn-secondary btn-sm" style="margin-left:auto;" data-click="saCerrarCfdi">Cancelar</button>
+    </div>
+  </div>
+</div>

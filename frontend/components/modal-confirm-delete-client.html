@@ -1,0 +1,24 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden select-none" id="modal-confirm-delete-client">
+<div class="bg-white rounded-3xl border border-red-200 shadow-2xl w-[420px] p-6 font-montserrat font-bold text-xs text-slate-600 space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+<i class="w-6 h-6 text-red-500" data-lucide="trash-2"></i>
+</div>
+<div>
+<h3 class="font-black text-slate-800 text-sm uppercase">Eliminar Cliente</h3>
+<p class="text-slate-400 text-xs mt-0.5">Esta acción no se puede deshacer</p>
+</div>
+</div>
+<div class="bg-red-50 border border-red-100 rounded-2xl p-3">
+<p class="text-red-700">¿Estás seguro que deseas eliminar al cliente:</p>
+<p class="text-red-800 font-black mt-1" id="delete-client-name-display">-</p>
+</div>
+<div class="flex gap-3 justify-end">
+<button class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-5 py-2.5 rounded-xl transition" onclick="closeModal('modal-confirm-delete-client')">Cancelar (Esc)</button>
+<button class="bg-red-600 hover:bg-red-700 text-white font-bold px-5 py-2.5 rounded-xl transition flex items-center gap-1.5" onclick="confirmDeleteClient()">
+<i class="w-4 h-4" data-lucide="trash-2"></i>
+          Eliminar (Enter)
+        </button>
+</div>
+</div>
+</div>

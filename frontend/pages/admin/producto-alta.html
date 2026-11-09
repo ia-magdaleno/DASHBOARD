@@ -1,0 +1,3626 @@
+<!-- =============================================================================
+     CALEBSYS ADMIN SHELL — ALTA / EDICIÓN DE PRODUCTO
+     Archivo: frontend/pages/admin/producto-alta.html
+     Basado en diseño Magdaleno (media_1791395370073.jpg)
+     Normalización Calebsys: MAYÚSCULAS en campos de negocio
+     ============================================================================= -->
+
+<div class="prod-alta-view" id="prod-alta-view">
+
+  <!-- ── 1. TOP HEADER & ACCIONES ── -->
+  <header class="pa-header" style="gap:14px;flex-wrap:wrap;">
+    <div class="pa-header-left">
+      <button type="button" class="pa-btn-icon" id="pa-btn-back" title="Volver al catálogo (ESC)" data-click="cancelProductFromPage">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <div class="pa-titles">
+        <h1 class="pa-title" id="pa-form-title">Alta / Edición de Producto</h1>
+        <p class="pa-subtitle" id="pa-form-subtitle">Registra un nuevo producto o edita uno existente</p>
+      </div>
+    </div>
+
+    <div class="pa-header-actions">
+      <button type="button" class="pa-btn pa-btn-cancel" id="pa-btn-cancel" data-click="cancelProductFromPage">
+        <i class="fa-solid fa-xmark"></i> Cancelar
+      </button>
+      <button type="button" class="pa-btn pa-btn-save" id="pa-btn-save" data-click="saveProductFromPage">
+        <i class="fa-solid fa-floppy-disk"></i> Guardar <span class="pa-kbd">F12</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── 2. PESTAÑAS DE NAVEGACIÓN ── -->
+  <nav class="pa-tabs" id="pa-tabs-nav">
+    <button type="button" class="pa-tab active" data-tab="general" data-key="F1" title="Atajo: F1">
+      <i class="fa-solid fa-file-lines"></i> Información General <span class="pa-tab-key">F1</span>
+    </button>
+    <button type="button" class="pa-tab" data-tab="precios" data-key="F2" title="Atajo: F2">
+      <i class="fa-solid fa-tags"></i> Precios <span class="pa-tab-key">F2</span>
+    </button>
+    <button type="button" class="pa-tab" data-tab="inventario" data-key="F3" title="Atajo: F3">
+      <i class="fa-solid fa-boxes-stacked"></i> Stock y Operaciones <span class="pa-tab-key">F3</span>
+    </button>
+    <button type="button" class="pa-tab" data-tab="complementos" data-key="F4" title="Atajo: F4">
+      <i class="fa-solid fa-puzzle-piece"></i> Complementos <span class="pa-tab-key">F4</span>
+    </button>
+    <button type="button" class="pa-tab" data-tab="catalogos" data-key="F5" title="Atajo: F5">
+      <i class="fa-solid fa-book-open"></i> Catálogos <span class="pa-tab-key">F5</span>
+    </button>
+    <button type="button" class="pa-tab" data-tab="etiqueta" data-key="F6" title="Atajo: F6">
+      <i class="fa-solid fa-print"></i> Imprimir Etiquetas <span class="pa-tab-key">F6</span>
+    </button>
+  </nav>
+
+  <!-- ── 3. CUERPO PRINCIPAL DEL FORMULARIO ── -->
+  <form id="pa-product-form" onsubmit="return false;" autocomplete="off">
+    <div class="pa-grid-container">
+
+      <!-- ── COLUMNA IZQUIERDA / CENTRAL (FORMULARIO PRINCIPAL) ── -->
+      <div class="pa-col-main">
+
+        <!-- CONTENEDOR COMPLETO DE INFORMACIÓN GENERAL [F1] -->
+        <div id="pa-tab-general-f1-lower" style="display:flex;flex-direction:column;gap:14px;">
+
+        <!-- BLOQUE: IDENTIFICADORES Y CLASIFICACIÓN -->
+        <div class="pa-card">
+          <!-- Fila 1: SKU, Código, Código Alterno -->
+          <div class="pa-row pa-row-3">
+            <div class="pa-field">
+              <label class="pa-label" for="pa-sku">SKU <span class="pa-req">*</span></label>
+              <div class="pa-input-wrap">
+                <i class="fa-solid fa-shield-halved pa-field-icon"></i>
+                <input type="text" id="pa-sku" class="pa-input pa-uppercase" placeholder="ej. 800034980630" required>
+              </div>
+            </div>
+
+            <div class="pa-field">
+              <label class="pa-label" for="pa-codigo">Código <span class="pa-req">*</span></label>
+              <div class="pa-input-wrap">
+                <i class="fa-solid fa-barcode pa-field-icon"></i>
+                <input type="text" id="pa-codigo" class="pa-input pa-uppercase" placeholder="ej. 800034980630" required>
+              </div>
+            </div>
+
+            <div class="pa-field">
+              <label class="pa-label" for="pa-codigo-alt">Código Alterno</label>
+              <div class="pa-input-wrap">
+                <i class="fa-solid fa-link pa-field-icon"></i>
+                <input type="text" id="pa-codigo-alt" class="pa-input pa-uppercase" placeholder="SKU / Código alterno...">
+              </div>
+            </div>
+          </div>
+
+          <!-- Fila 2: Familia, Departamento, SAT ID, SAT UNIDAD -->
+          <div class="pa-row pa-row-4">
+            <div class="pa-field">
+              <div class="pa-label-row">
+                <label class="pa-label" for="pa-familia" style="margin-bottom:0;">Familia <span class="pa-req">*</span></label>
+              </div>
+              <div class="pa-input-wrap">
+                <i class="fa-solid fa-users pa-field-icon"></i>
+                <select id="pa-familia" class="pa-select pa-uppercase">
+                  <option value="GENERAL" selected>GENERAL</option>
+                  <option value="VARILLA">VARILLA</option>
+                  <option value="ACEROS">ACEROS</option>
+                  <option value="CEMENTO">CEMENTO</option>
+                  <option value="MADERAS">MADERAS</option>
+                  <option value="FERRETERIA">FERRETERÍA</option>
+                  <option value="ACABADOS">ACABADOS</option>
+                  <option value="PLOMERIA">PLOMERÍA</option>
+                  <option value="ELECTRICO">ELÉCTRICO</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="pa-field">
+              <div class="pa-label-row">
+                <label class="pa-label" for="pa-departamento" style="margin-bottom:0;">Departamento <span class="pa-req">*</span></label>
+              </div>
+              <div class="pa-input-wrap">
+                <i class="fa-solid fa-building pa-field-icon"></i>
+                <select id="pa-departamento" class="pa-select pa-uppercase">
+                  <option value="GENERAL" selected>GENERAL</option>
+                  <option value="VARILLA">VARILLA</option>
+                  <option value="MATERIALES PESADOS">MATERIALES PESADOS</option>
+                  <option value="CONSTRUCCION">CONSTRUCCIÓN</option>
+                  <option value="PINTURAS">PINTURAS</option>
+                  <option value="MADERAS">MADERAS</option>
+                  <option value="HERRAMIENTAS">HERRAMIENTAS</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="pa-field" style="position:relative;min-width:0;" id="pa-sat-id-field-wrap">
+              <div class="pa-label-row" style="gap:4px;">
+                <label class="pa-label" for="pa-sat-id" style="margin-bottom:0;">SAT ID <span class="pa-req">*</span></label>
+              </div>
+              <div class="pa-input-wrap">
+                <i class="fa-solid fa-magnifying-glass pa-field-icon" style="cursor:pointer;pointer-events:auto;" id="pa-sat-id-icon-btn" title="Buscar clave SAT"></i>
+                <input type="text" id="pa-sat-id" class="pa-input pa-uppercase" value="" autocomplete="off" placeholder="Clave o descripción SAT...">
+              </div>
+              <!-- Dropdown Autocompletable Inteligente Oscuro SAT ID (Top 8 sugerencias con Categoría Padre) -->
+              <div id="pa-sat-id-dropdown" style="display:none;position:absolute;top:100%;left:0;width:460px;max-width:94vw;z-index:9990;margin-top:4px;background:#0b1324;border:1.5px solid #0284c7;border-radius:12px;box-shadow:0 18px 42px rgba(2,6,23,0.82);overflow:hidden;">
+                <div style="padding:8px 12px;background:linear-gradient(90deg,rgba(2,132,199,0.22),rgba(99,102,241,0.12));border-bottom:1px solid rgba(56,189,248,0.25);display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                  <span style="font-size:10.5px;font-weight:800;color:#38bdf8;text-transform:uppercase;letter-spacing:.35px;">✨ Buscador Semántico SAT · Top 8 Sugerencias</span>
+                  <button type="button" id="pa-sat-id-dd-more" style="background:rgba(2,132,199,0.28);border:1px solid rgba(56,189,248,0.45);color:#e0f2fe;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;cursor:pointer;">Ver catálogo ↗</button>
+                </div>
+                <div style="padding:7px 10px;border-bottom:1px solid #1e293b;background:#060c18;">
+                  <input type="text" id="pa-sat-id-dd-inp" class="pa-input pa-uppercase" placeholder="Escribe ej. AGUA PURIFICADA EMBOTELLADA, VARILLA CORRUGADA, MARTILLO..." style="height:30px;font-size:11.5px;padding:0 10px;width:100%;background:#0f172a;color:#f8fafc;border:1px solid #334155;">
+                </div>
+                <div id="pa-sat-id-dd-list" style="max-height:285px;overflow-y:auto;"></div>
+              </div>
+            </div>
+
+            <div class="pa-field" style="position:relative;min-width:0;" id="pa-sat-unidad-field-wrap">
+              <div class="pa-label-row">
+                <label class="pa-label" for="pa-sat-unidad" style="margin-bottom:0;">SAT UNIDAD <span class="pa-req">*</span></label>
+              </div>
+              <div class="pa-input-wrap">
+                <i class="fa-solid fa-cube pa-field-icon" style="cursor:pointer;pointer-events:auto;" id="pa-sat-unidad-icon-btn" title="Buscar unidad SAT"></i>
+                <input type="text" id="pa-sat-unidad" class="pa-input pa-uppercase" value="H87" autocomplete="off" placeholder="Ej. H87, BULTO, BOTELLA, TRAMO, MTR...">
+                <input type="hidden" id="pa-sat-unidad-empaque" value="H87">
+              </div>
+              <!-- Dropdown Autocompletable Inteligente Oscuro SAT UNIDAD -->
+              <div id="pa-sat-unidad-dropdown" style="display:none;position:absolute;top:100%;right:0;width:410px;max-width:94vw;z-index:9990;margin-top:4px;background:#0b1324;border:1.5px solid #0284c7;border-radius:12px;box-shadow:0 18px 42px rgba(2,6,23,0.82);overflow:hidden;">
+                <div style="padding:8px 12px;background:linear-gradient(90deg,rgba(2,132,199,0.22),rgba(16,185,129,0.12));border-bottom:1px solid rgba(56,189,248,0.25);display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                  <span style="font-size:10.5px;font-weight:800;color:#38bdf8;text-transform:uppercase;letter-spacing:.3px;"><i class="fa-solid fa-cube"></i> Buscador Semántico Unidad SAT (c_ClaveUnidad)</span>
+                  <button type="button" id="pa-sat-unidad-dd-more" style="background:rgba(2,132,199,0.28);border:1px solid rgba(56,189,248,0.45);color:#e0f2fe;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;cursor:pointer;">Ver catálogo ↗</button>
+                </div>
+                <div style="padding:7px 10px;border-bottom:1px solid #1e293b;background:#060c18;">
+                  <input type="text" id="pa-sat-unidad-dd-inp" class="pa-input pa-uppercase" placeholder="Escribe ej. BULTO, COSTAL, BOTELLA, GARRAFÓN, TRAMO, TIRA, H87..." style="height:30px;font-size:11.5px;padding:0 10px;width:100%;background:#0f172a;color:#f8fafc;border:1px solid #334155;">
+                </div>
+                <div id="pa-sat-unidad-dd-list" style="max-height:265px;overflow-y:auto;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fila 3: Descripción y Marca -->
+          <div class="pa-row pa-row-4">
+            <div class="pa-field pa-field-desc-col">
+              <label class="pa-label" for="pa-descripcion">Descripción <span class="pa-req">*</span></label>
+              <div class="pa-input-wrap">
+                <i class="fa-solid fa-file-lines pa-field-icon"></i>
+                <input type="text" id="pa-descripcion" class="pa-input pa-uppercase" placeholder="ej. VARILLA CORRUGADA 3/8 TRAMO 12 MTS" required>
+              </div>
+            </div>
+
+            <div class="pa-field">
+              <label class="pa-label" for="pa-marca">Marca</label>
+              <div class="pa-input-wrap">
+                <i class="fa-solid fa-globe pa-field-icon"></i>
+                <select id="pa-marca" class="pa-select pa-uppercase">
+                  <option value="GENÉRICO" selected>GENÉRICO</option>
+                  <option value="DEACERO">DEACERO</option>
+                  <option value="SICARTSA">SICARTSA</option>
+                  <option value="CEMEX">CEMEX</option>
+                  <option value="APASCO">APASCO</option>
+                  <option value="MOCTEZUMA">MOCTEZUMA</option>
+                  <option value="TRUPER">TRUPER</option>
+                  <option value="TERNIUM">TERNIUM</option>
+                  <option value="GERDAU CORSA">GERDAU CORSA</option>
+                  <option value="URREA">URREA</option>
+                  <option value="ROTOPLAS">ROTOPLAS</option>
+                  <option value="AUSTROMEX">AUSTROMEX</option>
+                  <option value="SIKA">SIKA</option>
+                  <option value="COMEX">COMEX</option>
+                  <option value="BEREL">BEREL</option>
+                  <option value="CREST">CREST</option>
+                  <option value="SOPRANO">SOPRANO</option>
+                  <option value="GENERAL">GENERAL</option>
+                  <option value="__OTRA__">+ OTRA (CAPTURAR MARCA...)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fila 4: 3 TARJETAS (Unidades, Costos/Precios, Imagen) -->
+        <div class="pa-row-cards-3">
+
+          <!-- Tarjeta 1: Presentación y Unidades -->
+          <div class="pa-card" style="display:flex;flex-direction:column;justify-content:space-between;">
+            <h3 class="pa-card-title"><i class="fa-solid fa-box-archive"></i> Unidades y Empaque</h3>
+            
+            <div class="pa-field">
+              <label class="pa-label" for="pa-pres-compra">Presentación de Compra</label>
+              <div class="pa-input-wrap">
+                <i class="fa-solid fa-box-open pa-field-icon"></i>
+                <select id="pa-pres-compra" class="pa-select pa-uppercase">
+                  <option value="PIEZA" selected>PIEZA (H87)</option>
+                  <option value="CAJA">CAJA (XBX)</option>
+                  <option value="PAQUETE">PAQUETE (XPK)</option>
+                  <option value="BULTO">BULTO (XSA)</option>
+                  <option value="SACO">SACO (XSA)</option>
+                  <option value="BOLSA">BOLSA (XBG)</option>
+                  <option value="TONELADA">TONELADA (TNE)</option>
+                  <option value="ATADO">ATADO (XBH)</option>
+                  <option value="ROLLO">ROLLO (XRO)</option>
+                  <option value="CUBETA">CUBETA (XBJ)</option>
+                  <option value="METRO">METRO (MTR)</option>
+                  <option value="M3">M3 (MTQ)</option>
+                  <option value="MILLAR">MILLAR (MIL)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="pa-field" style="margin-top:10px;">
+              <label class="pa-label" for="pa-paquete">Paquete (Piezas por Empaque)</label>
+              <div style="display:grid;grid-template-columns:1fr 82px;gap:6px;align-items:center;">
+                <div class="pa-input-wrap">
+                  <i class="fa-solid fa-boxes-stacked pa-field-icon"></i>
+                  <select id="pa-paquete" class="pa-select pa-uppercase">
+                    <option value="--" selected>--</option>
+                    <option value="6 PZAS">6 PZAS</option>
+                    <option value="10 PZAS">10 PZAS</option>
+                    <option value="12 PZAS">12 PZAS</option>
+                    <option value="20 PZAS">20 PZAS</option>
+                    <option value="24 PZAS">24 PZAS</option>
+                    <option value="25 PZAS">25 PZAS</option>
+                    <option value="50 PZAS">50 PZAS</option>
+                    <option value="100 PZAS">100 PZAS</option>
+                  </select>
+                </div>
+                <div class="pa-input-with-symbol" title="Cantidad numérica de piezas por empaque">
+                  <input type="number" id="pa-paquete-qty" class="pa-input" min="1" step="1" value="1" style="padding-left:8px;padding-right:26px;text-align:center;font-weight:700;">
+                  <span class="pa-input-symbol" style="font-size:9.5px;">PZ</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="pa-field" style="margin-top:10px;">
+              <label class="pa-label" for="pa-unidad-medida">Unidad de Medida (Venta)</label>
+              <div class="pa-input-wrap">
+                <i class="fa-solid fa-ruler pa-field-icon"></i>
+                <select id="pa-unidad-medida" class="pa-select pa-uppercase">
+                  <option value="PIEZA" selected>PIEZA (H87)</option>
+                  <option value="METRO">METRO (MTR)</option>
+                  <option value="KILOGRAMO">KILOGRAMO (KGM)</option>
+                  <option value="LITRO">LITRO (LTR)</option>
+                  <option value="TONELADA">TONELADA (TNE)</option>
+                  <option value="M3">M3 (MTQ)</option>
+                  <option value="M2">M2 (MTK)</option>
+                  <option value="BOLSA">BOLSA (XBG)</option>
+                  <option value="SACO">SACO (XSA)</option>
+                  <option value="CAJA">CAJA (XBX)</option>
+                  <option value="PAQUETE">PAQUETE (XPK)</option>
+                  <option value="ROLLO">ROLLO (XRO)</option>
+                  <option value="CUBETA">CUBETA (XBJ)</option>
+                  <option value="GALÓN">GALÓN (GLL)</option>
+                  <option value="JUEGO">JUEGO (SET)</option>
+                  <option value="PAR">PAR (PR)</option>
+                  <option value="MILLAR">MILLAR (MIL)</option>
+                  <option value="SERVICIO">SERVICIO (E48)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tarjeta 2: Costos / Precios con Cálculo Automático y Desglose Caja -> Pieza -->
+          <div class="pa-card" id="pa-card-precios">
+            <h3 class="pa-card-title">
+              <span><i class="fa-solid fa-tags"></i> Costos / Precios</span>
+              <span id="pa-badge-box-mode" style="display:none;margin-left:auto;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(6,182,212,0.16);color:#22d3ee;border:1px solid rgba(6,182,212,0.35);">
+                <i class="fa-solid fa-boxes-packing"></i> DESGLOSE CAJA → PIEZA
+              </span>
+              <span id="pa-badge-usd-indicator" class="pa-usd-mode-badge" style="display:none;"><i class="fa-solid fa-dollar-sign"></i> DÓLARES (USD)</span>
+            </h3>
+            
+            <div class="pa-row pa-row-3 pa-costos-inputs-row" style="margin-bottom:6px;">
+              <div class="pa-field">
+                <label class="pa-label" for="pa-costo" id="pa-costo-label">Costo de Pieza</label>
+                <div class="pa-input-with-symbol">
+                  <input type="number" id="pa-costo" class="pa-input" step="0.01" min="0" value="0.00">
+                  <span class="pa-input-symbol" id="pa-costo-currency-symbol">$</span>
+                </div>
+              </div>
+
+              <div class="pa-field">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">
+                  <label class="pa-label" for="pa-flete-pct" style="margin-bottom:0;">Flete (%)</label>
+                  <span id="pa-flete-monto-badge" style="font-size:10px;font-weight:700;color:#38bdf8;">$0.00</span>
+                </div>
+                <div class="pa-input-with-symbol">
+                  <input type="number" id="pa-flete-pct" class="pa-input" step="0.01" min="0" value="0.00" placeholder="0.00">
+                  <span class="pa-input-symbol">%</span>
+                </div>
+                <input type="hidden" id="pa-costo-otro" value="0.00">
+              </div>
+
+              <div class="pa-field">
+                <label class="pa-label" for="pa-margen" id="pa-margen-label">Margen (%)</label>
+                <div class="pa-input-with-symbol">
+                  <input type="number" id="pa-margen" class="pa-input" step="0.01" min="0" value="0.00">
+                  <span class="pa-input-symbol">%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bloque reactivo de Desglose por Caja y Sobreprecio por Pieza (visible cuando se compra por Caja/Paquete) -->
+            <div id="pa-desglose-caja-block" style="display:none;margin-bottom:8px;padding:8px 10px;border-radius:9px;background:rgba(15,23,42,0.55);border:1px solid rgba(56,189,248,0.22);">
+              <!-- Sub-fila A: Cant. Piezas, Costo por Pieza calculado y Costo Total c/Flete -->
+              <div class="pa-row pa-row-3 pa-costos-inputs-row" style="margin-bottom:6px;gap:8px;">
+                <div class="pa-field">
+                  <label class="pa-label" for="pa-cant-piezas-ro" style="font-size:10px;">Cant. Piezas</label>
+                  <div class="pa-input-with-symbol">
+                    <input type="number" id="pa-cant-piezas-ro" class="pa-input" value="1" readonly tabindex="-1" style="opacity:0.85;cursor:not-allowed;height:32px;font-size:12px;">
+                    <span class="pa-input-symbol" style="font-size:9.5px;">PZ</span>
+                  </div>
+                </div>
+                <div class="pa-field">
+                  <label class="pa-label" for="pa-costo-pieza-ro" style="font-size:10px;" title="Calculado automáticamente: Costo por Caja / Cant. Piezas">Costo x Pieza [Cálc.]</label>
+                  <div class="pa-input-with-symbol">
+                    <input type="text" id="pa-costo-pieza-ro" class="pa-input" value="0.00" readonly tabindex="-1" style="opacity:0.9;cursor:not-allowed;height:32px;font-size:12px;color:#38bdf8;font-weight:700;">
+                    <span class="pa-input-symbol">$</span>
+                  </div>
+                </div>
+                <div class="pa-field">
+                  <label class="pa-label" for="pa-costo-flete-pieza-ro" style="font-size:10px;" title="Costo unitario con flete prorrateado">Costo Pza c/Flete</label>
+                  <div class="pa-input-with-symbol">
+                    <input type="text" id="pa-costo-flete-pieza-ro" class="pa-input" value="0.00" readonly tabindex="-1" style="opacity:0.9;cursor:not-allowed;height:32px;font-size:12px;color:#34d399;font-weight:700;">
+                    <span class="pa-input-symbol">$</span>
+                  </div>
+                </div>
+              </div>
+              <div id="pa-costo-flete-summary" style="font-size:10.5px;color:#94a3b8;margin-bottom:7px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px;">
+                <span><i class="fa-solid fa-calculator" style="color:#38bdf8;"></i> Costo Pza = Costo Caja / Piezas</span>
+                <strong id="pa-costo-flete-summary-val" style="color:#e2e8f0;">C/Flete: $0.00 Caja ($0.00 por Pieza)</strong>
+              </div>
+
+              <!-- Sub-fila B: Sobreprecio Pieza (% y $) + Margen Final Pieza (%) -->
+              <div class="pa-row pa-row-3 pa-costos-inputs-row" style="margin-bottom:2px;gap:8px;padding-top:6px;border-top:1px dashed rgba(56,189,248,0.18);">
+                <div class="pa-field">
+                  <label class="pa-label" for="pa-sobreprecio-pct" style="font-size:10px;color:#38bdf8;">+ Sobreprecio Pza (%)</label>
+                  <div class="pa-input-with-symbol">
+                    <input type="number" id="pa-sobreprecio-pct" class="pa-input" step="0.01" min="0" value="0.00" style="height:32px;font-size:12.5px;">
+                    <span class="pa-input-symbol">%</span>
+                  </div>
+                </div>
+                <div class="pa-field">
+                  <label class="pa-label" for="pa-sobreprecio-monto" style="font-size:10px;color:#38bdf8;">+ Sobreprecio Pza ($)</label>
+                  <div class="pa-input-with-symbol">
+                    <input type="number" id="pa-sobreprecio-monto" class="pa-input" step="0.01" min="0" value="0.00" style="height:32px;font-size:12.5px;">
+                    <span class="pa-input-symbol">$</span>
+                  </div>
+                </div>
+                <div class="pa-field">
+                  <label class="pa-label" for="pa-margen-final-pieza" style="font-size:10px;color:#22d3ee;">Margen Final Pza (%)</label>
+                  <div class="pa-input-with-symbol">
+                    <input type="text" id="pa-margen-final-pieza" class="pa-input" value="0.00" readonly tabindex="-1" style="height:32px;font-size:12.5px;font-weight:800;color:#22d3ee;cursor:not-allowed;">
+                    <span class="pa-input-symbol">%</span>
+                  </div>
+                </div>
+              </div>
+              <div id="pa-margen-breakdown-helper" style="display:none;font-size:10px;color:#94a3b8;text-align:right;margin-top:2px;">
+                0% margen base + 0% sobreprecio = 0% margen menudeo
+              </div>
+            </div>
+
+            <div id="pa-costo-converted-helper" class="pa-costo-helper" style="display:none; margin-bottom: 8px;"></div>
+
+            <!-- Vista 1: Precio único editable (cuando se compra y vende por PIEZA directa) -->
+            <div class="pa-price-highlight-box" id="pa-single-price-box">
+              <div class="pa-price-hero-label" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+                <span id="pa-single-price-hero-title">Precio Nuevo (IVA Incluido)</span>
+                <span style="font-size:9px;opacity:0.75;font-weight:600;"><i class="fa-solid fa-pen"></i> Editable</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:center;gap:2px;">
+                <span class="pa-price-hero-value" style="font-size:24px;">$</span>
+                <input type="number" id="pa-precio-display" step="0.01" min="0" value="0.00"
+                  title="Haz clic para escribir un Precio Final manual y ajustar automáticamente el % de Margen"
+                  style="width:150px;background:transparent;border:1px dashed rgba(56,189,248,0.35);border-radius:7px;color:inherit;font-size:24px;font-weight:800;text-align:center;padding:1px 6px;outline:none;font-family:inherit;">
+              </div>
+              <div class="pa-price-detail-formula" id="pa-precio-formula-detail" style="display:none;">Costo: $0.00 | Margen: 0% | IVA: 16%</div>
+            </div>
+
+            <!-- Vista 2: Dos grandes contenedores editables (Precio por Caja y Precio por Pieza con Sobreprecio) -->
+            <div id="pa-dual-price-box" style="display:none;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;">
+              <div style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.45);border-radius:10px;padding:8px 6px;text-align:center;">
+                <div style="font-size:9.5px;font-weight:800;color:#34d399;text-transform:uppercase;letter-spacing:0.3px;display:flex;align-items:center;justify-content:center;gap:4px;">
+                  <span id="pa-dual-caja-label">PRECIO POR CAJA (IVA INC.)</span>
+                  <i class="fa-solid fa-pen" style="font-size:8.5px;opacity:0.75;" title="Editable: escribe el precio final de caja para recalcular utilidad"></i>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:center;gap:1px;margin:3px 0;">
+                  <span style="font-size:19px;font-weight:800;color:#ecfdf5;">$</span>
+                  <input type="number" id="pa-precio-caja-display" step="0.01" min="0" value="0.00"
+                    title="Escribe el Precio por Caja manual (ej. 1600) para ajustar automáticamente el % de Margen y el Precio por Pieza"
+                    style="width:118px;background:rgba(6,78,59,0.35);border:1px dashed rgba(52,211,153,0.45);border-radius:6px;color:#ecfdf5;font-size:19px;font-weight:800;text-align:center;padding:1px 4px;outline:none;font-family:inherit;">
+                </div>
+                <div style="display:none;font-size:9.5px;color:#6ee7b7;font-weight:600;" id="pa-precio-caja-sub">Costo c/flete $0.00 · Margen 0%</div>
+              </div>
+              <div style="background:rgba(6,182,212,0.14);border:1px solid rgba(56,189,248,0.55);border-radius:10px;padding:8px 6px;text-align:center;">
+                <div style="font-size:9.5px;font-weight:800;color:#38bdf8;text-transform:uppercase;letter-spacing:0.3px;display:flex;align-items:center;justify-content:center;gap:4px;">
+                  <span id="pa-dual-pieza-label">PRECIO POR PIEZA (C/SOBREPRECIO)</span>
+                  <i class="fa-solid fa-pen" style="font-size:8.5px;opacity:0.75;" title="Editable: escribe el precio final por pieza para recalcular sobreprecio y margen final"></i>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:center;gap:1px;margin:3px 0;">
+                  <span style="font-size:19px;font-weight:800;color:#ffffff;">$</span>
+                  <input type="number" id="pa-precio-pieza-display" step="0.01" min="0" value="0.00"
+                    title="Escribe el Precio por Pieza manual para ajustar automáticamente el % de Sobreprecio y Margen Final"
+                    style="width:118px;background:rgba(12,74,110,0.35);border:1px dashed rgba(56,189,248,0.45);border-radius:6px;color:#ffffff;font-size:19px;font-weight:800;text-align:center;padding:1px 4px;outline:none;font-family:inherit;">
+                </div>
+                <div style="display:none;font-size:9.5px;color:#7dd3fc;font-weight:600;" id="pa-precio-pieza-sub">Costo c/flete $0.00 · Margen 0%</div>
+              </div>
+            </div>
+            <input type="hidden" id="pa-precio-final" value="0.00">
+            <input type="hidden" id="pa-precio-caja-final" value="0.00">
+            <input type="hidden" id="pa-precio-pieza-final" value="0.00">
+
+            <div class="pa-usd-toggle-row">
+              <label class="pa-toggle-switch">
+                <input type="checkbox" id="pa-is-usd">
+                <span class="pa-slider round"></span>
+              </label>
+              <div class="pa-usd-info">
+                <span class="pa-usd-title">USD / DLLS</span>
+                <span class="pa-usd-sub" id="pa-usd-subtext">Calcular costo en Dólares</span>
+              </div>
+              <div class="pa-usd-rate-badge" title="Tipo de cambio de compra en USD (editable)">
+                <span style="font-weight:700;">T:</span>
+                <input type="number" id="pa-tc-rate" class="pa-tc-input" value="17.50" step="0.01" min="0.01" title="Escribe aquí el tipo de cambio">
+                <i class="fa-solid fa-circle-info" title="Tipo de cambio de la compra. Modifícalo si es necesario."></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tarjeta 3: Imagen del Producto -->
+          <div class="pa-card pa-card-photo">
+            <h3 class="pa-card-title"><i class="fa-solid fa-image"></i> Imagen del Producto</h3>
+            <div class="pa-photo-preview-wrap">
+              <img id="pa-photo-img" src="" alt="Vista previa" class="pa-photo-img pa-hidden">
+              <div id="pa-photo-placeholder" class="pa-photo-placeholder">
+                <i class="fa-solid fa-box-open pa-ph-icon"></i>
+                <span>Sin foto</span>
+              </div>
+            </div>
+            <input type="file" id="pa-photo-file-input" accept="image/*" class="pa-hidden">
+            <div class="pa-photo-actions">
+              <button type="button" class="pa-btn-photo-action" id="pa-btn-upload-photo">
+                <i class="fa-solid fa-camera"></i> Seleccionar archivo / Tomar Foto
+              </button>
+              <button type="button" class="pa-btn-photo-sub" id="pa-btn-caracteristicas">
+                <i class="fa-solid fa-list-check"></i> Características
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Fila 5: 3 TARJETAS (Inventario, Diversos, Impresor) -->
+        <div class="pa-row-cards-3">
+
+          <!-- Tarjeta 1: Manejo en Inventario -->
+          <div class="pa-card">
+            <h3 class="pa-card-title"><i class="fa-solid fa-cubes"></i> Manejo en Inventario</h3>
+            <div class="pa-row pa-row-3">
+              <div class="pa-field">
+                <label class="pa-label" for="pa-stock-min">Mínimo</label>
+                <input type="number" id="pa-stock-min" class="pa-input" value="0" min="0">
+              </div>
+              <div class="pa-field">
+                <label class="pa-label" for="pa-stock-actual">Stock Actual</label>
+                <input type="number" id="pa-stock-actual" class="pa-input" value="0" min="0">
+              </div>
+              <div class="pa-field">
+                <label class="pa-label" for="pa-stock-almacen">Stock Almacén</label>
+                <input type="number" id="pa-stock-almacen" class="pa-input" value="0" min="0">
+              </div>
+            </div>
+            <div class="pa-row pa-row-2" style="margin-top:10px;">
+              <div class="pa-field">
+                <label class="pa-label" for="pa-stock-max">Máximo</label>
+                <input type="number" id="pa-stock-max" class="pa-input" value="0" min="0">
+              </div>
+              <div class="pa-field">
+                <label class="pa-label" for="pa-stock-transito">Stock en Tránsito</label>
+                <input type="number" id="pa-stock-transito" class="pa-input" value="0" min="0">
+              </div>
+            </div>
+          </div>
+
+          <!-- Tarjeta 2: Diversos -->
+          <div class="pa-card">
+            <h3 class="pa-card-title"><i class="fa-solid fa-calculator"></i> Diversos</h3>
+            <div class="pa-row pa-row-2">
+              <div class="pa-field">
+                <label class="pa-label" for="pa-ieps">IEPS (%)</label>
+                <input type="number" id="pa-ieps" class="pa-input" value="0.00" step="0.01">
+              </div>
+              <div class="pa-field">
+                <label class="pa-label" for="pa-iva">Impuesto (IVA %)</label>
+                <input type="number" id="pa-iva" class="pa-input" value="16.00" step="0.01">
+              </div>
+            </div>
+            <div class="pa-row pa-row-2" style="margin-top:10px;">
+              <div class="pa-field">
+                <label class="pa-label" for="pa-garantia">Garantía (días)</label>
+                <input type="number" id="pa-garantia" class="pa-input" value="0" min="0">
+              </div>
+              <div class="pa-field">
+                <label class="pa-label" for="pa-puntos">Puntos</label>
+                <input type="number" id="pa-puntos" class="pa-input" value="0.00" step="0.01">
+              </div>
+            </div>
+          </div>
+
+          <!-- Tarjeta 3: Enviar a Impresor -->
+          <div class="pa-card">
+            <h3 class="pa-card-title"><i class="fa-solid fa-print"></i> Enviar a Impresor</h3>
+            <div class="pa-checkbox-grid">
+              <label class="pa-chk-item"><input type="checkbox" id="pa-print-1"> <span>1</span></label>
+              <label class="pa-chk-item"><input type="checkbox" id="pa-print-2"> <span>2</span></label>
+              <label class="pa-chk-item"><input type="checkbox" id="pa-print-3"> <span>3</span></label>
+              <label class="pa-chk-item"><input type="checkbox" id="pa-print-4"> <span>4</span></label>
+              <label class="pa-chk-item"><input type="checkbox" id="pa-print-5"> <span>5</span></label>
+              <label class="pa-chk-item"><input type="checkbox" id="pa-print-6"> <span>6</span></label>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Fila 6: INFERIOR (Venta Sugerida y Observaciones) -->
+        <div class="pa-row-bottom">
+
+          <!-- Venta Sugerida -->
+          <div class="pa-card pa-card-sugerida" style="position:relative;">
+            <div class="pa-card-header-flex" style="gap:8px;flex-wrap:wrap;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <h3 class="pa-card-title" style="margin:0;"><i class="fa-solid fa-cart-shopping"></i> Venta Sugerida</h3>
+                <span id="pa-sugeridos-count-badge" style="font-size:10.5px;font-weight:800;color:#1d4ed8;background:#dbeafe;border:1px solid #93c5fd;padding:1px 8px;border-radius:999px;">0 sugeridos</span>
+              </div>
+              <button type="button" class="pa-btn-sm-primary" id="pa-btn-add-sugerido" title="Abrir ventana de artículos multimodal o buscar para agregar">
+                <i class="fa-solid fa-plus"></i> Agregar producto
+              </button>
+            </div>
+
+            <!-- Barra Buscadora Multimodal de Artículos Sugeridos -->
+            <div id="pa-sugerido-search-bar-wrap" style="margin-bottom:10px;position:relative;">
+              <div style="display:flex;align-items:center;gap:6px;background:#f8fafc;border:1.5px solid #cbd5e1;border-radius:9px;padding:4px 8px;transition:border-color .15s,box-shadow .15s;" id="pa-sugerido-search-box">
+                <i class="fa-solid fa-magnifying-glass" style="color:#2563eb;font-size:12.5px;flex-shrink:0;"></i>
+                <input type="text" id="pa-sugerido-search-input" class="pa-uppercase" autocomplete="off" placeholder="Buscar artículo por SKU, código, descripción, marca o medida (ej. CEMEX 50K)..." style="flex:1;min-width:0;border:none;outline:none;background:transparent;font-size:12px;font-weight:700;color:#0f172a;height:26px;">
+                <button type="button" id="pa-sugerido-search-clear" title="Limpiar búsqueda" style="display:none;width:22px;height:22px;border-radius:6px;border:none;background:#e2e8f0;color:#475569;cursor:pointer;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+              <!-- Dropdown Autocomplete Multimodal -->
+              <div id="pa-sugerido-search-dropdown" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:#0f172a;border:1.5px solid #38bdf8;border-radius:10px;box-shadow:0 16px 38px rgba(15,23,42,0.45);max-height:260px;overflow-y:auto;z-index:9996;"></div>
+            </div>
+
+            <div class="pa-table-wrap">
+              <table class="pa-table">
+                <thead>
+                  <tr>
+                    <th style="width:36px;">#</th>
+                    <th>Código</th>
+                    <th>Descripción</th>
+                    <th style="text-align:right;">Precio</th>
+                    <th style="width:70px;text-align:center;">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="pa-sugeridos-tbody">
+                  <tr>
+                    <td colspan="5" class="pa-td-empty">
+                      <i class="fa-solid fa-box-archive"></i> No hay productos sugeridos
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Observaciones con Normalización a MAYÚSCULAS -->
+          <div class="pa-card pa-card-obs">
+            <div class="pa-card-header-flex">
+              <h3 class="pa-card-title"><i class="fa-solid fa-comment-dots"></i> Observaciones</h3>
+              <span class="pa-char-counter" id="pa-obs-counter">0/500</span>
+            </div>
+            <textarea id="pa-observaciones" class="pa-textarea pa-uppercase" maxlength="500" placeholder="Agregar observaciones sobre el producto..."></textarea>
+          </div>
+
+        </div>
+
+        </div><!-- /#pa-tab-general-f1-lower -->
+
+        <!-- =========================================================================
+             PESTAÑA: 🧩 COMPLEMENTOS [F4] (#pa-tab-complementos-f4)
+             ========================================================================= -->
+        <div id="pa-tab-complementos-f4" style="display:none;flex-direction:column;gap:14px;">
+
+          <!-- CINTILLA INFORMATIVA DE SOLO LECTURA: EXPEDIENTE ÚNICO DEL ARTÍCULO ACTIVO -->
+          <div id="pa-f4-active-record-banner" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:linear-gradient(90deg,#eff6ff 0%,#f8fafc 100%);border:1px solid #93c5fd;border-left:4px solid #2563eb;border-radius:10px;padding:10px 14px;box-shadow:0 2px 6px rgba(37,99,235,0.06);">
+            <div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;">
+              <span style="font-size:16px;line-height:1;">📦</span>
+              <span style="font-size:12px;font-weight:700;color:#1e3a8a;white-space:nowrap;">Editando expediente único del artículo:</span>
+              <strong id="pa-f4-banner-sku" style="font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:900;color:#1d4ed8;background:#dbeafe;border:1px solid #93c5fd;padding:2px 8px;border-radius:6px;white-space:nowrap;">SIN-SKU</strong>
+              <span style="color:#64748b;font-weight:800;">—</span>
+              <strong id="pa-f4-banner-desc" style="font-size:12.5px;font-weight:800;color:#0f172a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">NUEVO ARTÍCULO EN CAPTURA</strong>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+              <span id="pa-f4-auto-logistics-badge" style="font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:999px;background:#dcfce7;color:#15803d;border:1px solid #86efac;">
+                ⚡ Carta Porte 3.1: 100% Automático
+              </span>
+              <button type="button" id="pa-f4-btn-back-f1" style="background:#ffffff;color:#1e40af;border:1px solid #93c5fd;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:800;cursor:pointer;">
+                <i class="fa-solid fa-arrow-left"></i> Volver a F1
+              </button>
+            </div>
+          </div>
+
+          <!-- FILA SUPERIOR DE COMPLEMENTOS: TARJETA 1 (Bóveda Documental) + TARJETA 2 (Logística y Carta Porte 3.1) -->
+          <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:14px;align-items:stretch;">
+
+            <!-- ── TARJETA 1: 📁 Bóveda Documental, Fichas Técnicas y Certificados (PDF / Imagen) ── -->
+            <div class="pa-card" style="display:flex;flex-direction:column;justify-content:space-between;">
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;border-bottom:1px solid #e2e8f0;padding-bottom:8px;">
+                  <h3 class="pa-card-title" style="margin:0;">
+                    <i class="fa-solid fa-folder-open" style="color:#2563eb;"></i> 1. Bóveda Documental, Fichas Técnicas y Certificados
+                  </h3>
+                  <span id="pa-f4-docs-counter" style="font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;">
+                    0 / 5 cargados
+                  </span>
+                </div>
+
+                <input type="file" id="pa-f4-doc-file-input" accept=".pdf,image/*" style="display:none;">
+
+                <div id="pa-f4-docs-list" style="display:flex;flex-direction:column;gap:8px;">
+                  <!-- Renderizado dinámicamente por products-form.js (5 slots oficiales + controles NOM/Vigencia) -->
+                </div>
+              </div>
+
+              <div style="margin-top:10px;padding-top:8px;border-top:1px dashed #cbd5e1;font-size:10.5px;color:#475569;display:flex;align-items:center;justify-content:space-between;">
+                <span><i class="fa-solid fa-paperclip" style="color:#2563eb;"></i> Los documentos con <strong>[✓] Adjuntar en Cotizaciones</strong> se incluyen automáticamente en envíos a clientes/licitaciones.</span>
+              </div>
+            </div>
+
+            <!-- ── TARJETA 2: 🚛 Logística, Dimensiones Físicas y Complemento Carta Porte 3.1 (SAT) ── -->
+            <div class="pa-card" style="display:flex;flex-direction:column;justify-content:space-between;">
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;border-bottom:1px solid #e2e8f0;padding-bottom:8px;">
+                  <h3 class="pa-card-title" style="margin:0;">
+                    <i class="fa-solid fa-truck-fast" style="color:#2563eb;"></i> 2. Logística, Dimensiones y Carta Porte 3.1 (SAT)
+                  </h3>
+                  <span style="font-size:10px;font-weight:800;padding:2px 7px;border-radius:5px;background:#f1f5f9;color:#334155;border:1px solid #cbd5e1;">
+                    CFDI 4.0 · CP 3.1
+                  </span>
+                </div>
+
+                <!-- Sub-bloque: Dimensiones y Cubicaje -->
+                <div style="font-size:10.5px;font-weight:800;color:#475569;text-transform:uppercase;margin-bottom:6px;letter-spacing:.3px;">
+                  📐 Dimensiones Físicas y Cubicaje Unitario
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;">
+                  <div class="pa-field">
+                    <label class="pa-label" for="f4-log-peso" style="font-size:10px;">Peso Bruto (Kg)</label>
+                    <input type="number" id="f4-log-peso" class="pa-input" step="0.001" min="0" value="0.000" placeholder="0.000">
+                  </div>
+                  <div class="pa-field">
+                    <label class="pa-label" for="f4-log-largo" style="font-size:10px;">Largo (cm)</label>
+                    <input type="number" id="f4-log-largo" class="pa-input" step="0.1" min="0" value="0.0" placeholder="0.0">
+                  </div>
+                  <div class="pa-field">
+                    <label class="pa-label" for="f4-log-ancho" style="font-size:10px;">Ancho (cm)</label>
+                    <input type="number" id="f4-log-ancho" class="pa-input" step="0.1" min="0" value="0.0" placeholder="0.0">
+                  </div>
+                  <div class="pa-field">
+                    <label class="pa-label" for="f4-log-alto" style="font-size:10px;">Alto (cm)</label>
+                    <input type="number" id="f4-log-alto" class="pa-input" step="0.1" min="0" value="0.0" placeholder="0.0">
+                  </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px;margin-bottom:10px;">
+                  <div class="pa-field">
+                    <label class="pa-label" for="f4-log-volumen" style="font-size:10px;color:#2563eb;">Volumen Unitario (m³) [Auto]</label>
+                    <input type="text" id="f4-log-volumen" class="pa-input" value="0.000000" readonly tabindex="-1" style="background:#eff6ff;color:#1d4ed8;font-weight:800;font-family:monospace;cursor:not-allowed;">
+                  </div>
+                  <div class="pa-field">
+                    <label class="pa-label" for="f4-log-pallet-qty" style="font-size:10px;">Pzas / Cajas x Tarima</label>
+                    <input type="number" id="f4-log-pallet-qty" class="pa-input" step="1" min="0" value="0" placeholder="Ej. 48">
+                  </div>
+                  <div class="pa-field">
+                    <label class="pa-label" for="f4-log-estiba" style="font-size:10px;">Estiba Máx. (Camas)</label>
+                    <input type="number" id="f4-log-estiba" class="pa-input" step="1" min="0" value="0" placeholder="Ej. 4">
+                  </div>
+                </div>
+
+                <!-- Switch Material Peligroso SAT Carta Porte -->
+                <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin-bottom:10px;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;">
+                    <label for="f4-log-mat-peligroso" style="display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:800;color:#92400e;cursor:pointer;margin:0;">
+                      <span>☣️ Material Peligroso (SAT Carta Porte 3.1)</span>
+                    </label>
+                    <label class="pa-toggle-switch" style="margin:0;">
+                      <input type="checkbox" id="f4-log-mat-peligroso">
+                      <span class="pa-slider round"></span>
+                    </label>
+                  </div>
+
+                  <div id="f4-log-hazmat-box" style="display:none;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;padding-top:8px;border-top:1px dashed #f59e0b;">
+                    <div class="pa-field">
+                      <label class="pa-label" for="f4-log-un-code" style="font-size:9.5px;color:#92400e;">Clave Mat. Peligroso (ONU)</label>
+                      <input type="text" id="f4-log-un-code" class="pa-input pa-uppercase" placeholder="Ej. UN1263 / 1263">
+                    </div>
+                    <div class="pa-field">
+                      <label class="pa-label" for="f4-log-hazard-class" style="font-size:9.5px;color:#92400e;">Clase / Div. Peligro</label>
+                      <input type="text" id="f4-log-hazard-class" class="pa-input pa-uppercase" placeholder="Ej. CLASE 3 INFLAMABLE">
+                    </div>
+                    <div class="pa-field">
+                      <label class="pa-label" for="f4-log-embalaje-sat" style="font-size:9.5px;color:#92400e;">Tipo Embalaje SAT</label>
+                      <input type="text" id="f4-log-embalaje-sat" class="pa-input pa-uppercase" placeholder="Ej. 1A1 / 4G / Z01">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Sub-bloque: Comercio Exterior / Aduana -->
+                <div style="font-size:10.5px;font-weight:800;color:#475569;text-transform:uppercase;margin-bottom:6px;letter-spacing:.3px;">
+                  🌎 Comercio Exterior / Aduana (Compacto)
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:8px;">
+                  <div class="pa-field">
+                    <label class="pa-label" for="f4-log-pais" style="font-size:10px;">País de Origen</label>
+                    <select id="f4-log-pais" class="pa-select pa-uppercase">
+                      <option value="MÉXICO" selected>MÉXICO (MEX)</option>
+                      <option value="EE.UU.">EE.UU. (USA)</option>
+                      <option value="CHINA">CHINA (CHN)</option>
+                      <option value="ALEMANIA">ALEMANIA (DEU)</option>
+                      <option value="CANADÁ">CANADÁ (CAN)</option>
+                      <option value="BRASIL">BRASIL (BRA)</option>
+                      <option value="JAPÓN">JAPÓN (JPN)</option>
+                      <option value="ESPAÑA">ESPAÑA (ESP)</option>
+                      <option value="TAIWÁN">TAIWÁN (TWN)</option>
+                    </select>
+                  </div>
+                  <div class="pa-field">
+                    <label class="pa-label" for="f4-log-fraccion" style="font-size:10px;">Fracción Arancelaria</label>
+                    <input type="text" id="f4-log-fraccion" class="pa-input pa-uppercase" placeholder="Ej. 7214.20.01">
+                  </div>
+                  <div class="pa-field">
+                    <label class="pa-label" for="f4-log-pedimento" style="font-size:10px;">No. Pedimento Reciente</label>
+                    <input type="text" id="f4-log-pedimento" class="pa-input pa-uppercase" placeholder="Ej. 26 47 3821 6001234">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- FILA MEDIA DE COMPLEMENTOS: TARJETA 3 (Multi-Proveedor XML) + TARJETA 4 (Productos Equivalentes Stock=0) -->
+          <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:14px;align-items:stretch;">
+
+            <!-- ── TARJETA 3: 🏭 Catálogo Multi-Proveedor y Cruce Automático de XML de Compras ── -->
+            <div class="pa-card" style="display:flex;flex-direction:column;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;border-bottom:1px solid #e2e8f0;padding-bottom:8px;">
+                <h3 class="pa-card-title" style="margin:0;">
+                  <i class="fa-solid fa-industry" style="color:#2563eb;"></i> 3. Catálogo Multi-Proveedor y Cruce XML de Compras
+                </h3>
+                <span id="pa-f4-prov-count" style="font-size:10.5px;font-weight:800;color:#475569;">0 proveedores</span>
+              </div>
+
+              <!-- Formulario rápido de alta de relación proveedor-artículo -->
+              <div style="display:grid;grid-template-columns:1.3fr 1fr 90px 75px 65px 65px auto;gap:6px;align-items:end;margin-bottom:10px;background:#f8fafc;padding:8px;border-radius:8px;border:1px solid #e2e8f0;">
+                <div class="pa-field">
+                  <label class="pa-label" for="f4-prov-name" style="font-size:9.5px;">Proveedor *</label>
+                  <input type="text" id="f4-prov-name" list="f4-prov-datalist" class="pa-input pa-uppercase" placeholder="Nombre o Razón Social..." style="height:30px;font-size:11.5px;padding:0 8px;">
+                  <datalist id="f4-prov-datalist">
+                    <option value="DISTRIBUIDORA DEACERO S.A. DE C.V."></option>
+                    <option value="CEMEX MÉXICO S.A. DE C.V."></option>
+                    <option value="TRUPER S.A. DE C.V."></option>
+                    <option value="GRUPO ROTOPLAS S.A.B. DE C.V."></option>
+                    <option value="TERNIUM MÉXICO S.A. DE C.V."></option>
+                    <option value="URREA HERRAMIENTAS PROFESIONALES"></option>
+                  </datalist>
+                </div>
+                <div class="pa-field">
+                  <label class="pa-label" for="f4-prov-xml-sku" style="font-size:9.5px;" title="NoIdentificacion en el XML de compra del proveedor">SKU en XML Factura *</label>
+                  <input type="text" id="f4-prov-xml-sku" class="pa-input pa-uppercase" placeholder="Cód. en XML..." style="height:30px;font-size:11.5px;padding:0 8px;font-family:monospace;">
+                </div>
+                <div class="pa-field">
+                  <label class="pa-label" for="f4-prov-cost" style="font-size:9.5px;">Costo Pact.</label>
+                  <input type="number" id="f4-prov-cost" class="pa-input" step="0.01" min="0" value="0.00" style="height:30px;font-size:11.5px;padding:0 6px;">
+                </div>
+                <div class="pa-field">
+                  <label class="pa-label" for="f4-prov-currency" style="font-size:9.5px;">Moneda</label>
+                  <select id="f4-prov-currency" class="pa-select" style="height:30px;font-size:11px;padding:0 4px;">
+                    <option value="MXN" selected>MXN</option>
+                    <option value="USD">USD</option>
+                  </select>
+                </div>
+                <div class="pa-field">
+                  <label class="pa-label" for="f4-prov-lead-days" style="font-size:9.5px;">Días Ent.</label>
+                  <input type="number" id="f4-prov-lead-days" class="pa-input" step="1" min="0" value="1" style="height:30px;font-size:11.5px;padding:0 6px;text-align:center;">
+                </div>
+                <div class="pa-field">
+                  <label class="pa-label" for="f4-prov-min-qty" style="font-size:9.5px;">Mín. Comp.</label>
+                  <input type="number" id="f4-prov-min-qty" class="pa-input" step="1" min="1" value="1" style="height:30px;font-size:11.5px;padding:0 6px;text-align:center;">
+                </div>
+                <button type="button" id="f4-prov-add-btn" class="pa-btn-sm-primary" style="height:30px;padding:0 10px;white-space:nowrap;" title="Agregar proveedor a la matriz de cruce XML">
+                  <i class="fa-solid fa-plus"></i> Agregar
+                </button>
+              </div>
+
+              <div class="pa-table-wrap" style="max-height:190px;overflow-y:auto;">
+                <table class="pa-table">
+                  <thead>
+                    <tr>
+                      <th>Proveedor</th>
+                      <th>SKU en XML</th>
+                      <th style="text-align:right;">Costo Pactado</th>
+                      <th style="text-align:center;">Entrega</th>
+                      <th style="text-align:center;">Mín.</th>
+                      <th style="text-align:center;">⭐ Princ.</th>
+                      <th style="width:42px;text-align:center;"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="f4-prov-tbody">
+                    <tr>
+                      <td colspan="7" class="pa-td-empty">Sin proveedores vinculados para cruce de XML</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- ── TARJETA 4: 🔄 Productos Equivalentes / Sustitutos (Cross-Reference cuando Stock = 0) ── -->
+            <div class="pa-card" style="display:flex;flex-direction:column;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;border-bottom:1px solid #e2e8f0;padding-bottom:8px;">
+                <h3 class="pa-card-title" style="margin:0;">
+                  <i class="fa-solid fa-arrows-rotate" style="color:#2563eb;"></i> 4. Productos Equivalentes / Sustitutos (Stock = 0)
+                </h3>
+                <span id="pa-f4-eq-count" style="font-size:10.5px;font-weight:800;color:#15803d;background:#dcfce7;padding:2px 8px;border-radius:999px;border:1px solid #86efac;">
+                  0 sustitutos
+                </span>
+              </div>
+
+              <!-- Buscador inteligente con Autocomplete -->
+              <div style="display:grid;grid-template-columns:1fr 165px auto;gap:6px;align-items:end;margin-bottom:10px;background:#f8fafc;padding:8px;border-radius:8px;border:1px solid #e2e8f0;position:relative;">
+                <div class="pa-field" style="position:relative;">
+                  <label class="pa-label" for="f4-eq-search-inp" style="font-size:9.5px;">🔍 Buscar Producto Sustituto (SKU o Descripción)</label>
+                  <input type="text" id="f4-eq-search-inp" class="pa-input pa-uppercase" placeholder="Escribe SKU o nombre del equivalente..." autocomplete="off" style="height:30px;font-size:11.5px;padding:0 8px;">
+                  <div id="f4-eq-search-dd" style="display:none;position:absolute;left:0;right:0;top:100%;margin-top:3px;background:#ffffff;border:1.5px solid #2563eb;border-radius:8px;box-shadow:0 12px 28px rgba(15,23,42,.18);max-height:210px;overflow-y:auto;z-index:9995;"></div>
+                </div>
+                <div class="pa-field">
+                  <label class="pa-label" for="f4-eq-type" style="font-size:9.5px;">Tipo de Equivalencia</label>
+                  <select id="f4-eq-type" class="pa-select" style="height:30px;font-size:11px;padding:0 6px;">
+                    <option value="IDÉNTICO OTRA MARCA" selected>Idéntico otra marca</option>
+                    <option value="CALIDAD SUPERIOR">Calidad Superior</option>
+                    <option value="ECONÓMICO / GENÉRICO">Económico / Genérico</option>
+                  </select>
+                </div>
+                <button type="button" id="f4-eq-add-btn" class="pa-btn-sm-primary" style="height:30px;padding:0 10px;white-space:nowrap;">
+                  <i class="fa-solid fa-plus"></i> Vincular
+                </button>
+              </div>
+
+              <div class="pa-table-wrap" style="max-height:190px;overflow-y:auto;">
+                <table class="pa-table">
+                  <thead>
+                    <tr>
+                      <th>SKU</th>
+                      <th>Descripción</th>
+                      <th>Marca</th>
+                      <th style="text-align:center;">Stock</th>
+                      <th style="text-align:right;">Precio</th>
+                      <th>Tipo Equivalencia</th>
+                      <th style="width:42px;text-align:center;"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="f4-eq-tbody">
+                    <tr>
+                      <td colspan="7" class="pa-td-empty">No hay productos sustitutos configurados para sugerir en Caja POS cuando Stock = 0</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- FILA INFERIOR DE COMPLEMENTOS: TARJETA 5 (Especificaciones Técnicas + Descripción Licitaciones + Video/QR) -->
+          <div class="pa-card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;border-bottom:1px solid #e2e8f0;padding-bottom:8px;flex-wrap:wrap;gap:8px;">
+              <h3 class="pa-card-title" style="margin:0;">
+                <i class="fa-solid fa-gears" style="color:#2563eb;"></i> 5. Especificaciones Técnicas (Característica ➔ Valor), Licitaciones y Código QR
+              </h3>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span style="font-size:11px;font-weight:700;color:#475569;">Plantilla Rápida por Giro:</span>
+                <select id="f4-spec-template-sel" class="pa-select" style="height:28px;font-size:11px;padding:0 8px;width:220px;">
+                  <option value="">-- Seleccionar plantilla --</option>
+                  <option value="FERRETERIA">🔧 Ferretería / Herramienta</option>
+                  <option value="MADERERIA_ACERO">🪵 Maderería / Acero / Construcción</option>
+                  <option value="ELECTRICO">⚡ Material Eléctrico / Iluminación</option>
+                  <option value="PINTURAS_QUIMICOS">🧪 Pinturas / Químicos / Impermeabilizantes</option>
+                  <option value="FARMACIA_SALUD">💊 Farmacia / Salud</option>
+                  <option value="REFACCIONARIA">🚗 Refaccionaria / Autopartes</option>
+                </select>
+                <button type="button" id="f4-spec-load-tpl-btn" class="pa-btn-sm-primary" style="height:28px;padding:0 10px;font-size:11px;">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i> Pre-cargar filas
+                </button>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:16px;align-items:start;">
+              <!-- Mitad Izquierda: Tabla Dinámica de Especificaciones Técnicas -->
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                  <span style="font-size:11px;font-weight:800;color:#334155;text-transform:uppercase;">Tabla de Atributos Técnicos</span>
+                  <button type="button" id="f4-spec-add-btn" class="pa-btn-sm-primary" style="height:27px;padding:0 10px;font-size:11px;">
+                    <i class="fa-solid fa-plus"></i> Agregar Especificación
+                  </button>
+                </div>
+
+                <div class="pa-table-wrap" style="max-height:235px;overflow-y:auto;">
+                  <table class="pa-table">
+                    <thead>
+                      <tr>
+                        <th style="width:44%;">Atributo / Característica (Ej. Voltaje, Calibre)</th>
+                        <th>Valor Técnico (Ej. 120V, 12 AWG, f'c 250 kg/cm²)</th>
+                        <th style="width:42px;text-align:center;"></th>
+                      </tr>
+                    </thead>
+                    <tbody id="f4-spec-tbody">
+                      <!-- Renderizado por products-form.js -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Mitad Derecha: Descripción Extendida para Licitaciones y Video/QR -->
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div class="pa-field">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                    <label class="pa-label" for="f4-spec-licitacion-desc" style="margin:0;font-size:10.5px;">
+                      📋 Descripción Técnica Extendida (Para Licitaciones y Cotizaciones Formales)
+                    </label>
+                    <span id="f4-spec-lic-counter" style="font-size:10px;color:#64748b;font-weight:700;">0/1500</span>
+                  </div>
+                  <textarea id="f4-spec-licitacion-desc" class="pa-textarea pa-uppercase" maxlength="1500" style="min-height:105px;font-size:11.5px;" placeholder="Especificación extensa para anexos técnicos de licitación y cotizaciones formales (no altera la descripción corta del ticket POS)..."></textarea>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 145px;gap:10px;align-items:center;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px 10px;">
+                  <div>
+                    <label class="pa-label" for="f4-spec-video-url" style="font-size:10px;">
+                      🔗 URL Video Demostrativo / Catálogo Web (YouTube / Fabricante)
+                    </label>
+                    <input type="url" id="f4-spec-video-url" class="pa-input" placeholder="https://www.youtube.com/watch?v=... o ficha web del fabricante" style="height:32px;font-size:11.5px;margin-bottom:6px;">
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                      <button type="button" id="f4-spec-qr-download-btn" style="background:#ffffff;color:#1e40af;border:1px solid #93c5fd;border-radius:6px;padding:4px 9px;font-size:10.5px;font-weight:800;cursor:pointer;">
+                        <i class="fa-solid fa-download"></i> Descargar QR
+                      </button>
+                      <button type="button" id="f4-spec-qr-print-btn" style="background:#ffffff;color:#0f172a;border:1px solid #cbd5e1;border-radius:6px;padding:4px 9px;font-size:10.5px;font-weight:800;cursor:pointer;">
+                        <i class="fa-solid fa-print"></i> Imprimir QR Técnico
+                      </button>
+                      <button type="button" id="f4-spec-open-url-btn" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:6px;padding:4px 9px;font-size:10.5px;font-weight:800;cursor:pointer;">
+                        <i class="fa-solid fa-up-right-from-square"></i> Abrir Enlace
+                      </button>
+                    </div>
+                  </div>
+
+                  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:#ffffff;border:1px solid #cbd5e1;border-radius:8px;padding:6px;min-height:112px;">
+                    <canvas id="f4-spec-qr-canvas" width="92" height="92" style="width:92px;height:92px;display:block;"></canvas>
+                    <span style="font-size:9px;font-weight:800;color:#475569;margin-top:3px;">CÓDIGO QR TÉCNICO</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /#pa-tab-complementos-f4 -->
+
+        <!-- Modal de Vista Previa de Documento [F4] -->
+        <div id="pa-f4-doc-preview-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.72);z-index:99999;align-items:center;justify-content:center;padding:20px;">
+          <div style="width:860px;max-width:96vw;height:84vh;background:#ffffff;border-radius:12px;border:1px solid #cbd5e1;box-shadow:0 24px 60px rgba(0,0,0,0.45);display:flex;flex-direction:column;overflow:hidden;">
+            <div style="padding:12px 16px;background:#0f172a;color:#ffffff;display:flex;align-items:center;justify-content:space-between;">
+              <div style="font-size:13.5px;font-weight:800;" id="pa-f4-doc-preview-title">📄 Vista Previa del Documento</div>
+              <button type="button" id="pa-f4-doc-preview-close" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);color:#ffffff;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:800;cursor:pointer;">
+                ✕ Cerrar [ESC]
+              </button>
+            </div>
+            <div id="pa-f4-doc-preview-body" style="flex:1;background:#f1f5f9;display:flex;align-items:center;justify-content:center;overflow:auto;padding:12px;">
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── BARRA LATERAL DERECHA (ATRIBUTOS Y CONFIGURACIÓN) ── -->
+      <aside class="pa-col-sidebar">
+        <div class="pa-card pa-sidebar-card">
+          <div class="pa-sidebar-header">
+            <h3 class="pa-sidebar-title"><i class="fa-solid fa-sliders"></i> Atributos y Configuración</h3>
+          </div>
+
+          <!-- Estado del Producto: Activo / Inactivo -->
+          <div class="pa-status-box">
+            <span class="pa-status-label">Estado del Producto</span>
+            <div class="pa-status-toggle-wrap">
+              <span class="pa-status-text" id="pa-status-text">Activo</span>
+              <label class="pa-toggle-switch">
+                <input type="checkbox" id="pa-is-active" checked>
+                <span class="pa-slider round"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Checkboxes Generales -->
+          <div class="pa-chk-group">
+            <label class="pa-chk-label"><input type="checkbox" id="pa-art-pesado"> <span>Artículo Pesado</span></label>
+            <label class="pa-chk-label"><input type="checkbox" id="pa-precio-abierto"> <span>Precio Abierto</span></label>
+            <label class="pa-chk-label"><input type="checkbox" id="pa-art-negativo"> <span>Artículo Negativo (Cupón)</span></label>
+          </div>
+
+          <div class="pa-divider"></div>
+
+          <!-- Desactivar producto para -->
+          <div class="pa-section-block">
+            <h4 class="pa-section-title">Desactivar producto para:</h4>
+            <div class="pa-chk-group">
+              <label class="pa-chk-label"><input type="checkbox" id="pa-desact-venta"> <span>Venta</span></label>
+              <label class="pa-chk-label"><input type="checkbox" id="pa-desact-compras"> <span>Compras</span></label>
+              <label class="pa-chk-label"><input type="checkbox" id="pa-desact-traspasos"> <span>Traspasos</span></label>
+            </div>
+          </div>
+
+          <div class="pa-divider"></div>
+
+          <!-- Auditoría de Kardex (Opciones) -->
+          <div class="pa-section-block">
+            <div class="pa-chk-scroll-list">
+              <label class="pa-chk-label"><input type="checkbox" id="pa-kardex-auditoria"> <span>Auditoría de Kardex</span></label>
+              <label class="pa-chk-label"><input type="checkbox" id="pa-kardex-servicio"> <span>Servicio</span></label>
+              <label class="pa-chk-label"><input type="checkbox" id="pa-kardex-no-desc"> <span>No permitir descuento en caja</span></label>
+              <label class="pa-chk-label"><input type="checkbox" id="pa-kardex-no-ofertas-cal"> <span>No aplica en ofertas calendarizadas</span></label>
+              <label class="pa-chk-label"><input type="checkbox" id="pa-kardex-no-ofertas-depto"> <span>No aplica en ofertas por departamento</span></label>
+              <label class="pa-chk-label"><input type="checkbox" id="pa-kardex-corte-z"> <span>Monitorear unidades vendidas en corte Z</span></label>
+              <label class="pa-chk-label"><input type="checkbox" id="pa-kardex-no-variantes"> <span>No mostrar variantes automáticamente</span></label>
+              <label class="pa-chk-label"><input type="checkbox" id="pa-kardex-base-prod"> <span>Base de producción</span></label>
+              <label class="pa-chk-label"><input type="checkbox" id="pa-kardex-ofertas-cruzadas" checked> <span>Manejo ofertas cruzadas</span></label>
+              <label class="pa-chk-label"><input type="checkbox" id="pa-kardex-recarga-celular"> <span>Recarga de celular</span></label>
+              <label class="pa-chk-label"><input type="checkbox" id="pa-kardex-antibiotico"> <span>Solicitud receta antibiótico</span></label>
+              <label class="pa-chk-label"><input type="checkbox" id="pa-kardex-exento-iva"> <span>Exento de IVA</span></label>
+              <label class="pa-chk-label"><input type="checkbox" id="pa-kardex-desc-abierta"> <span>Descripción abierta</span></label>
+              <label class="pa-chk-label"><input type="checkbox" id="pa-kardex-prod-controlado"> <span>Producto controlado</span></label>
+              <label class="pa-chk-label"><input type="checkbox" id="pa-kardex-existencia-neg" checked> <span>Permitir existencia Negativo</span></label>
+              <label class="pa-chk-label"><input type="checkbox" id="pa-kardex-autorizacion"> <span>Autorización</span></label>
+              <label class="pa-chk-label"><input type="checkbox" id="pa-kardex-no-inventariable"> <span>No inventariable</span></label>
+              <label class="pa-chk-label"><input type="checkbox" id="pa-kardex-recetas-paquetes"> <span>Manejo de recetas o paquetes</span></label>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Tarjeta: Precio y Historial de Precios -->
+        <div class="pa-card pa-price-history-card">
+          <div class="pa-price-history-header" id="pa-historial-header-toggle">
+            <h3 class="pa-price-history-title">
+              <i class="fa-solid fa-clock-rotate-left"></i> Precio y Historial de Precios
+            </h3>
+            <button type="button" class="pa-btn-collapse" id="pa-btn-toggle-historial" title="Colapsar / Expandir">
+              <i class="fa-solid fa-chevron-up" id="pa-historial-chevron"></i>
+            </button>
+          </div>
+
+          <div id="pa-historial-body-content">
+            <!-- Dos cajitas métricas superiores -->
+            <div class="pa-price-history-stats">
+              <div class="pa-history-stat-box">
+                <div class="pa-stat-icon"><i class="fa-solid fa-certificate"></i></div>
+                <div class="pa-stat-data">
+                  <span class="pa-stat-sub">Precio Activo desde:</span>
+                  <span class="pa-stat-val" id="pa-hist-precio-activo">$0.00</span>
+                </div>
+              </div>
+
+              <div class="pa-history-stat-box">
+                <div class="pa-stat-icon"><i class="fa-regular fa-calendar-check"></i></div>
+                <div class="pa-stat-data">
+                  <span class="pa-stat-sub">Actualizado el:</span>
+                  <span class="pa-stat-val" id="pa-hist-fecha-act">Sin registro</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tabla de Historial -->
+            <div class="pa-history-table-section">
+              <div class="pa-history-subtitle">Historial de Precios</div>
+              <div class="pa-history-table-wrap">
+                <table class="pa-history-table">
+                  <thead>
+                    <tr>
+                      <th><i class="fa-solid fa-calendar-days"></i> Fecha</th>
+                      <th>Precio</th>
+                      <th>Usuario</th>
+                    </tr>
+                  </thead>
+                  <tbody id="pa-price-history-tbody">
+                    <tr data-empty-history="1">
+                      <td colspan="3" style="text-align:center;color:#64748b;font-size:11px;padding:12px;">Sin historial de precios registrado para este artículo</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+
+    <!-- Barra inferior informativa (Sucursal, Caja, Usuario, Folio) -->
+    <div class="pa-bottom-info-strip">
+      <div class="pa-bottom-strip-item"><span class="pa-strip-dot"></span> <strong id="pa-foot-sucursal">MATRIZ</strong></div>
+      <div class="pa-bottom-strip-sep">|</div>
+      <div class="pa-bottom-strip-item">Caja: <strong id="pa-foot-caja">1</strong></div>
+      <div class="pa-bottom-strip-sep">|</div>
+      <div class="pa-bottom-strip-item">Usuario: <strong id="pa-foot-user">ANTONIO M.</strong></div>
+      <div class="pa-bottom-strip-sep">|</div>
+      <div class="pa-bottom-strip-item">Folio: <strong id="pa-foot-folio">12345678</strong></div>
+    </div>
+  </form>
+
+  <!-- ── 3B. PANEL PESTAÑA STOCK Y OPERACIONES [F3] (ADAPTABLE MODO CLARO / OSCURO) ── -->
+  <style>
+    #pa-tab-panel-stock-f3,
+    #pa-f3-op-modal,
+    #pa-f3-doc-modal {
+      --f3-bg: #ffffff;
+      --f3-card-bg: #f8fafc;
+      --f3-banner-bg: #f0f9ff;
+      --f3-border: #cbd5e1;
+      --f3-border-soft: #e2e8f0;
+      --f3-text: #0f172a;
+      --f3-text-sub: #334155;
+      --f3-muted: #64748b;
+      --f3-thead-bg: #f1f5f9;
+      --f3-row-even: #f8fafc;
+      --f3-filter-bar-bg: #f1f5f9;
+      --f3-input-bg: #ffffff;
+      --f3-pill-bg: #ffffff;
+      --f3-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+      --f3-hl-bg: linear-gradient(145deg, rgba(16, 185, 129, 0.14), rgba(240, 253, 244, 0.95));
+      --f3-hl-title: #047857;
+      --f3-hl-sub: #065f46;
+    }
+    [data-theme="dark"] #pa-tab-panel-stock-f3,
+    [data-theme="dark"] #pa-f3-op-modal,
+    [data-theme="dark"] #pa-f3-doc-modal,
+    body.dark-mode #pa-tab-panel-stock-f3,
+    body.dark-mode #pa-f3-op-modal,
+    body.dark-mode #pa-f3-doc-modal {
+      --f3-bg: #0f1423;
+      --f3-card-bg: #131b2e;
+      --f3-banner-bg: rgba(19, 27, 46, 0.92);
+      --f3-border: #1d2a45;
+      --f3-border-soft: rgba(29, 42, 69, 0.85);
+      --f3-text: #f3f4f6;
+      --f3-text-sub: #cbd5e1;
+      --f3-muted: #9ca3af;
+      --f3-thead-bg: #1d2a45;
+      --f3-row-even: rgba(15, 20, 35, 0.45);
+      --f3-filter-bar-bg: #152036;
+      --f3-input-bg: #0f1423;
+      --f3-pill-bg: #0f1423;
+      --f3-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+      --f3-hl-bg: linear-gradient(145deg, rgba(16, 185, 129, 0.18), rgba(19, 27, 46, 0.95));
+      --f3-hl-title: #a7f3d0;
+      --f3-hl-sub: #d1fae5;
+    }
+    #pa-tab-panel-stock-f3 {
+      background: var(--f3-bg);
+      border: 1px solid var(--f3-border);
+      border-radius: 14px;
+      padding: 16px 18px 20px;
+      color: var(--f3-text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      box-shadow: var(--f3-shadow);
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+    .f3-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: var(--f3-banner-bg);
+      border: 1px solid var(--f3-border);
+      border-left: 4px solid #0284c7;
+      border-radius: 9px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      backdrop-filter: blur(10px);
+    }
+    .f3-banner-text {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--f3-text);
+    }
+    .f3-banner-sku {
+      color: #0284c7;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    [data-theme="dark"] .f3-banner-sku {
+      color: #38bdf8;
+    }
+    .f3-section-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--f3-muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .f3-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 1200px) {
+      .f3-kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 768px) {
+      .f3-kpi-grid { grid-template-columns: 1fr; }
+    }
+    .f3-kpi-card {
+      background: var(--f3-card-bg);
+      border: 1px solid var(--f3-border);
+      border-radius: 12px;
+      padding: 13px 14px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      position: relative;
+    }
+    .f3-kpi-card:hover {
+      transform: translateY(-1px);
+      border-color: #0284c7;
+    }
+    .f3-kpi-card.f3-kpi-highlight {
+      background: var(--f3-hl-bg);
+      border: 1.5px solid #10b981;
+      box-shadow: 0 0 18px rgba(16, 185, 129, 0.15);
+    }
+    .f3-kpi-title {
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--f3-text-sub);
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .f3-kpi-val {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--f3-text);
+      line-height: 1.15;
+      margin-bottom: 4px;
+      letter-spacing: -0.02em;
+    }
+    .f3-kpi-card.f3-kpi-highlight .f3-kpi-val {
+      color: #059669;
+    }
+    [data-theme="dark"] .f3-kpi-card.f3-kpi-highlight .f3-kpi-val {
+      color: #10b981;
+      text-shadow: 0 0 12px rgba(16, 185, 129, 0.35);
+    }
+    .f3-kpi-sub {
+      font-size: 11px;
+      color: var(--f3-muted);
+    }
+    .f3-actions-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .f3-quick-btns {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(165px, 1fr));
+      gap: 10px;
+      flex: 1;
+    }
+    @media (max-width: 1100px) {
+      .f3-quick-btns { grid-template-columns: repeat(2, 1fr); }
+    }
+    .f3-op-btn {
+      height: 38px;
+      border-radius: 9px;
+      font-size: 12.5px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      padding: 0 14px;
+    }
+    .f3-op-in {
+      background: rgba(16, 185, 129, 0.14);
+      color: #059669;
+      border: 1px solid rgba(16, 185, 129, 0.55);
+    }
+    [data-theme="dark"] .f3-op-in { color: #34d399; }
+    .f3-op-in:hover {
+      background: #059669;
+      color: #ffffff;
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.35);
+    }
+    .f3-op-out {
+      background: rgba(244, 63, 94, 0.14);
+      color: #e11d48;
+      border: 1px solid rgba(244, 63, 94, 0.55);
+    }
+    [data-theme="dark"] .f3-op-out { color: #fb7185; }
+    .f3-op-out:hover {
+      background: #e11d48;
+      color: #ffffff;
+      box-shadow: 0 0 16px rgba(244, 63, 94, 0.35);
+    }
+    .f3-op-tra {
+      background: rgba(59, 130, 246, 0.14);
+      color: #2563eb;
+      border: 1px solid rgba(59, 130, 246, 0.55);
+    }
+    [data-theme="dark"] .f3-op-tra { color: #60a5fa; }
+    .f3-op-tra:hover {
+      background: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 0 16px rgba(59, 130, 246, 0.35);
+    }
+    .f3-op-aju {
+      background: rgba(245, 158, 11, 0.14);
+      color: #d97706;
+      border: 1px solid rgba(245, 158, 11, 0.55);
+    }
+    [data-theme="dark"] .f3-op-aju { color: #fbbf24; }
+    .f3-op-aju:hover {
+      background: #d97706;
+      color: #ffffff;
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.35);
+    }
+    .f3-export-wrap {
+      position: relative;
+    }
+    .f3-export-btn {
+      height: 38px;
+      padding: 0 16px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #2563eb, #0284c7);
+      color: #ffffff;
+      border: 1px solid #38bdf8;
+      font-size: 12.5px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+    .f3-export-btn:hover {
+      filter: brightness(1.08);
+    }
+    .f3-export-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 6px);
+      width: 280px;
+      background: var(--f3-card-bg);
+      border: 1px solid var(--f3-border);
+      border-radius: 11px;
+      box-shadow: var(--f3-shadow);
+      z-index: 950;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+    }
+    .f3-export-item {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--f3-border-soft);
+      color: var(--f3-text);
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .f3-export-item:last-child { border-bottom: none; }
+    .f3-export-item:hover {
+      background: rgba(59, 130, 246, 0.15);
+      color: #0284c7;
+    }
+    [data-theme="dark"] .f3-export-item:hover {
+      color: #ffffff;
+    }
+    .f3-block-card {
+      background: var(--f3-card-bg);
+      border: 1px solid var(--f3-border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      backdrop-filter: blur(10px);
+    }
+    .f3-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+      color: var(--f3-text);
+    }
+    .f3-table thead tr {
+      background: var(--f3-thead-bg);
+      color: var(--f3-text-sub);
+      text-align: left;
+      font-size: 11.5px;
+      font-weight: 800;
+    }
+    .f3-table th, .f3-table td {
+      padding: 9px 13px;
+      border-bottom: 1px solid var(--f3-border-soft);
+    }
+    .f3-table tbody tr:nth-child(even) {
+      background: var(--f3-row-even);
+    }
+    .f3-table tbody tr:hover {
+      background: rgba(59, 130, 246, 0.08);
+    }
+    .f3-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+    .f3-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .f3-filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 10px 14px;
+      background: var(--f3-filter-bar-bg);
+      border-bottom: 1px solid var(--f3-border);
+      font-size: 12px;
+      color: var(--f3-text-sub);
+    }
+    .f3-date-chip {
+      background: none;
+      border: none;
+      color: var(--f3-muted);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 3px 7px;
+      border-radius: 5px;
+      transition: all 0.12s;
+    }
+    .f3-date-chip:hover, .f3-date-chip.active {
+      color: #0284c7;
+      background: rgba(56, 189, 248, 0.14);
+    }
+    [data-theme="dark"] .f3-date-chip:hover, [data-theme="dark"] .f3-date-chip.active {
+      color: #38bdf8;
+    }
+    .f3-filter-select, .f3-filter-search {
+      background: var(--f3-input-bg);
+      border: 1px solid var(--f3-border);
+      color: var(--f3-text);
+      border-radius: 7px;
+      height: 30px;
+      padding: 0 10px;
+      font-size: 12px;
+    }
+    .f3-folio-link {
+      color: #0284c7;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      text-decoration: none;
+      background: rgba(56, 189, 248, 0.12);
+      padding: 2px 7px;
+      border-radius: 5px;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      display: inline-block;
+    }
+    [data-theme="dark"] .f3-folio-link {
+      color: #38bdf8;
+    }
+    .f3-folio-link:hover {
+      background: #0284c7;
+      color: #ffffff;
+    }
+  </style>
+
+  <div id="pa-tab-panel-stock-f3" style="display:none;margin-top:6px;">
+
+    <!-- [3] BLOQUE 1: TARJETAS DE RESUMEN DE STOCK Y VENTAS POR SUCURSAL / MATRIZ -->
+    <div class="f3-section-label">BLOQUE 1 - RESUMEN DE EXISTENCIAS Y VENTAS REALES DEL POS (MATRIZ Y SUCURSALES)</div>
+    <div class="f3-kpi-grid">
+      <!-- 1. Existencia Física Total (Matriz + Sucursales) -->
+      <div class="f3-kpi-card">
+        <div class="f3-kpi-title"><i class="fa-solid fa-store" style="color:#38bdf8;"></i> EXISTENCIA EN SUCURSALES</div>
+        <div class="f3-kpi-val" id="pa-f3-kpi-fisico">0 PZ</div>
+        <div class="f3-kpi-sub" id="pa-f3-kpi-fisico-sub">Suma de Matriz y Sucursales</div>
+      </div>
+
+      <!-- 2. Ventas Acumuladas (Facturas + Notas de Venta) -->
+      <div class="f3-kpi-card">
+        <div class="f3-kpi-title"><i class="fa-solid fa-file-invoice-dollar" style="color:#60a5fa;"></i> VENTAS POS (SUCURSAL Y MATRIZ)</div>
+        <div class="f3-kpi-val" id="pa-f3-kpi-comprometido">0 PZ</div>
+        <div class="f3-kpi-sub" id="pa-f3-kpi-ventas-sub">Facturas CFDI y Notas de Venta</div>
+      </div>
+
+      <!-- 3. Stock Disponible para Venta (Destacado #10b981) -->
+      <div class="f3-kpi-card f3-kpi-highlight">
+        <div class="f3-kpi-title" style="color:var(--f3-hl-title);"><i class="fa-solid fa-circle-check" style="color:#10b981;"></i> DISPONIBLE EN POS</div>
+        <div class="f3-kpi-val" id="pa-f3-kpi-disponible">0 PZ</div>
+        <div class="f3-kpi-sub" style="color:var(--f3-hl-sub);" id="pa-f3-kpi-disp-sub">Listo para Factura o Nota de Venta</div>
+      </div>
+
+      <!-- 4. Devoluciones / Notas de Crédito / Tránsito -->
+      <div class="f3-kpi-card">
+        <div class="f3-kpi-title"><i class="fa-solid fa-rotate-left" style="color:#f59e0b;"></i> DEVOLUCIONES / N. CRÉDITO</div>
+        <div class="f3-kpi-val" id="pa-f3-kpi-transito">0 PZ</div>
+        <div class="f3-kpi-sub" id="pa-f3-kpi-dev-sub">Devoluciones y Notas de Crédito</div>
+      </div>
+
+      <!-- 5. Valor en Inventario -->
+      <div class="f3-kpi-card" id="pa-f3-kpi-valor-card">
+        <div class="f3-kpi-title"><i class="fa-solid fa-dollar-sign" style="color:#fbbf24;"></i> VALOR EN INVENTARIO</div>
+        <div class="f3-kpi-val" id="pa-f3-kpi-valor" style="font-size:21px;">$0.00 MXN</div>
+        <div class="f3-kpi-sub" id="pa-f3-kpi-valor-sub">0 PZ × $0.00 Costo Prom.</div>
+      </div>
+    </div>
+
+    <!-- [4] BLOQUES 3 & 5: BOTONERA DE ACCIONES RÁPIDAS Y EXPORTACIÓN -->
+    <div class="f3-actions-row">
+      <div style="flex:1;min-width:280px;">
+        <div class="f3-section-label">BLOQUE 3 - OPERACIONES EN MATRIZ Y SUCURSALES</div>
+        <div class="f3-quick-btns">
+          <button type="button" class="f3-op-btn f3-op-in" id="pa-f3-btn-entrada">
+            <i class="fa-solid fa-plus"></i> Entrada / Devolución
+          </button>
+          <button type="button" class="f3-op-btn f3-op-out" id="pa-f3-btn-salida">
+            <i class="fa-solid fa-minus"></i> Salida (Factura / Nota)
+          </button>
+          <button type="button" class="f3-op-btn f3-op-tra" id="pa-f3-btn-traslado">
+            <i class="fa-solid fa-right-left"></i> Traspaso Sucursal
+          </button>
+          <button type="button" class="f3-op-btn f3-op-aju" id="pa-f3-btn-ajuste">
+            <i class="fa-solid fa-scale-balanced"></i> Ajuste de Stock
+          </button>
+        </div>
+      </div>
+
+      <div class="f3-export-wrap">
+        <div class="f3-section-label">BLOQUE 5 - REPORTES</div>
+        <button type="button" class="f3-export-btn" id="pa-f3-btn-export-toggle">
+          <i class="fa-solid fa-download"></i> Generar Reporte / Exportar <i class="fa-solid fa-chevron-down" style="font-size:10px;margin-left:2px;"></i>
+        </button>
+        <div class="f3-export-menu" id="pa-f3-export-dropdown">
+          <button type="button" class="f3-export-item" data-export="pdf-kardex">
+            <i class="fa-regular fa-file-pdf" style="color:#f87171;font-size:14px;"></i>
+            <span>Kardex en PDF por Sucursal</span>
+          </button>
+          <button type="button" class="f3-export-item" data-export="excel-csv">
+            <i class="fa-solid fa-file-csv" style="color:#34d399;font-size:14px;"></i>
+            <span>Exportar a Excel (.XLSX) / CSV</span>
+          </button>
+          <button type="button" class="f3-export-item" data-export="concepto">
+            <i class="fa-solid fa-clipboard-list" style="color:#38bdf8;font-size:14px;"></i>
+            <span>Resumen por Tipo de Folio (Fac/NV/Dev/NC)</span>
+          </button>
+          <button type="button" class="f3-export-item" data-export="ciego-pdf">
+            <i class="fa-solid fa-user-secret" style="color:#fbbf24;font-size:14px;"></i>
+            <span>Hoja de Conteo por Sucursal (PDF)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- [5] BLOQUE 2: TABLA DE EXISTENCIAS Y VENTAS POR SUCURSAL Y MATRIZ (SOLO DATOS DEL SISTEMA) -->
+    <div class="f3-section-label">BLOQUE 2 - EXISTENCIAS Y VENTAS POR SUCURSAL Y MATRIZ</div>
+    <div class="f3-block-card">
+      <div style="overflow-x:auto;">
+        <table class="f3-table">
+          <thead>
+            <tr>
+              <th>Sucursal / Sede</th>
+              <th>Presentación y Equivalencia</th>
+              <th>Mín / Máx</th>
+              <th>Ventas (Facturas / Notas de Venta)</th>
+              <th>Devoluciones / Notas Créd.</th>
+              <th>Existencia Actual</th>
+              <th>Estado de Stock</th>
+            </tr>
+          </thead>
+          <tbody id="pa-f3-warehouses-tbody">
+            <!-- Renderizado reactivo conectado a Sucursales del sistema -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- [6] BLOQUE 4: KARDEX HISTÓRICO DE MOVIMIENTOS POR SUCURSAL Y TIPO DE FOLIO -->
+    <div class="f3-section-label">BLOQUE 4 - KARDEX DEL PRODUCTO (FACTURAS, NOTAS DE VENTA, DEVOLUCIONES Y NOTAS DE CRÉDITO)</div>
+    <div class="f3-block-card" style="margin-bottom:4px;">
+      <!-- Barra de Filtros Inline por Sucursal, Tipo de Folio y Fechas -->
+      <div class="f3-filter-bar">
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+          <span style="color:#9ca3af;font-weight:700;margin-right:4px;">Fechas:</span>
+          <button type="button" class="f3-date-chip" data-date-range="hoy">Hoy</button>
+          <span style="color:#334155;">|</span>
+          <button type="button" class="f3-date-chip" data-date-range="semana">Esta Semana</button>
+          <span style="color:#334155;">|</span>
+          <button type="button" class="f3-date-chip active" data-date-range="mes">Este Mes</button>
+          <span style="color:#334155;">|</span>
+          <button type="button" class="f3-date-chip" data-date-range="custom">Personalizado</button>
+          <span id="pa-f3-custom-dates-wrap" style="display:none;align-items:center;gap:4px;margin-left:6px;">
+            <input type="date" id="pa-f3-date-from" class="f3-filter-select" style="height:26px;font-size:11px;padding:0 6px;">
+            <span style="color:#64748b;">a</span>
+            <input type="date" id="pa-f3-date-to" class="f3-filter-select" style="height:26px;font-size:11px;padding:0 6px;">
+          </span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <label style="display:inline-flex;align-items:center;gap:5px;color:#9ca3af;font-weight:700;">
+            <i class="fa-solid fa-store" style="color:#38bdf8;"></i> Sucursal:
+            <select id="pa-f3-filter-almacen" class="f3-filter-select">
+              <option value="TODOS">Todas (Matriz + Sucursales)</option>
+            </select>
+          </label>
+
+          <label style="display:inline-flex;align-items:center;gap:5px;color:#9ca3af;font-weight:700;">
+            <i class="fa-solid fa-file-invoice" style="color:#60a5fa;"></i> Documento / Folio:
+            <select id="pa-f3-filter-concepto" class="f3-filter-select">
+              <option value="TODOS">Todos los Documentos</option>
+              <option value="FACTURA">Facturas (CFDI)</option>
+              <option value="NOTA_VENTA">Notas de Venta</option>
+              <option value="DEVOLUCION">Devoluciones</option>
+              <option value="NOTA_CREDITO">Notas de Crédito</option>
+              <option value="COMPRA">Compras / Entradas</option>
+              <option value="TRASLADO">Traspasos entre Sucursales</option>
+              <option value="AJUSTE">Ajustes de Inventario</option>
+            </select>
+          </label>
+
+          <label style="display:inline-flex;align-items:center;gap:5px;color:#9ca3af;">
+            Movimiento:
+            <select id="pa-f3-filter-tipo" class="f3-filter-select">
+              <option value="TODOS">Todos</option>
+              <option value="ENTRADA">Entradas (+)</option>
+              <option value="SALIDA">Salidas (-)</option>
+              <option value="TRASLADO">Traspasos (⇄)</option>
+              <option value="AJUSTE">Ajustes</option>
+            </select>
+          </label>
+
+          <div style="display:inline-flex;align-items:center;gap:6px;">
+            <div style="position:relative;">
+              <input type="text" id="pa-f3-filter-search" class="f3-filter-search" placeholder="Buscar folio (FAC, NV, DEV, NC), cliente o usuario..." style="width:245px;padding-right:28px;">
+              <i class="fa-solid fa-magnifying-glass" style="position:absolute;right:9px;top:50%;transform:translateY(-50%);color:#64748b;font-size:11px;pointer-events:none;"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla del Kardex -->
+      <div style="overflow-x:auto;">
+        <table class="f3-table">
+          <thead>
+            <tr>
+              <th>Fecha / Hora</th>
+              <th>Folio</th>
+              <th>Tipo de Documento</th>
+              <th>Sucursal / Sede</th>
+              <th>Cliente / Proveedor / Referencia</th>
+              <th style="text-align:right;">Entrada (+)</th>
+              <th style="text-align:right;">Salida (-)</th>
+              <th style="text-align:right;">Existencia (Saldo)</th>
+              <th style="text-align:right;">Costo / Precio Unit.</th>
+              <th style="text-align:right;">Costo Prom.</th>
+              <th style="text-align:right;">Total Mov. ($)</th>
+              <th>Usuario</th>
+            </tr>
+          </thead>
+          <tbody id="pa-f3-kardex-tbody">
+            <!-- Renderizado reactivo desde products-form.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Barra Inferior de Impresión y Envío de Reporte (Bloque 4 / F3) -->
+      <div id="pa-f3-bottom-report-bar" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:12px 16px;border-top:1px solid var(--f3-border,#cbd5e1);background:var(--f3-card-bg,rgba(241,245,249,.65));">
+        <div style="font-size:12px;color:var(--f3-muted,#64748b);display:flex;align-items:center;gap:8px;font-weight:600;">
+          <i class="fa-solid fa-file-invoice" style="color:#2563eb;font-size:14px;"></i>
+          <span>Acciones del Reporte de Existencias y Kardex del Producto:</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <button type="button" id="pa-f3-btn-bottom-print" style="height:36px;padding:0 16px;border-radius:8px;border:1px solid #2563eb;background:#2563eb;color:#ffffff;font-size:12.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;box-shadow:0 2px 6px rgba(37,99,235,.25);">
+            <i class="fa-solid fa-print"></i> Imprimir Reporte
+          </button>
+          <button type="button" id="pa-f3-btn-bottom-excel" style="height:36px;padding:0 15px;border-radius:8px;border:1px solid #10b981;background:rgba(16,185,129,.12);color:#047857;font-size:12.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">
+            <i class="fa-solid fa-file-csv"></i> Exportar Excel / CSV
+          </button>
+          <button type="button" id="pa-f3-btn-bottom-send" style="height:36px;padding:0 16px;border-radius:8px;border:1px solid #0284c7;background:linear-gradient(135deg,#0284c7,#2563eb);color:#ffffff;font-size:12.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;box-shadow:0 2px 6px rgba(2,132,199,.25);">
+            <i class="fa-solid fa-paper-plane"></i> Enviar Reporte
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal de Operaciones Rápidas F3 (Conectado a Matriz / Sucursales y Tipos de Folio) ── -->
+  <div id="pa-f3-op-modal" style="display:none;position:fixed;inset:0;z-index:10045;background:rgba(2,6,23,.76);backdrop-filter:blur(5px);align-items:center;justify-content:center;">
+    <div style="width:540px;max-width:95vw;background:var(--f3-bg);border:1.5px solid #3b82f6;border-radius:15px;box-shadow:0 22px 55px rgba(0,0,0,.45);color:var(--f3-text);overflow:hidden;">
+      <div id="pa-f3-op-modal-hdr" style="padding:14px 18px;background:rgba(59,130,246,.14);border-bottom:1px solid #1d2a45;display:flex;align-items:center;justify-content:space-between;">
+        <h3 id="pa-f3-op-modal-title" style="margin:0;font-size:14.5px;font-weight:800;display:flex;align-items:center;gap:8px;color:#fff;">
+          <i class="fa-solid fa-boxes-stacked"></i> Operación por Sucursal
+        </h3>
+        <button type="button" id="pa-f3-op-modal-close" style="background:none;border:none;color:#9ca3af;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div style="padding:16px 18px;display:flex;flex-direction:column;gap:12px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div>
+            <label id="pa-f3-op-alm-label" style="display:block;font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:4px;">Sucursal / Matriz *</label>
+            <select id="pa-f3-op-almacen" class="pa-select" style="width:100%;background:var(--f3-input-bg);border-color:var(--f3-border);color:var(--f3-text);">
+              <!-- Se llena dinámicamente con MATRIZ y Sucursales del sistema -->
+            </select>
+          </div>
+          <div id="pa-f3-op-dest-wrap" style="display:none;">
+            <label style="display:block;font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:4px;">Sucursal Destino *</label>
+            <select id="pa-f3-op-destino" class="pa-select" style="width:100%;background:var(--f3-input-bg);border-color:var(--f3-border);color:var(--f3-text);">
+              <!-- Se llena dinámicamente con MATRIZ y Sucursales del sistema -->
+            </select>
+          </div>
+          <div id="pa-f3-op-motivo-wrap">
+            <label style="display:block;font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:4px;">Tipo de Documento / Folio *</label>
+            <select id="pa-f3-op-motivo" class="pa-select" style="width:100%;background:var(--f3-input-bg);border-color:var(--f3-border);color:var(--f3-text);"></select>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+          <div>
+            <label id="pa-f3-op-qty-label" style="display:block;font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:4px;">Cantidad *</label>
+            <input type="number" id="pa-f3-op-qty" class="pa-input" value="1" min="0" step="1" style="width:100%;background:var(--f3-input-bg);border-color:var(--f3-border);color:var(--f3-text);font-weight:800;">
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:4px;">Costo / Precio Unit. ($)</label>
+            <input type="number" id="pa-f3-op-costo" class="pa-input" value="100.00" min="0" step="0.01" style="width:100%;background:var(--f3-input-bg);border-color:var(--f3-border);color:var(--f3-text);">
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:4px;">Folio del Documento *</label>
+            <input type="text" id="pa-f3-op-folio" class="pa-input pa-uppercase" placeholder="FAC-001 / NV-001" style="width:100%;background:var(--f3-input-bg);border-color:var(--f3-border);color:#0284c7;font-family:monospace;font-weight:700;">
+          </div>
+        </div>
+
+        <div>
+          <label id="pa-f3-op-obs-label" style="display:block;font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:4px;">Cliente / Proveedor / Referencia *</label>
+          <input type="text" id="pa-f3-op-obs" class="pa-input pa-uppercase" placeholder="Ej. Cliente Mostrador, Factura A-104, Devolución sobre NV-5520..." style="width:100%;background:var(--f3-input-bg);border-color:var(--f3-border);color:var(--f3-text);">
+        </div>
+
+        <div id="pa-f3-op-preview" style="padding:9px 12px;border-radius:8px;background:var(--f3-card-bg);border:1px solid var(--f3-border);font-size:11.5px;color:var(--f3-muted);"></div>
+      </div>
+      <div style="padding:12px 18px;background:var(--f3-card-bg);border-top:1px solid var(--f3-border);display:flex;justify-content:flex-end;gap:10px;">
+        <button type="button" id="pa-f3-op-cancel" class="pa-btn pa-btn-cancel" style="height:34px;padding:0 14px;font-size:12px;">Cancelar</button>
+        <button type="button" id="pa-f3-op-confirm" class="pa-btn pa-btn-save" style="height:34px;padding:0 16px;font-size:12px;">
+          <i class="fa-solid fa-check"></i> Registrar en Kardex
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal Vista Rápida de Folio / Documento de Kardex F3 ── -->
+  <div id="pa-f3-doc-modal" style="display:none;position:fixed;inset:0;z-index:10046;background:rgba(2,6,23,.76);backdrop-filter:blur(5px);align-items:center;justify-content:center;">
+    <div style="width:520px;max-width:95vw;background:var(--f3-bg);border:1.5px solid #38bdf8;border-radius:15px;box-shadow:0 22px 55px rgba(0,0,0,.45);color:var(--f3-text);overflow:hidden;">
+      <div style="padding:14px 18px;background:rgba(2,132,199,.18);border-bottom:1px solid #1d2a45;display:flex;align-items:center;justify-content:space-between;">
+        <h3 id="pa-f3-doc-modal-title" style="margin:0;font-size:14.5px;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;">
+          <i class="fa-solid fa-file-invoice"></i> Detalle del Folio
+        </h3>
+        <button type="button" id="pa-f3-doc-modal-close" style="background:none;border:none;color:#9ca3af;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="pa-f3-doc-modal-body" style="padding:16px 18px;font-size:12.5px;line-height:1.6;"></div>
+      <div style="padding:12px 18px;background:var(--f3-card-bg);border-top:1px solid var(--f3-border);display:flex;justify-content:flex-end;">
+        <button type="button" id="pa-f3-doc-modal-ok" class="pa-btn pa-btn-save" style="height:34px;padding:0 16px;font-size:12px;">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 4. PANEL EXCLUSIVO PESTAÑA CATÁLOGOS (F5): SOLO FAMILIAS Y DEPARTAMENTOS ── -->
+  <div id="pa-tab-panel-catalogos" style="display:none;margin-top:6px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px;padding:10px 14px;border-radius:10px;background:var(--bg-card,#0f172a);border:1px solid var(--border,#1e293b);">
+      <div style="font-size:12.5px;color:var(--text-secondary,#94a3b8);display:flex;align-items:center;gap:8px;">
+        <i class="fa-solid fa-layer-group" style="color:#06b6d4;"></i>
+        <span>Gestión exclusiva de <b>Familias y Departamentos</b>. Los datos capturados en el producto permanecen intactos al cambiar de pestaña.</span>
+      </div>
+      <button type="button" class="pa-btn pa-btn-cancel" id="pa-btn-back-general-f1" style="height:32px;padding:0 12px;font-size:12px;">
+        <i class="fa-solid fa-file-lines"></i> Volver a Información General <span class="pa-kbd">F1</span>
+      </button>
+    </div>
+    <div id="pa-catalogos-f5-mount"></div>
+  </div>
+
+  <!-- ── Mini Modal Alta Rápida Inline (+ Familia / + Departamento) ── -->
+  <div id="pa-quick-cat-modal" style="display:none;position:fixed;inset:0;z-index:10020;background:rgba(2,6,23,.68);backdrop-filter:blur(3px);align-items:center;justify-content:center;">
+    <div style="width:420px;max-width:94vw;background:var(--bg-card,#0f172a);border:1px solid #06b6d4;border-radius:14px;box-shadow:0 16px 40px rgba(0,0,0,.55);padding:18px 20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <h3 id="pa-quick-cat-title" style="margin:0;font-size:14px;font-weight:800;color:var(--text-primary,#f8fafc);display:flex;align-items:center;gap:8px;">
+          <i class="fa-solid fa-plus-circle" style="color:#06b6d4;"></i> Alta Rápida
+        </h3>
+        <button type="button" id="pa-quick-cat-close" style="background:none;border:none;color:var(--text-muted,#94a3b8);cursor:pointer;font-size:15px;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="pa-quick-cat-sub" style="font-size:12px;color:var(--text-secondary,#94a3b8);margin-bottom:10px;"></div>
+      <input type="text" id="pa-quick-cat-inp" class="pa-input pa-uppercase" placeholder="Escribe el nombre..." style="width:100%;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <button type="button" id="pa-quick-cat-goto-f5" class="pa-btn pa-btn-cancel" style="font-size:11.5px;height:34px;padding:0 10px;">
+          <i class="fa-solid fa-book-open"></i> Abrir Catálogos (F5)
+        </button>
+        <div style="display:flex;gap:8px;">
+          <button type="button" id="pa-quick-cat-cancel" class="pa-btn pa-btn-cancel" style="height:34px;padding:0 12px;font-size:12px;">Cancelar</button>
+          <button type="button" id="pa-quick-cat-save" class="pa-btn pa-btn-save" style="height:34px;padding:0 14px;font-size:12px;">
+            <i class="fa-solid fa-check"></i> Guardar y Seleccionar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal Buscador Inteligente de Catálogo Oficial del SAT (c_ClaveProdServ y c_ClaveUnidad) ── -->
+  <div id="pa-sat-modal" style="display:none;position:fixed;inset:0;z-index:10030;background:rgba(2,6,23,.74);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+    <div style="width:780px;max-width:96vw;max-height:88vh;display:flex;flex-direction:column;background:#0b172a;border:1.5px solid #06b6d4;border-radius:16px;box-shadow:0 20px 55px rgba(0,0,0,.65);overflow:hidden;color:#f8fafc;">
+      <!-- Cabecera -->
+      <div style="padding:14px 20px;background:linear-gradient(90deg,rgba(6,182,212,.16),rgba(37,99,235,.06));border-bottom:1px solid rgba(6,182,212,.3);display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:38px;height:38px;border-radius:10px;background:rgba(6,182,212,.2);border:1px solid rgba(6,182,212,.45);display:flex;align-items:center;justify-content:center;color:#38bdf8;font-size:17px;">
+            <i class="fa-solid fa-magnifying-glass-dollar"></i>
+          </div>
+          <div>
+            <h3 id="pa-sat-modal-title" style="margin:0;font-size:15px;font-weight:800;color:#ffffff;letter-spacing:.3px;">
+              BUSCADOR DE CLAVES SAT — PRODUCTOS Y SERVICIOS (CFDI 4.0)
+            </h3>
+            <div style="font-size:11.5px;color:#94a3b8;margin-top:2px;">
+              Escribe el nombre del producto (ej. <b style="color:#38bdf8;">MARTILLO</b>, <b style="color:#38bdf8;">VARILLA</b>, <b style="color:#38bdf8;">CEMENTO</b>) o código y haz clic para asignarlo.
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button type="button" id="pa-sat-tab-prod" style="height:30px;padding:0 12px;border-radius:7px;border:1px solid #06b6d4;background:#0284c7;color:#fff;font-size:11.5px;font-weight:700;cursor:pointer;">
+            <i class="fa-solid fa-tag"></i> SAT ID (Producto)
+          </button>
+          <button type="button" id="pa-sat-tab-unit" style="height:30px;padding:0 12px;border-radius:7px;border:1px solid #334155;background:#0f172a;color:#94a3b8;font-size:11.5px;font-weight:700;cursor:pointer;">
+            <i class="fa-solid fa-cube"></i> SAT Unidad
+          </button>
+          <button type="button" id="pa-sat-modal-close" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:18px;padding:4px 6px;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      </div>
+
+      <!-- Barra de búsqueda en tiempo real + chips rápidos -->
+      <div style="padding:12px 20px;border-bottom:1px solid #1e293b;background:#060f1e;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="position:relative;flex:1;">
+            <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#38bdf8;font-size:13px;"></i>
+            <input type="text" id="pa-sat-modal-search-inp" class="pa-input pa-uppercase" placeholder="BUSCAR EJ: AGUA PURIFICADA EMBOTELLADA, MARTILLO, VARILLA, CEMENTO, TABLAROCA..." style="width:100%;height:38px;padding:0 14px 0 36px;font-size:13.5px;font-weight:700;background:#0f172a;border:1.5px solid #06b6d4;color:#ffffff;border-radius:9px;">
+          </div>
+          <button type="button" id="pa-sat-btn-from-desc" title="IA Clasificadora: Analizar Descripción, Familia y Departamento del producto" style="height:38px;padding:0 12px;border-radius:9px;border:1px solid rgba(56,189,248,.4);background:rgba(2,132,199,.18);color:#38bdf8;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap;">
+            ✨ Sugerir con IA
+          </button>
+        </div>
+        <div id="pa-sat-quick-chips" style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:9px;">
+          <span style="font-size:10.5px;font-weight:700;color:#64748b;margin-right:2px;">Rápidos:</span>
+          <button type="button" class="pa-sat-qchip" data-q="AGUA PURIFICADA EMBOTELLADA">💧 AGUA EMBOTELLADA</button>
+          <button type="button" class="pa-sat-qchip" data-q="MARTILLO">🔨 MARTILLO</button>
+          <button type="button" class="pa-sat-qchip" data-q="VARILLA">🏗️ VARILLA</button>
+          <button type="button" class="pa-sat-qchip" data-q="CEMENTO">🧱 CEMENTO</button>
+          <button type="button" class="pa-sat-qchip" data-q="TABLAROCA">🪧 TABLAROCA</button>
+          <button type="button" class="pa-sat-qchip" data-q="TALADRO">🛠️ TALADRO</button>
+          <button type="button" class="pa-sat-qchip" data-q="DESARMADOR">🪛 DESARMADOR</button>
+          <button type="button" class="pa-sat-qchip" data-q="PINTURA">🎨 PINTURA</button>
+          <button type="button" class="pa-sat-qchip" data-q="TUBO">🚰 TUBO / PVC</button>
+          <button type="button" class="pa-sat-qchip" data-q="CABLE">⚡ CABLE</button>
+          <button type="button" class="pa-sat-qchip" data-q="TORNILLO">🔩 TORNILLO / PIJA</button>
+          <button type="button" class="pa-sat-qchip" data-q="01010101">📋 GENÉRICO (01010101)</button>
+        </div>
+      </div>
+
+      <!-- Resultados -->
+      <div id="pa-sat-modal-results" style="flex:1;overflow-y:auto;padding:8px 14px;min-height:240px;max-height:360px;"></div>
+
+      <!-- Pie: Alta rápida de nueva clave SAT al catálogo -->
+      <div style="padding:10px 20px;background:#060f1e;border-top:1px solid #1e293b;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:280px;">
+          <span style="font-size:11px;font-weight:700;color:#94a3b8;white-space:nowrap;">+ Agregar clave al catálogo:</span>
+          <input type="text" id="pa-sat-custom-code" class="pa-input pa-uppercase" placeholder="Código (ej. 27111609)" style="width:130px;height:30px;font-size:11.5px;padding:0 8px;background:#0f172a;color:#38bdf8;border:1px solid #334155;">
+          <input type="text" id="pa-sat-custom-label" class="pa-input pa-uppercase" placeholder="Descripción del producto SAT..." style="flex:1;height:30px;font-size:11.5px;padding:0 8px;background:#0f172a;color:#f8fafc;border:1px solid #334155;">
+          <button type="button" id="pa-sat-custom-add-btn" style="height:30px;padding:0 11px;border-radius:7px;border:1px solid #06b6d4;background:#0284c7;color:#fff;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">
+            <i class="fa-solid fa-plus"></i> Guardar y Usar
+          </button>
+        </div>
+        <span id="pa-sat-modal-count" style="font-size:11px;color:#64748b;font-weight:600;"></span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── ESTILOS ESPECÍFICOS DE LA PANTALLA ── -->
+<style>
+  .prod-alta-view {
+    padding: 16px 20px 40px;
+    max-width: none;   /* aprovecha todo el ancho disponible (antes tope de 1560px) */
+    width: 100%;
+    margin: 0;
+    color: #1e293b;
+    background: #ecf1f7;
+    border-radius: 12px;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  [data-theme="dark"] .prod-alta-view {
+    background: transparent;
+  }
+  .pa-sat-qchip {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid #334155;
+    color: #cbd5e1;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.14s;
+  }
+  .pa-sat-qchip:hover {
+    border-color: #06b6d4;
+    color: #38bdf8;
+    background: rgba(6, 182, 212, 0.15);
+  }
+  .pa-sat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 11px;
+    border-bottom: 1px solid rgba(51, 65, 85, 0.45);
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .pa-sat-row:hover, .pa-sat-row.active-row {
+    background: rgba(6, 182, 212, 0.16);
+  }
+
+  /* ── Header ── */
+  .pa-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .pa-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .pa-btn-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #334155;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    transition: all 0.2s ease;
+  }
+  .pa-btn-icon:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+  }
+  .pa-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+    line-height: 1.2;
+  }
+  .pa-subtitle {
+    font-size: 12px;
+    color: #64748b;
+    margin: 2px 0 0;
+  }
+  .pa-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .pa-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
+  .pa-btn-cancel {
+    background: #ffffff;
+    border-color: #cbd5e1;
+    color: #475569;
+  }
+  .pa-btn-cancel:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    color: #0f172a;
+  }
+  .pa-btn-save {
+    background: #0284c7;
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(2, 132, 199, 0.35);
+  }
+  .pa-btn-save:hover {
+    background: #0369a1;
+  }
+  .pa-kbd {
+    background: rgba(255, 255, 255, 0.25);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Tabs ── */
+  .pa-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+  .pa-tab {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+  .pa-tab:hover {
+    color: #0284c7;
+    border-color: #bae6fd;
+    background: #f0f9ff;
+  }
+  .pa-tab.active {
+    background: #0284c7;
+    color: #ffffff;
+    border-color: #0284c7;
+    box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+  }
+
+  /* ── Layout Grid ── */
+  .pa-grid-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 330px;
+    gap: 16px;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .pa-grid-container {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .pa-col-main {
+    min-width: 0;
+  }
+
+  .pa-col-sidebar {
+    width: 330px;
+    min-width: 310px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  @media (max-width: 900px) {
+    .pa-col-sidebar {
+      width: 100%;
+      min-width: 0;
+    }
+  }
+
+  /* ── Cards Generales ── */
+  .pa-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    margin-bottom: 14px;
+  }
+  .pa-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pa-card-title i {
+    color: #0284c7;
+  }
+
+  /* ── Filas y Campos ── */
+  .pa-row {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .pa-row:last-child {
+    margin-bottom: 0;
+  }
+  .pa-row-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pa-row-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .pa-row-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  @media (max-width: 900px) {
+    .pa-row-3, .pa-row-4 { grid-template-columns: 1fr; }
+  }
+
+  .pa-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+  .pa-field-full {
+    width: 100%;
+  }
+  .pa-field-desc-col {
+    grid-column: span 3;
+  }
+  @media (max-width: 900px) {
+    .pa-field-desc-col {
+      grid-column: span 1;
+    }
+  }
+  .pa-label-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 0; min-height: 0; }
+  .pa-quick-add-btn { width: 20px; height: 20px; border-radius: 6px; border: 1px solid rgba(6, 182, 212, .45); background: rgba(6, 182, 212, .14); color: #06b6d4; font-size: 10px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all .15s; padding: 0; }
+  .pa-quick-add-btn:hover { background: #06b6d4; color: #fff; transform: scale(1.06); }
+  .pa-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .pa-req {
+    color: #ef4444;
+  }
+
+  .pa-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .pa-field-icon {
+    position: absolute;
+    left: 10px;
+    color: #0284c7;
+    font-size: 13px;
+    pointer-events: none;
+  }
+  .pa-input, .pa-select, .pa-textarea {
+    width: 100%;
+    padding: 8px 10px 8px 32px;
+    font-size: 13px;
+    color: #0f172a;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-family: inherit;
+  }
+  .pa-input:focus, .pa-select:focus, .pa-textarea:focus {
+    outline: none;
+    border-color: #0284c7;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+  }
+  .pa-select {
+    cursor: pointer;
+  }
+  .pa-uppercase {
+    text-transform: uppercase;
+  }
+
+  /* ── 3 Column Cards ── */
+  .pa-row-cards-3 {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 1100px) {
+    .pa-row-cards-3 { grid-template-columns: 1fr; }
+  }
+
+  /* ── Price Highlight Box ── */
+  .pa-price-highlight-box {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+    margin: 10px 0;
+  }
+  .pa-price-hero-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #047857;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+  .pa-price-hero-value {
+    font-size: 26px;
+    font-weight: 800;
+    color: #065f46;
+    letter-spacing: -0.5px;
+  }
+
+  .pa-price-detail-formula {
+    font-size: 10.5px;
+    color: #065f46;
+    margin-top: 4px;
+    font-weight: 600;
+  }
+
+  .pa-usd-toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 6px;
+    border-top: 1px solid #f1f5f9;
+  }
+  .pa-usd-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .pa-usd-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #1e293b;
+  }
+  .pa-usd-sub {
+    font-size: 10px;
+    color: #64748b;
+  }
+  .pa-usd-rate-badge {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+  }
+  .pa-usd-rate-badge:hover, .pa-usd-rate-badge:focus-within {
+    border-color: #0284c7;
+    background: #ffffff;
+  }
+  .pa-tc-input {
+    width: 52px;
+    border: none;
+    background: transparent;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #0f172a;
+    text-align: right;
+    padding: 1px 2px;
+    outline: none;
+  }
+  .pa-tc-input:focus {
+    background: #ffffff;
+    border-radius: 3px;
+  }
+
+  /* ── Estilos de Modo USD Activo (Contorno Verde Claro) ── */
+  .pa-card.pa-usd-mode-active {
+    border: 2px solid #86efac !important;
+    box-shadow: 0 0 0 4px rgba(134, 239, 172, 0.35), 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+    background: #f0fdf4 !important;
+    transition: all 0.25s ease;
+  }
+  .pa-card.pa-usd-mode-active .pa-card-title {
+    color: #166534;
+  }
+  .pa-card.pa-usd-mode-active .pa-usd-rate-badge {
+    border-color: #86efac;
+    background: #ffffff;
+  }
+  .pa-usd-mode-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #16a34a;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+    letter-spacing: 0.5px;
+    margin-left: auto;
+  }
+  .pa-input-with-symbol {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .pa-input-with-symbol .pa-input {
+    padding-right: 24px;
+  }
+  .pa-input-symbol {
+    position: absolute;
+    right: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    pointer-events: none;
+  }
+
+  /* ── Alineación perfecta de Costo, Flete y Margen ── */
+  .pa-costos-inputs-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    align-items: end;
+    margin-bottom: 8px;
+  }
+  .pa-costos-inputs-row .pa-field {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-width: 0;
+  }
+  .pa-costos-inputs-row .pa-label {
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.3px;
+  }
+  .pa-costos-inputs-row .pa-input-with-symbol {
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .pa-costos-inputs-row .pa-input-with-symbol .pa-input {
+    width: 100%;
+    height: 38px;
+    text-align: center;
+    padding-left: 8px;
+    padding-right: 22px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .pa-costo-helper {
+    margin-top: 4px;
+    font-size: 11px;
+    color: #15803d;
+    background: #dcfce7;
+    padding: 3px 6px;
+    border-radius: 4px;
+    border: 1px solid #bbf7d0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* ── Photo Box ── */
+  .pa-photo-preview-wrap {
+    width: 100%;
+    height: 125px;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .pa-photo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .pa-photo-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: #94a3b8;
+    font-size: 11px;
+  }
+  .pa-ph-icon {
+    font-size: 28px;
+    color: #cbd5e1;
+  }
+  .pa-photo-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .pa-btn-photo-action {
+    width: 100%;
+    padding: 7px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid #0284c7;
+    background: #f0f9ff;
+    color: #0284c7;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+  }
+  .pa-btn-photo-action:hover {
+    background: #0284c7;
+    color: #ffffff;
+  }
+  .pa-btn-photo-sub {
+    width: 100%;
+    padding: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #475569;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .pa-btn-photo-sub:hover {
+    background: #f8fafc;
+  }
+
+  /* ── Checkboxes Grid ── */
+  .pa-checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding-top: 4px;
+  }
+  .pa-chk-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #334155;
+    cursor: pointer;
+  }
+
+  /* ── Bottom Row ── */
+  .pa-row-bottom {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 900px) {
+    .pa-row-bottom { grid-template-columns: 1fr; }
+  }
+  .pa-card-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .pa-btn-sm-primary {
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    background: #0284c7;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .pa-table-wrap {
+    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+  }
+  .pa-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .pa-table th {
+    background: #f8fafc;
+    padding: 6px 10px;
+    text-align: left;
+    font-weight: 700;
+    color: #475569;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 11px;
+    text-transform: uppercase;
+  }
+  .pa-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .pa-td-empty {
+    text-align: center;
+    color: #94a3b8;
+    padding: 24px !important;
+  }
+  .pa-textarea {
+    resize: vertical;
+    min-height: 80px;
+    padding: 10px;
+  }
+  .pa-char-counter {
+    font-size: 11px;
+    color: #94a3b8;
+  }
+
+  /* ── Right Sidebar: Atributos y Configuración ── */
+  .pa-sidebar-card {
+    padding: 14px;
+    position: static;
+    margin-bottom: 14px;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  .pa-sidebar-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pa-sidebar-title i {
+    color: #0284c7;
+  }
+  .pa-status-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin: 8px 0;
+  }
+  .pa-status-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #1e293b;
+  }
+  .pa-status-toggle-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .pa-status-text {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #059669;
+  }
+
+  /* ── Toggle Switch (iOS style) ── */
+  .pa-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 20px;
+  }
+  .pa-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .pa-slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: #cbd5e1;
+    transition: .3s;
+    border-radius: 20px;
+  }
+  .pa-slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+  }
+  input:checked + .pa-slider {
+    background-color: #10b981;
+  }
+  input:checked + .pa-slider:before {
+    transform: translateX(16px);
+  }
+
+  /* ── Checkboxes Group & Lists ── */
+  .pa-chk-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .pa-chk-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #334155;
+    cursor: pointer;
+    line-height: 1.25;
+    user-select: none;
+  }
+  .pa-chk-label input[type="checkbox"] {
+    margin-top: 0;
+    accent-color: #0284c7;
+    width: 13.5px;
+    height: 13.5px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .pa-chk-kardex-main {
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    font-size: 11.5px !important;
+    margin-bottom: 6px !important;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed #cbd5e1;
+  }
+  .pa-chk-kardex-main input[type="checkbox"] {
+    width: 14.5px;
+    height: 14.5px;
+  }
+  .pa-divider {
+    height: 1px;
+    background: #e2e8f0;
+    margin: 8px 0;
+  }
+  .pa-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 5px 0;
+  }
+  .pa-chk-scroll-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4.5px;
+    max-height: none !important;
+    overflow: visible !important;
+    padding-right: 0;
+  }
+
+  .pa-hidden {
+    display: none !important;
+  }
+
+  /* ── Precio y Historial de Precios ── */
+  .pa-price-history-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px;
+    margin-top: 14px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  .pa-price-history-card * {
+    font-family: inherit;
+  }
+  .pa-price-history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 12px;
+  }
+  .pa-price-history-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: inherit;
+  }
+  .pa-price-history-title i {
+    color: #0284c7;
+    font-size: 14px;
+  }
+  .pa-btn-collapse {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+  .pa-btn-collapse:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+  .pa-price-history-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .pa-history-stat-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 7px 9px;
+  }
+  .pa-stat-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: #e0f2fe;
+    color: #0284c7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .pa-stat-data {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .pa-stat-sub {
+    font-size: 11px;
+    font-weight: 500;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.25;
+    font-family: inherit;
+  }
+  .pa-stat-val {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #0f172a;
+    white-space: nowrap;
+    line-height: 1.25;
+    font-family: inherit;
+  }
+  .pa-history-table-section {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 10px;
+  }
+  .pa-history-subtitle {
+    font-size: 11px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 8px;
+    text-transform: none;
+    letter-spacing: normal;
+    font-family: inherit;
+  }
+  .pa-history-table-wrap {
+    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+  }
+  .pa-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    font-family: inherit;
+  }
+  .pa-history-table th {
+    background: #f8fafc;
+    padding: 6px 8px;
+    text-align: left;
+    font-weight: 700;
+    color: #475569;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 11px;
+    text-transform: none;
+    font-family: inherit;
+  }
+  .pa-history-table th i {
+    color: #0284c7;
+    margin-right: 4px;
+    font-size: 11px;
+  }
+  .pa-history-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+    white-space: nowrap;
+    font-size: 11px;
+    line-height: 1.25;
+    font-family: inherit;
+  }
+  .pa-history-table td i {
+    color: #0284c7;
+    margin-right: 4px;
+    font-size: 11px;
+  }
+  .pa-td-price {
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 11px;
+    font-family: inherit;
+  }
+  .pa-td-user {
+    font-weight: 500;
+    color: #475569;
+    font-size: 11px;
+    font-family: inherit;
+  }
+
+  /* ── Barra Inferior Informativa ── */
+  .pa-bottom-info-strip {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+    padding: 10px 16px;
+    margin-top: 20px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #475569;
+  }
+  .pa-bottom-strip-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .pa-strip-dot {
+    width: 7px;
+    height: 7px;
+    background: #0284c7;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .pa-bottom-strip-item strong {
+    color: #0284c7;
+    font-weight: 700;
+  }
+  .pa-bottom-strip-sep {
+    color: #cbd5e1;
+    user-select: none;
+  }
+
+  /* ── Validación de Asterisco Rojo (*): Error en Input ── */
+  .pa-input-error {
+    border: 2px solid #ef4444 !important;
+    background-color: rgba(239, 68, 68, 0.06) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25) !important;
+    animation: paShake 0.3s ease-in-out;
+  }
+  @keyframes paShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-4px); }
+    40%, 80% { transform: translateX(4px); }
+  }
+
+  /* =========================================================================
+     MODO OSCURO (DARK MODE) — MATCHING REFERENCIA CALEBSYS (media_1791401753782.png)
+     ========================================================================= */
+  [data-theme="dark"] .prod-alta-view {
+    color: #f1f5f9;
+  }
+  [data-theme="dark"] .pa-header {
+    border-bottom-color: rgba(56, 189, 248, 0.15);
+  }
+  [data-theme="dark"] .pa-title {
+    color: #ffffff;
+  }
+  [data-theme="dark"] .pa-subtitle {
+    color: #94a3b8;
+  }
+  [data-theme="dark"] .pa-btn-icon {
+    background: #0b172a;
+    border-color: rgba(56, 189, 248, 0.25);
+    color: #38bdf8;
+  }
+  [data-theme="dark"] .pa-btn-icon:hover {
+    background: #112340;
+    border-color: #38bdf8;
+  }
+  [data-theme="dark"] .pa-btn-cancel {
+    background: #0b172a;
+    border-color: rgba(56, 189, 248, 0.25);
+    color: #cbd5e1;
+  }
+  [data-theme="dark"] .pa-btn-cancel:hover {
+    background: #112340;
+    color: #ffffff;
+    border-color: #38bdf8;
+  }
+  [data-theme="dark"] .pa-btn-save {
+    background: #0284c7;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(2, 132, 199, 0.4);
+  }
+  [data-theme="dark"] .pa-btn-save:hover {
+    background: #0369a1;
+  }
+  [data-theme="dark"] .pa-tab {
+    background: #0b172a;
+    border-color: rgba(56, 189, 248, 0.18);
+    color: #94a3b8;
+  }
+  [data-theme="dark"] .pa-tab:hover {
+    background: #112340;
+    color: #38bdf8;
+    border-color: rgba(56, 189, 248, 0.4);
+  }
+  [data-theme="dark"] .pa-tab.active {
+    background: #0284c7;
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(2, 132, 199, 0.35);
+  }
+  [data-theme="dark"] .pa-card,
+  [data-theme="dark"] .pa-sidebar-card,
+  [data-theme="dark"] .pa-price-history-card {
+    background: #0b172a;
+    border-color: rgba(56, 189, 248, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  }
+  [data-theme="dark"] .pa-card-title,
+  [data-theme="dark"] .pa-sidebar-title,
+  [data-theme="dark"] .pa-price-history-title {
+    color: #ffffff;
+  }
+  [data-theme="dark"] .pa-card-title i,
+  [data-theme="dark"] .pa-sidebar-title i,
+  [data-theme="dark"] .pa-price-history-title i {
+    color: #38bdf8;
+  }
+  [data-theme="dark"] .pa-label {
+    color: #94a3b8;
+  }
+  [data-theme="dark"] .pa-section-title {
+    color: #cbd5e1;
+  }
+  [data-theme="dark"] .pa-req {
+    color: #f87171;
+  }
+  [data-theme="dark"] .pa-field-icon {
+    color: #38bdf8;
+  }
+  [data-theme="dark"] .pa-input,
+  [data-theme="dark"] .pa-select,
+  [data-theme="dark"] .pa-textarea {
+    background: #060f1e;
+    border-color: #1a365d;
+    color: #f8fafc;
+  }
+  [data-theme="dark"] .pa-input:focus,
+  [data-theme="dark"] .pa-select:focus,
+  [data-theme="dark"] .pa-textarea:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+  }
+  [data-theme="dark"] .pa-input-symbol {
+    color: #38bdf8;
+  }
+  [data-theme="dark"] .pa-price-highlight-box {
+    background: #07152b;
+    border-color: rgba(56, 189, 248, 0.35);
+  }
+  [data-theme="dark"] .pa-price-hero-label {
+    color: #38bdf8;
+  }
+  [data-theme="dark"] .pa-price-hero-value {
+    color: #ffffff;
+  }
+  [data-theme="dark"] .pa-price-detail-formula {
+    color: #94a3b8;
+  }
+  [data-theme="dark"] .pa-usd-toggle-row {
+    border-top-color: #1a365d;
+  }
+  [data-theme="dark"] .pa-usd-title {
+    color: #ffffff;
+  }
+  [data-theme="dark"] .pa-usd-sub {
+    color: #94a3b8;
+  }
+  [data-theme="dark"] .pa-usd-rate-badge {
+    background: #060f1e;
+    border-color: #1a365d;
+    color: #38bdf8;
+  }
+  [data-theme="dark"] .pa-usd-rate-badge:hover,
+  [data-theme="dark"] .pa-usd-rate-badge:focus-within {
+    border-color: #38bdf8;
+    background: #09172e;
+  }
+  [data-theme="dark"] .pa-tc-input {
+    color: #38bdf8;
+  }
+  [data-theme="dark"] .pa-tc-input:focus {
+    background: #09172e;
+  }
+  [data-theme="dark"] .pa-costo-helper {
+    color: #34d399;
+    background: #06201a;
+    border-color: #064e3b;
+  }
+  [data-theme="dark"] .pa-card.pa-usd-mode-active {
+    border-color: #34d399 !important;
+    background: #041f18 !important;
+    box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.25), 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+  }
+  [data-theme="dark"] .pa-card.pa-usd-mode-active .pa-card-title {
+    color: #86efac;
+  }
+  [data-theme="dark"] .pa-photo-preview-wrap {
+    background: #060f1e;
+    border-color: #1a365d;
+  }
+  [data-theme="dark"] .pa-photo-placeholder {
+    color: #64748b;
+  }
+  [data-theme="dark"] .pa-ph-icon {
+    color: #1a365d;
+  }
+  [data-theme="dark"] .pa-btn-photo-action {
+    background: #0284c7;
+    color: #ffffff;
+    border-color: #0284c7;
+  }
+  [data-theme="dark"] .pa-btn-photo-action:hover {
+    background: #0369a1;
+  }
+  [data-theme="dark"] .pa-btn-photo-sub {
+    background: #0b172a;
+    border-color: #1a365d;
+    color: #cbd5e1;
+  }
+  [data-theme="dark"] .pa-btn-photo-sub:hover {
+    background: #112340;
+    color: #ffffff;
+  }
+  [data-theme="dark"] .pa-table-wrap {
+    border-color: #1a365d;
+  }
+  [data-theme="dark"] .pa-table th {
+    background: #060f1e;
+    color: #94a3b8;
+    border-bottom-color: #1a365d;
+  }
+  [data-theme="dark"] .pa-table td {
+    border-bottom-color: #0f2038;
+    color: #f1f5f9;
+  }
+  [data-theme="dark"] .pa-td-empty {
+    color: #64748b;
+  }
+  [data-theme="dark"] .pa-status-box {
+    background: #060f1e;
+    border-color: #1a365d;
+  }
+  [data-theme="dark"] .pa-status-label {
+    color: #cbd5e1;
+  }
+  [data-theme="dark"] .pa-chk-label,
+  [data-theme="dark"] .pa-chk-item {
+    color: #cbd5e1;
+  }
+  [data-theme="dark"] .pa-chk-label input[type="checkbox"],
+  [data-theme="dark"] .pa-chk-item input[type="checkbox"] {
+    accent-color: #38bdf8;
+  }
+  [data-theme="dark"] .pa-divider {
+    background: rgba(56, 189, 248, 0.15);
+  }
+  [data-theme="dark"] .pa-btn-collapse {
+    color: #38bdf8;
+  }
+  [data-theme="dark"] .pa-btn-collapse:hover {
+    background: #112340;
+    color: #ffffff;
+  }
+  [data-theme="dark"] .pa-history-stat-box {
+    background: #060f1e;
+    border-color: #1a365d;
+  }
+  [data-theme="dark"] .pa-stat-icon {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+  }
+  [data-theme="dark"] .pa-stat-sub {
+    color: #94a3b8;
+  }
+  [data-theme="dark"] .pa-stat-val {
+    color: #ffffff;
+  }
+  [data-theme="dark"] .pa-history-table-section {
+    border-top-color: #1a365d;
+  }
+  [data-theme="dark"] .pa-history-subtitle {
+    color: #94a3b8;
+  }
+  [data-theme="dark"] .pa-history-table-wrap {
+    border-color: #1a365d;
+  }
+  [data-theme="dark"] .pa-history-table th {
+    background: #060f1e;
+    color: #94a3b8;
+    border-bottom-color: #1a365d;
+  }
+  [data-theme="dark"] .pa-history-table th i {
+    color: #38bdf8;
+  }
+  [data-theme="dark"] .pa-history-table td {
+    border-bottom-color: #0f2038;
+    color: #cbd5e1;
+  }
+  [data-theme="dark"] .pa-history-table td i {
+    color: #38bdf8;
+  }
+  [data-theme="dark"] .pa-td-price {
+    color: #ffffff;
+  }
+  [data-theme="dark"] .pa-td-user {
+    color: #cbd5e1;
+  }
+  [data-theme="dark"] .pa-bottom-info-strip {
+    background: #050c18;
+    border-color: #1a365d;
+    color: #94a3b8;
+  }
+  [data-theme="dark"] .pa-bottom-strip-item strong {
+    color: #38bdf8;
+  }
+  [data-theme="dark"] .pa-strip-dot {
+    background: #38bdf8;
+  }
+  [data-theme="dark"] .pa-bottom-strip-sep {
+    color: #1a365d;
+  }
+  [data-theme="dark"] .pa-input-error {
+    border-color: #ef4444 !important;
+    background-color: rgba(239, 68, 68, 0.14) !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.35) !important;
+  }
+</style>
+
+<!-- Modal Cambio de Precio (Flotante) -->
+<style>
+  /* Etiqueta de acceso rápido en las pestañas (F1–F5) */
+  .pa-tab .pa-tab-key {
+    margin-left: 8px; padding: 1px 6px; border-radius: 5px;
+    font-size: 10.5px; font-weight: 700; letter-spacing: .3px;
+    background: rgba(127, 127, 127, 0.22); color: inherit; opacity: .85;
+  }
+
+  /* Fondo: igual que las demás ventanas flotantes del sistema (negro 70% + blur) */
+  #modal-cambio-precio {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 1000;
+    align-items: center; justify-content: center;
+    font-family: 'Inter', system-ui, sans-serif;
+
+    /* ── Tema OSCURO (por defecto) ── */
+    --cp-bg: linear-gradient(180deg, #0a1f3f 0%, #061428 100%);
+    --cp-panel: rgba(8, 28, 58, 0.75);
+    --cp-border: rgba(37, 130, 235, 0.55);
+    --cp-line: rgba(56, 130, 220, 0.30);
+    --cp-text: #f1f5f9;
+    --cp-muted: #8fb4e3;
+    --cp-title: #ffffff;
+    --cp-accent: #38a8ff;
+    --cp-icon-bg: rgba(37, 130, 235, 0.18);
+    --cp-row-hl: linear-gradient(90deg, rgba(23, 105, 210, 0.75) 0%, rgba(23, 105, 210, 0.25) 100%);
+    --cp-thead: rgba(23, 105, 210, 0.14);
+    --cp-input-bg: #04142b;
+    --cp-input-border: rgba(56, 130, 220, 0.6);
+    --cp-btn-bg: rgba(10, 36, 74, 0.8);
+    --cp-kbd-bg: rgba(255, 255, 255, 0.12);
+    --cp-shadow: 0 0 0 1px rgba(37,130,235,.25), 0 0 34px rgba(37,130,235,.35), 0 24px 60px rgba(0,0,0,.6);
+  }
+  /* ── Tema CLARO ── */
+  html[data-theme="light"] #modal-cambio-precio {
+    --cp-bg: #ffffff;
+    --cp-panel: #f8fafc;
+    --cp-border: #93c5fd;
+    --cp-line: #dbe4f0;
+    --cp-text: #0f172a;
+    --cp-muted: #64748b;
+    --cp-title: #0f172a;
+    --cp-accent: #0284c7;
+    --cp-icon-bg: #e0f2fe;
+    --cp-row-hl: linear-gradient(90deg, #bfdbfe 0%, #eff6ff 100%);
+    --cp-thead: #f1f5f9;
+    --cp-input-bg: #ffffff;
+    --cp-input-border: #93c5fd;
+    --cp-btn-bg: #ffffff;
+    --cp-kbd-bg: #e2e8f0;
+    --cp-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);
+  }
+
+  #modal-cambio-precio .cp-modal {
+    background: var(--cp-bg);
+    border: 1px solid var(--cp-border);
+    border-radius: 16px;
+    width: 1380px; max-width: 98vw; max-height: 96vh;
+    display: flex; flex-direction: column;
+    box-shadow: var(--cp-shadow);
+    color: var(--cp-text);
+    overflow: hidden;
+  }
+  #modal-cambio-precio .cp-header {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    padding: 14px 24px 10px; flex: 0 0 auto;
+  }
+  #modal-cambio-precio .cp-title-wrap { display: flex; align-items: center; gap: 12px; min-width: 0; flex-shrink: 0; }
+  #modal-cambio-precio .cp-circle {
+    width: 42px; height: 42px; border-radius: 50%; flex: 0 0 auto;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--cp-icon-bg); border: 1px solid var(--cp-border);
+    color: var(--cp-accent); font-size: 18px;
+  }
+  #modal-cambio-precio .cp-title { margin: 0; font-size: 21px; font-weight: 700; color: var(--cp-title); white-space: nowrap; }
+  #modal-cambio-precio .cp-sub { display: none !important; }
+  #modal-cambio-precio .cp-actions { display: flex; align-items: center; gap: 10px; flex: 0 0 auto; }
+  #modal-cambio-precio .cp-top-btn {
+    display: flex; align-items: center; gap: 9px;
+    background: var(--cp-btn-bg); color: var(--cp-text);
+    border: 1px solid var(--cp-border); border-radius: 10px;
+    padding: 7px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  #modal-cambio-precio .cp-top-btn:hover { border-color: var(--cp-accent); }
+  #modal-cambio-precio .cp-top-btn i { color: var(--cp-accent); font-size: 17px; }
+  #modal-cambio-precio .cp-kbd {
+    background: var(--cp-kbd-bg); border-radius: 5px;
+    padding: 2px 7px; font-size: 11px; font-weight: 700;
+  }
+  #modal-cambio-precio .cp-close {
+    background: transparent; border: none; cursor: pointer;
+    color: var(--cp-muted); font-size: 22px; padding: 4px 6px; margin-left: 4px;
+  }
+  #modal-cambio-precio .cp-close:hover { color: #ef4444; }
+
+  #modal-cambio-precio .cp-body {
+    padding: 4px 24px 12px; overflow-y: auto; min-height: 0; flex: 1 1 auto;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  #modal-cambio-precio .cp-table-box {
+    border: 1px solid var(--cp-line); border-radius: 12px; overflow: visible;
+    background: var(--cp-panel); flex-shrink: 0;
+  }
+  #modal-cambio-precio table { width: 100%; border-collapse: collapse; }
+  #modal-cambio-precio .cp-prices th {
+    background: var(--cp-thead); color: var(--cp-muted);
+    font-size: 11.5px; font-weight: 700; text-transform: uppercase;
+    padding: 10px 14px; text-align: right; white-space: nowrap;
+    border-bottom: 1px solid var(--cp-line);
+  }
+  #modal-cambio-precio .cp-prices th:first-child { text-align: left; }
+  #modal-cambio-precio .cp-prices th i { color: var(--cp-accent); margin-right: 7px; font-size: 14px; }
+  #modal-cambio-precio .cp-prices td {
+    padding: 10px 14px; font-size: 13.5px; text-align: right;
+    border-bottom: 1px solid var(--cp-line); color: var(--cp-text);
+  }
+  #modal-cambio-precio .cp-prices tr:last-child td { border-bottom: none; }
+  #modal-cambio-precio .cp-prices td:first-child { text-align: left; font-weight: 600; letter-spacing: .2px; }
+  #modal-cambio-precio .cp-prices th.cp-c, #modal-cambio-precio .cp-prices td.cp-c { text-align: center; }
+  #modal-cambio-precio .cp-prices tr.cp-hl { background: var(--cp-row-hl); }
+  #modal-cambio-precio .cp-prices tr.cp-hl td { border-bottom-color: var(--cp-border); }
+  #modal-cambio-precio .cp-input {
+    width: 108px; text-align: right; padding: 7px 10px; border-radius: 7px;
+    background: var(--cp-input-bg); color: var(--cp-text);
+    border: 1px solid var(--cp-input-border); font-size: 13.5px; outline: none;
+  }
+  #modal-cambio-precio .cp-input:focus,
+  #modal-cambio-precio .cp-live-inp:focus {
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.45) !important;
+    background: rgba(14, 116, 144, 0.25) !important;
+  }
+
+  #modal-cambio-precio .cp-bottom { display: grid; grid-template-columns: 1.05fr 1fr; gap: 14px; flex-shrink: 0; }
+  #modal-cambio-precio .cp-info {
+    border: 1px solid var(--cp-line); border-radius: 12px; background: var(--cp-panel);
+    display: flex; align-items: center; justify-content: space-around; padding: 18px 16px; gap: 12px;
+  }
+  #modal-cambio-precio .cp-info-item { display: flex; align-items: center; gap: 12px; }
+  #modal-cambio-precio .cp-info-label { font-size: 12px; color: var(--cp-text); font-weight: 600; margin-bottom: 5px; }
+  #modal-cambio-precio .cp-info-date { font-size: 12.5px; color: var(--cp-text); display: flex; align-items: center; gap: 7px; }
+  #modal-cambio-precio .cp-info-date i { color: var(--cp-accent); }
+  #modal-cambio-precio .cp-vsep { width: 1px; align-self: stretch; background: var(--cp-line); }
+
+  #modal-cambio-precio .cp-hist {
+    border: 1px solid var(--cp-line); border-radius: 12px; background: var(--cp-panel); overflow: hidden;
+  }
+  #modal-cambio-precio .cp-hist-title {
+    display: flex; align-items: center; gap: 8px; padding: 8px 14px;
+    font-size: 13px; font-weight: 700; color: var(--cp-accent);
+    border-bottom: 1px solid var(--cp-line);
+  }
+  #modal-cambio-precio .cp-hist th {
+    text-align: left; font-size: 11.5px; font-weight: 600; color: var(--cp-muted);
+    padding: 7px 14px; border-bottom: 1px solid var(--cp-line);
+  }
+  #modal-cambio-precio .cp-hist td { padding: 6px 14px; font-size: 12px; color: var(--cp-text); border-bottom: 1px solid var(--cp-line); }
+  #modal-cambio-precio .cp-hist tr:last-child td { border-bottom: none; }
+  #modal-cambio-precio .cp-hist td i { color: var(--cp-accent); margin-right: 7px; }
+
+  #modal-cambio-precio .cp-footer {
+    display: flex; justify-content: flex-end; gap: 12px;
+    padding: 12px 24px 18px; flex: 0 0 auto;
+  }
+  #modal-cambio-precio .cp-btn-cancel {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--cp-btn-bg); color: var(--cp-text);
+    border: 1px solid var(--cp-border); border-radius: 9px;
+    padding: 9px 22px; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+  #modal-cambio-precio .cp-btn-save {
+    display: flex; align-items: center; gap: 8px;
+    background: #1e7bf2; color: #ffffff; border: 1px solid #4b9bff; border-radius: 9px;
+    padding: 9px 28px; font-size: 14px; font-weight: 700; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(30, 123, 242, 0.45);
+  }
+  #modal-cambio-precio .cp-btn-save:hover { background: #3b8dff; }
+  @media (max-width: 900px) {
+    #modal-cambio-precio .cp-bottom { grid-template-columns: 1fr; }
+    #modal-cambio-precio .cp-header { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+
+<div id="modal-cambio-precio">
+  <div class="cp-modal">
+
+    <div class="cp-header">
+      <div class="cp-title-wrap">
+        <div class="cp-circle"><i class="fa-solid fa-tags"></i></div>
+        <div>
+          <h2 class="cp-title">Cambio de Precio</h2>
+        </div>
+      </div>
+      <div class="cp-actions">
+        <button type="button" class="cp-top-btn"><i class="fa-solid fa-building-flag"></i> MATRIZ</button>
+        <button type="button" class="cp-top-btn"><i class="fa-solid fa-store"></i> Precio Sucursales <span class="cp-kbd">F2</span></button>
+        <button type="button" class="cp-top-btn">🏷️ Ofertas <span class="cp-kbd">F3</span></button>
+        <button type="button" class="cp-close" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+
+    <div class="cp-body">
+      <div class="cp-table-box">
+        <table class="cp-prices">
+          <thead>
+            <tr>
+              <th><i class="fa-solid fa-list-ul"></i>Escala</th>
+              <th><i class="fa-solid fa-tag"></i>Margen<br>Ideal</th>
+              <th><i class="fa-solid fa-briefcase"></i>Margen D/Trabajo</th>
+              <th><i class="fa-solid fa-gear"></i>Oferta</th>
+              <th><i class="fa-solid fa-tag"></i>Precio</th>
+              <th class="cp-c">V</th>
+              <th>Precio<br>Activo</th>
+              <th><i class="fa-solid fa-building"></i>Comisión<br>Venta</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="cp-hl">
+              <td>PRECIO DE LISTA</td><td>0.00 %</td><td>0.00 %</td><td>0.00 %</td>
+              <td><input class="cp-input" type="text" value="0.00"></td>
+              <td class="cp-c">—</td>
+              <td>$0.00</td><td>0.00 %</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="cp-bottom">
+        <div class="cp-info">
+          <div class="cp-info-item">
+            <div class="cp-circle"><i class="fa-solid fa-tags"></i></div>
+            <div>
+              <div class="cp-info-label">Precio activo desde:</div>
+              <div class="cp-info-date"><i class="fa-regular fa-calendar"></i>18/05/2025 17:50</div>
+            </div>
+          </div>
+          <div class="cp-vsep"></div>
+          <div class="cp-info-item">
+            <div class="cp-circle"><i class="fa-solid fa-rotate"></i></div>
+            <div>
+              <div class="cp-info-label">Última actualización del precio:</div>
+              <div class="cp-info-date"><i class="fa-regular fa-calendar"></i>18/05/2025 17:50</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cp-hist">
+          <div class="cp-hist-title"><i class="fa-solid fa-clock-rotate-left"></i> Historial de precios</div>
+          <table>
+            <thead><tr><th>Fecha</th><th>Precio</th><th>Usuario</th></tr></thead>
+            <tbody>
+              <tr><td><i class="fa-regular fa-clock"></i>18/05/2025 17:50</td><td>$69.60</td><td>Antonio M.</td></tr>
+              <tr><td><i class="fa-regular fa-clock"></i>10/05/2025 16:30</td><td>$68.90</td><td>María L.</td></tr>
+              <tr><td><i class="fa-regular fa-clock"></i>02/05/2025 09:15</td><td>$67.50</td><td>Carlos R.</td></tr>
+              <tr><td><i class="fa-regular fa-clock"></i>20/04/2025 14:22</td><td>$65.00</td><td>Antonio M.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="cp-footer">
+      <button type="button" class="cp-btn-cancel"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+      <button type="button" class="cp-btn-save"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- =========================================================================
+     MODAL BUSCADOR DE ARTÍCULOS MULTIMODAL PARA VENTA SUGERIDA (#pa-modal-sugeridos)
+     ========================================================================= -->
+<div id="pa-modal-sugeridos" tabindex="-1" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(15,23,42,0.68);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:18px;outline:none;">
+  <div style="width:940px;max-width:96vw;max-height:88vh;background:#ffffff;border:1.5px solid #cbd5e1;border-radius:16px;box-shadow:0 24px 60px rgba(15,23,42,0.45);display:flex;flex-direction:column;overflow:hidden;">
+
+    <!-- Barra Buscadora Multimodal limpia (sin banner superior ni selectores de Familia/Marca) -->
+    <div style="padding:14px 18px 10px;background:#f8fafc;border-bottom:1px solid #e2e8f0;display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <!-- Buscador principal de ancho completo -->
+        <div style="flex:1;display:flex;align-items:center;gap:8px;background:#ffffff;border:1.5px solid #93c5fd;border-radius:11px;padding:0 8px 0 12px;height:44px;box-shadow:0 2px 6px rgba(37,99,235,0.06);">
+          <i class="fa-solid fa-magnifying-glass" style="color:#2563eb;font-size:14px;"></i>
+          <input type="text" id="pa-modal-sug-search-inp" class="pa-uppercase" autocomplete="off" placeholder="Buscar por SKU, código, descripción, marca, medida (ej. CEMEX 50K)..." style="flex:1;min-width:0;border:none;outline:none;background:transparent;font-size:13px;font-weight:700;color:#0f172a;">
+          <button type="button" id="pa-modal-sug-search-clear" title="Limpiar búsqueda" style="display:none;width:26px;height:26px;border-radius:7px;border:none;background:#e2e8f0;color:#475569;cursor:pointer;align-items:center;justify-content:center;font-size:12px;">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <button type="button" id="pa-modal-sug-search-btn" style="height:32px;padding:0 12px;border-radius:8px;border:1px solid #2563eb;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#ffffff;font-size:11.5px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:5px;">
+            <i class="fa-solid fa-magnifying-glass"></i> Buscar
+          </button>
+        </div>
+        <button type="button" id="pa-modal-sug-close" title="Cerrar (ESC)" style="width:40px;height:44px;border-radius:10px;border:1px solid #cbd5e1;background:#ffffff;color:#475569;cursor:pointer;font-size:15px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Pestañas de filtro rápido: Todo / Con Stock / Sin Stock / Bajo Mínimo + Conteo -->
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;" id="pa-modal-sug-filter-tabs">
+          <button type="button" data-sug-tab="todo" class="pa-sug-tab-btn active" style="padding:4px 12px;border-radius:7px;border:1px solid #2563eb;background:#2563eb;color:#ffffff;font-size:11px;font-weight:800;cursor:pointer;">Todo</button>
+          <button type="button" data-sug-tab="con-stock" class="pa-sug-tab-btn" style="padding:4px 12px;border-radius:7px;border:1px solid #cbd5e1;background:#ffffff;color:#475569;font-size:11px;font-weight:800;cursor:pointer;">Con Stock</button>
+          <button type="button" data-sug-tab="sin-stock" class="pa-sug-tab-btn" style="padding:4px 12px;border-radius:7px;border:1px solid #cbd5e1;background:#ffffff;color:#475569;font-size:11px;font-weight:800;cursor:pointer;">Sin Stock</button>
+          <button type="button" data-sug-tab="bajo-minimo" class="pa-sug-tab-btn" style="padding:4px 12px;border-radius:7px;border:1px solid #cbd5e1;background:#ffffff;color:#475569;font-size:11px;font-weight:800;cursor:pointer;">Bajo Mínimo</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:#475569;font-weight:700;">
+          <span><kbd style="background:#e2e8f0;padding:1px 5px;border-radius:4px;font-family:monospace;font-weight:800;color:#1e3a8a;">↑↓</kbd> Navegar</span>
+          <span><kbd style="background:#e2e8f0;padding:1px 5px;border-radius:4px;font-family:monospace;font-weight:800;color:#1e3a8a;">ESPACIO</kbd> Marcar</span>
+          <span><kbd style="background:#e2e8f0;padding:1px 5px;border-radius:4px;font-family:monospace;font-weight:800;color:#1e3a8a;">ENTER</kbd> Seleccionar</span>
+          <span id="pa-modal-sug-count" style="color:#1d4ed8;font-weight:800;">0 artículos</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de resultados -->
+    <div style="flex:1;min-height:240px;max-height:420px;overflow-y:auto;padding:0;">
+      <table class="pa-table" style="width:100%;border-collapse:collapse;">
+        <thead style="position:sticky;top:0;z-index:2;background:#f1f5f9;border-bottom:1.5px solid #cbd5e1;">
+          <tr>
+            <th style="width:38px;text-align:center;padding:9px 8px;">
+              <input type="checkbox" id="pa-modal-sug-check-all" title="Seleccionar todos los visibles" style="width:15px;height:15px;accent-color:#2563eb;cursor:pointer;">
+            </th>
+            <th style="padding:9px 10px;">SKU / Código</th>
+            <th style="padding:9px 10px;">Descripción</th>
+            <th style="padding:9px 10px;">Marca / Familia</th>
+            <th style="padding:9px 10px;text-align:center;">Unidad</th>
+            <th style="padding:9px 10px;text-align:right;">Precio</th>
+            <th style="padding:9px 10px;text-align:center;">Stock</th>
+            <th style="width:92px;padding:9px 10px;text-align:center;">Acción</th>
+          </tr>
+        </thead>
+        <tbody id="pa-modal-sug-tbody">
+          <tr>
+            <td colspan="8" style="text-align:center;padding:24px;color:#64748b;font-size:12px;">Cargando catálogo de artículos...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Footer -->
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;background:#f8fafc;border-top:1px solid #e2e8f0;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span id="pa-modal-sug-selected-pill" style="font-size:11.5px;font-weight:800;color:#1d4ed8;background:#dbeafe;border:1px solid #93c5fd;padding:3px 10px;border-radius:999px;">0 marcados</span>
+        <span style="font-size:11px;color:#64748b;font-weight:600;">Haz clic en <b>+ Elegir</b> en cualquier fila o marca varios con casilla y pulsa <b>Agregar Seleccionados</b>.</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button type="button" id="pa-modal-sug-cancel" style="height:34px;padding:0 14px;border-radius:8px;border:1px solid #cbd5e1;background:#ffffff;color:#334155;font-size:12px;font-weight:800;cursor:pointer;">
+          Cerrar (ESC)
+        </button>
+        <button type="button" id="pa-modal-sug-add-selected" style="height:34px;padding:0 16px;border-radius:8px;border:1px solid #1d4ed8;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#ffffff;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 3px 10px rgba(37,99,235,0.28);">
+          <i class="fa-solid fa-check-double"></i> Agregar Seleccionados (ENTER)
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

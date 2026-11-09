@@ -1,0 +1,86 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden select-none" id="modal-clients">
+<div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-[650px] max-w-full max-h-[85vh] flex flex-col overflow-hidden font-montserrat font-bold">
+<!-- Modal Header -->
+<div class="bg-slate-50 border-b border-slate-200 px-5 py-4 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<i class="w-5 h-5 text-slate-500" data-lucide="users"></i>
+<h3 class="font-bold text-slate-700 text-sm">Seleccionar Cliente (F1)</h3>
+</div>
+<span class="bg-slate-200 text-slate-600 font-bold text-[9px] px-2 py-0.5 rounded">ESC para salir</span>
+</div>
+<!-- Modal Body -->
+<div class="p-5 flex-1 flex flex-col overflow-hidden font-montserrat font-bold">
+<!-- Tabs for Search vs Add -->
+<div class="flex border-b border-slate-200 mb-4 text-xs font-bold select-none">
+<button class="border-b-2 border-blue-500 text-blue-600 px-4 py-2 -mb-px" id="tab-client-search" onclick="toggleClientTab('search')">Buscar Cliente</button>
+<button class="border-b-2 border-transparent text-slate-400 px-4 py-2 -mb-px hover:text-slate-600" id="tab-client-add" onclick="toggleClientTab('add')">Nuevo Cliente</button>
+</div>
+<!-- SEARCH TAB -->
+<div class="flex-1 flex flex-col overflow-hidden" id="client-search-section">
+<div class="relative mb-4">
+<input class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-base font-semibold focus:bg-white text-slate-800 pl-11 shadow-inner" id="client-search-input" placeholder="Buscar por nombre o RFC..." type="text"/>
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<i class="w-4 h-4 text-slate-400" data-lucide="search"></i>
+</div>
+</div>
+<!-- Results Table -->
+<div class="flex-1 overflow-auto custom-scrollbar border border-slate-200 rounded-2xl">
+<table class="w-full border-collapse text-left text-sm relative">
+<thead class="bg-slate-50 border-b border-slate-200 sticky top-0 z-10">
+<tr>
+<th class="py-2 px-3 font-bold text-slate-400 text-xs uppercase" scope="col">ID</th>
+<th class="py-2 px-3 font-bold text-slate-400 text-xs uppercase" scope="col">Nombre</th>
+<th class="py-2 px-3 font-bold text-slate-400 text-xs uppercase w-36" scope="col">RFC</th>
+<th class="py-2 px-3 font-bold text-slate-400 text-xs uppercase w-28" scope="col">Tipo</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100" id="client-results-body">
+<!-- Dynamically populated -->
+</tbody>
+</table>
+</div>
+</div>
+<!-- ADD CLIENT TAB -->
+<form class="hidden space-y-4 text-xs font-bold" id="client-add-form" onsubmit="submitNewClient(event)">
+<div>
+<label class="block text-xs font-bold text-slate-400 mb-1 uppercase" for="new-client-name">Nombre / Razón Social *</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 text-sm font-semibold text-slate-800" id="new-client-name" placeholder="ej. Juan Pérez o Maderas del Norte" required="" type="text"/>
+</div>
+<div class="grid grid-cols-3 gap-4">
+<div>
+<label class="block text-xs font-bold text-slate-400 mb-1 uppercase" for="new-client-rfc">RFC (Opcional)</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 text-sm font-semibold text-slate-800" id="new-client-rfc" placeholder="ej. XAXX010101000" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-bold text-slate-400 mb-1 uppercase" for="new-client-phone">Teléfono (Opcional)</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 text-sm font-semibold text-slate-800" id="new-client-phone" placeholder="ej. 6121102490" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-bold text-slate-400 mb-1 uppercase" for="new-client-type">Tipo de Cliente</label>
+<select class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3 py-2 text-sm font-semibold text-slate-800 focus:bg-white" id="new-client-type">
+<option value="Público General">Público General</option>
+<option value="Precio Público">Precio Público</option>
+<option value="Contratista">Contratista</option>
+<option value="Distribuidor">Distribuidor</option>
+</select>
+</div>
+</div>
+<div class="pt-2 flex justify-end">
+<button class="bg-[#2563eb] hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-2xl transition text-sm flex items-center gap-1.5 shadow-md shadow-blue-100" type="submit">
+<i class="w-4 h-4" data-lucide="user-plus"></i>
+<span>Registrar y Seleccionar</span>
+</button>
+</div>
+</form>
+</div>
+<!-- Modal Footer -->
+<div class="bg-slate-50 border-t border-slate-200 px-5 py-3 flex items-center justify-between text-xs text-slate-500 font-montserrat font-bold">
+<div id="client-instructions-footer">
+<span>Usa <kbd class="bg-white border px-1 rounded font-bold">↑</kbd> <kbd class="bg-white border px-1 rounded font-bold">↓</kbd> para navegar, <kbd class="bg-white border px-1.5 rounded font-bold">Enter</kbd> para seleccionar</span>
+</div>
+<button class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-2 rounded-xl transition font-montserrat" onclick="closeModal('modal-clients')">
+          Cerrar
+        </button>
+</div>
+</div>
+</div>

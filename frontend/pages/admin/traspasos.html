@@ -1,0 +1,85 @@
+<!-- PAGE: TRASLADOS ENTRE BODEGAS -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Traslados entre Bodegas</h1>
+    <p class="page-subtitle">Movimiento de mercancía con trazabilidad y Kardex automático</p>
+  </div>
+  <div class="page-header-actions">
+    <button class="btn btn-primary btn-sm" data-click="openModalTraslado">
+      <i class="fa-solid fa-arrow-right-arrow-left"></i> Nuevo Traslado
+    </button>
+  </div>
+</div>
+
+<div class="table-wrapper">
+  <div class="table-toolbar">
+    <div class="table-toolbar-title">
+      Historial de Traslados
+      <span class="badge badge-neutral" id="traspasos-count"></span>
+    </div>
+    <div class="table-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Buscar SKU, bodega..." id="traspasos-search">
+    </div>
+  </div>
+  <div id="traspasos-table-body">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <div class="loading-text">Cargando traslados...</div>
+    </div>
+  </div>
+  <div id="traspasos-pagination" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border-color);font-size:13px;color:var(--text-muted);">
+    <span id="traspasos-pag-info">—</span>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-secondary btn-sm" id="traspasos-btn-prev" data-click="traspasosPrev" disabled>
+        <i class="fa-solid fa-chevron-left"></i> Anterior
+      </button>
+      <button class="btn btn-secondary btn-sm" id="traspasos-btn-next" data-click="traspasosNext" disabled>
+        Siguiente <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Nuevo Traslado -->
+<div class="modal-backdrop" id="modal-traslado">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa-solid fa-arrow-right-arrow-left"></i> Nuevo Traslado</div>
+      <button class="modal-close" data-click="closeModalTraslado">&times;</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:16px;">
+      <div class="form-group">
+        <label class="form-label">SKU del Producto *</label>
+        <input type="text" id="traslado-sku" class="form-input" placeholder="Escanea o escribe el SKU">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cantidad *</label>
+        <input type="number" id="traslado-qty" class="form-input" min="0.01" step="0.01" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bodega Origen *</label>
+        <select id="traslado-origen" class="form-input">
+          <option value="">Seleccionar bodega origen...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bodega Destino *</label>
+        <select id="traslado-destino" class="form-input">
+          <option value="">Seleccionar bodega destino...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notas</label>
+        <textarea id="traslado-notas" class="form-input" rows="2" placeholder="Motivo del traslado (opcional)"></textarea>
+      </div>
+      <div id="traslado-error" style="color:var(--danger);font-size:13px;display:none;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-click="closeModalTraslado">Cancelar</button>
+      <button class="btn btn-primary" id="btn-confirmar-traslado" data-click="confirmarTraslado">
+        <i class="fa-solid fa-check"></i> Confirmar Traslado
+      </button>
+    </div>
+  </div>
+</div>

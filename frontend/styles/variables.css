@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --sidebar-w: 260px;
+      --sidebar-bg: #0B1120;
+      --surface: #ffffff;
+      --surface-bg: #F4F7FE;
+      --border: #E2E8F0;
+      --text-main: #1E293B;
+      --text-muted: #64748B;
+      --text-light: #94A3B8;
+      --primary: #3B82F6;
+      --primary-dark: #1D4ED8;
+      --green: #10B981;
+      --red: #EF4444;
+      --purple: #8B5CF6;
+      --orange: #F59E0B;
+      --accent: #3B82F6;
+      --surface3: #E2E8F0;
+    }

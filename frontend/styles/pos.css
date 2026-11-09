@@ -1,0 +1,57 @@
+/* ── IMPRESIÓN: solo se imprime el ticket ── */
+    @media print {
+      @page {
+        margin: 0;
+        size: 80mm auto;   /* Tamaño exacto para rollo térmico */
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #fff;
+      }
+      /* Oculta ABSOLUTAMENTE todo */
+      body * { visibility: hidden !important; }
+      /* Solo el ticket es visible */
+      #ticket-80mm,
+      #ticket-80mm * { visibility: visible !important; }
+      /* Posición absoluta para que la impresora no agregue espacio */
+      #ticket-80mm {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 80mm !important;
+        margin: 0 !important;
+        padding: 4mm !important;
+        font-size: 10pt !important;
+      }
+    }
+
+    /* ── PANTALLA: simulación visual del ticket 80mm ── */
+    .ticket-container {
+      width: 300px;
+      max-width: 100%;
+      margin: 0 auto;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 12px;
+      line-height: 1.35;
+      color: #000;
+      background: #fff;
+      padding: 15px;
+      text-transform: uppercase;
+    }
+    .ticket-container .t-divider      { border-top: 1px dashed #000; margin: 6px 0; }
+    .ticket-container .t-divider-solid{ border-top: 1px solid  #000; margin: 6px 0; }
+    .ticket-container .t-flex         { display: flex; justify-content: space-between; }
+    .ticket-container .t-center       { text-align: center; }
+    .ticket-container .t-right        { text-align: right; }
+    .ticket-container .t-bold         { font-weight: bold; }
+    .ticket-container .t-barcode      { font-family: 'Libre Barcode 39 Text', cursive; font-size: 28px; letter-spacing: 3px; }
+    .ticket-container .t-small        { font-size: 10px; }
+    .ticket-container .t-large        { font-size: 15px; }
+    .ticket-container .t-item-row     { display: flex; margin-bottom: 2px; }
+    .ticket-container .t-col-50       { width: 50%; }
+    .ticket-container .t-col-25       { width: 25%; }
+    .ticket-container .t-col-25c      { width: 25%; text-align: center; }
+    .ticket-container .t-col-25r      { width: 25%; text-align: right; }
+    /* Excepción: correos en minúsculas */
+    .ticket-container .t-lowercase    { text-transform: lowercase; }

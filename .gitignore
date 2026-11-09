@@ -1,0 +1,166 @@
+# ── Python ──────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# ── Entornos virtuales ───────────────────────────────────────
+.venv/
+.venv_test/
+venv/
+env/
+ENV/
+
+# ── Variables de entorno / Secretos ─────────────────────────
+.env
+.env.local
+.env.production
+.env.staging
+
+# ── Bases de datos SQLite ────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ── Logs ────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Sistema operativo ────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDEs ────────────────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# ── Backups — cualquier nivel de directorio ──────────────────
+# NOTA: gitignore NO acepta comillas — patrones van sin quotes
+*.bak
+*.orig
+*.bak_*
+*.bak[0-9]
+*.bak[0-9][0-9]
+
+# ── Estado de sesión / Auditoría (internos) ──────────────────
+SESSION_STATE.md
+AUDITORIA_*.md
+PRUEBA*.md
+_ESTADO_Y_PLAN_*.md
+_PENDIENTES_*.md
+_PLAN_MVP_*.md
+
+# ── Credenciales / secretos (nunca versionar) ───────────────
+_CREDENCIALES_*.md
+_SECRETS_*.md
+
+# ── Scripts diagnóstico / parche — raíz del proyecto ────────
+_diag*.py
+_patch_*.py
+_fix_*.py
+_inspect_*.py
+_verify_*.py
+_check_*.py
+
+# Artefactos que backend/tests/test_pos.py escribe en la raíz al correr
+# (necesita 'node' en PATH; si falla los deja aquí sin borrar).
+temp_test.mjs
+temp_calc.mjs
+_chk*.py
+_rewrite_*.py
+_grep_*.py
+_strip_*.py
+_add_*.py
+_admin_*.py
+_create_*.py
+_commit_*.txt
+_commit_*.ps1
+_run_*.ps1
+_cat_*.ps1
+_docker_*.ps1
+_empaquetar_*.ps1
+_seed_*.ps1
+_dashboard_*.log
+_pytest_run_continua.log
+push-logica-original.ps1
+verify_*.ps1
+ci_test_*.ps1
+test_api.py
+test_calebsys.db
+login_payload.json
+cookies*.txt
+cookies_test.txt
+
+# ── Cachés de Python en cualquier subdirectorio ─────────────
+backend/**/__pycache__/
+backend/**/*.pyc
+backend/**/*.pyo
+
+# ── Scripts diagnóstico — backend/ ──────────────────────────
+backend/_apply_col.py
+backend/_fix_*.py
+backend/_seed_*.py
+backend/_test_*.py
+backend/_scan_*.py
+backend/_sync_*.py
+backend/_validate_*.py
+backend/_get_*.py
+backend/_commit_*.txt
+backend/_check_*.py
+backend/audit_*.py
+backend/check_*.py
+backend/fix_*.py
+backend/gen_*.py
+backend/test_*.py
+backend/test_*.ps1
+
+# ── Imágenes de trabajo interno ──────────────────────────────
+TABLA DE USUARIOS CALEBSYS.png
+Master Calebsys.jpeg
+
+# ── Docs confidenciales de negocio ───────────────────────────
+# Gestionados en DOCS/ fuera del repo — sin comillas en gitignore
+Presupuesto Detallado Fases 2-5.md
+Propuesta Fase 2 - MVP CalebSys.md
+Alcance Modulo Administracion - Fase2.md
+Levantamiento Tecnico Detallado - Semana2.md
+datos para levantamiento y arquitectura.md
+Que debe incluir el modulo de Administracion.md
+Software CFDI Mexico.md
+MVP_ROLES_FUNCIONES_MODULOS.md
+ATAJOS F-KEYS.pdf
+
+# ── Datos de despliegue local (Docker) — no versionar ──
+deploy_data/
+_docker_db_backup_*.db
+
+# ── Sellos digitales (CSD) y llaves fiscales — NUNCA versionar ──
+# La llave privada del CSD firma los CFDI del contribuyente: si se filtra,
+# un tercero puede emitir facturas a su nombre. Aplica igual a los CSD de
+# prueba del SAT y a los reales del tenant.
+CSD/
+csd-pruebas*
+*.key
+*.cer
+*.pfx
+*.sdg
+*.ren
+
+# ── Cuarentena de archivos retirados (nunca versionar) ────────
+para_eliminar/
+
+# ── Capacitor / apps móviles ─────────────────────────────────
+apps/movil-app/android/
+apps/movil-app/node_modules/
+apps/movil-app/package-lock.json
+apps/terminal-app/android/
+apps/terminal-app/node_modules/
+apps/terminal-app/package-lock.json
+apps/setup-android.ps1

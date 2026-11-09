@@ -1,0 +1,1041 @@
+<!-- PAGE: CONFIGURACIÓN — hub de botones. Cada botón muestra su panel con información real:
+     /api/admin/empresa · /api/admin/config · /api/branches · /api/admin/integrations/(whatsapp|cfdi)
+     /api/multisucursal/config · /api/admin/import · /api/products/search -->
+<style>
+  /* Todo usa las variables del shell → cambia solo entre modo claro y oscuro */
+  .cfg-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 22px; }
+  .cfg-card { position: relative; display: flex; align-items: center; gap: 12px; padding: 14px 16px; text-align: left; cursor: pointer;
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; color: var(--text-primary);
+    transition: border-color .15s, transform .15s, box-shadow .15s, background .15s; }
+  .cfg-card:hover { border-color: var(--brand-400); transform: translateY(-1px); }
+  .cfg-card.active { border-color: var(--brand-400); background: var(--bg-active); box-shadow: 0 0 0 1px var(--brand-400), 0 8px 24px rgba(26, 86, 219, .22); }
+  .cfg-card-ico { width: 40px; height: 40px; flex: 0 0 auto; border-radius: 11px; display: flex; align-items: center; justify-content: center;
+    font-size: 17px; background: rgba(59, 130, 246, .16); color: var(--brand-400); }
+  .cfg-card.active .cfg-card-ico { background: var(--brand-500); color: #fff; }
+  .cfg-card-txt { min-width: 0; flex: 1; }
+  .cfg-card-title { font-size: 13.5px; font-weight: 700; line-height: 1.2; }
+  .cfg-card-sub { display: flex; align-items: center; gap: 6px; margin-top: 3px; font-size: 11px; color: var(--text-secondary); line-height: 1.3; }
+  .cfg-dot { width: 7px; height: 7px; border-radius: 50%; flex: 0 0 auto; background: var(--text-muted); }
+  .cfg-dot.ok { background: var(--success); } .cfg-dot.warn { background: var(--warning); } .cfg-dot.off { background: var(--text-muted); }
+  .cfg-card-arrow { color: var(--text-muted); font-size: 11px; }
+  .cfg-card.active .cfg-card-arrow { color: var(--brand-400); }
+  .cfg-card:focus-visible { outline: 2px solid var(--brand-400); outline-offset: 2px; }
+  .cfg-card-head-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .cfg-fkey { display: inline-flex; align-items: center; justify-content: center; padding: 1px 6px; border-radius: 5px; font-size: 10px; font-weight: 800; font-family: monospace; letter-spacing: .3px; background: var(--bg-card-2); color: var(--text-secondary); border: 1px solid var(--border); flex-shrink: 0; }
+  .cfg-card.active .cfg-fkey { background: var(--brand-500); color: #fff; border-color: var(--brand-400); box-shadow: 0 2px 8px rgba(37, 99, 235, .35); }
+  /* Bloques de canales en Redes Sociales */
+  .msg-ch-block { border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; background: var(--bg-card-2); }
+  .msg-ch-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .msg-ch-title { font-size: 13.5px; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+  .msg-ch-badge { font-size: 10.5px; font-weight: 700; padding: 2px 10px; border-radius: 999px; text-transform: lowercase; }
+  .msg-ch-badge.on { background: rgba(16, 185, 129, .15); color: var(--success); border: 1px solid rgba(16, 185, 129, .3); }
+  .msg-ch-badge.off { background: rgba(148, 163, 184, .15); color: var(--text-muted); border: 1px solid var(--border); }
+  /* Tarjetas horizontales de Impresoras */
+  .prt-list { display: flex; flex-direction: column; gap: 10px; margin: 14px 0 18px; }
+  .prt-card { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 16px; border-radius: 12px; background: var(--bg-card-2); border: 1px solid var(--border); transition: border-color .15s; }
+  .prt-card:hover { border-color: var(--brand-400); }
+  .prt-card-left { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; }
+  .prt-ico-wrap { position: relative; width: 40px; height: 40px; border-radius: 10px; background: rgba(59, 130, 246, .14); color: var(--brand-400); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .prt-num-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 6px; background: var(--brand-500); color: #fff; font-size: 11.5px; font-weight: 800; font-family: monospace; flex-shrink: 0; }
+  .prt-info { min-width: 0; flex: 1; }
+  .prt-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .prt-name { font-size: 13.5px; font-weight: 800; color: var(--text-primary); }
+  .prt-scope-badge { font-size: 10px; font-weight: 700; padding: 1px 8px; border-radius: 999px; background: rgba(6, 182, 212, .14); color: #06b6d4; border: 1px solid rgba(6, 182, 212, .3); text-transform: lowercase; }
+  .prt-meta { font-size: 11.5px; color: var(--text-secondary); margin-top: 2px; }
+  .prt-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+  .cfg-sec { display: none; }
+  .cfg-sec.on { display: block; animation: fadeIn .2s ease; }
+
+  /* Panel de información general */
+  .cfg-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  .cfg-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+  .cfg-panel-title { display: flex; align-items: center; gap: 12px; }
+  .cfg-panel-title .cfg-card-ico { width: 38px; height: 38px; }
+  .cfg-panel-title h2 { margin: 0; font-size: 15px; font-weight: 700; color: var(--text-primary); }
+  .cfg-panel-title p { margin: 2px 0 0; font-size: 12px; color: var(--text-secondary); }
+  .cfg-panel-body { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 28px; padding: 18px 20px 22px; }
+  .cfg-field label { display: block; margin: 12px 0 5px; font-size: 11.5px; font-weight: 600; color: var(--text-secondary); }
+  .cfg-field .form-control[readonly] { background: var(--bg-card-2); cursor: default; }
+  .cfg-note { grid-column: 1 / -1; margin-top: 12px; font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 8px; }
+  .cfg-note i { color: var(--brand-400); }
+
+  /* Catálogos */
+  .cfg-subnav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .cfg-subbtn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; cursor: pointer; font-size: 12.5px; font-weight: 600;
+    background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border); border-radius: 999px; transition: all .15s; }
+  .cfg-subbtn:hover { border-color: var(--brand-400); color: var(--text-primary); }
+  .cfg-subbtn.active { background: var(--brand-500); border-color: var(--brand-500); color: #fff; box-shadow: 0 4px 14px rgba(26, 86, 219, .35); }
+  .cfg-sub { display: none; } .cfg-sub.on { display: block; animation: fadeIn .2s ease; }
+  .cfg-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
+  .cfg-stat { padding: 12px 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; }
+  .cfg-stat b { display: block; font-size: 22px; font-weight: 800; line-height: 1.1; color: var(--text-primary); }
+  .cfg-stat span { font-size: 11px; color: var(--text-secondary); }
+  .cfg-group { padding: 14px 16px; margin-bottom: 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; }
+  .cfg-group h4 { margin: 0 0 10px; font-size: 12px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: var(--text-secondary); }
+  .cfg-group h4 i { color: var(--brand-400); margin-right: 6px; }
+  .cfg-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .cfg-chip { display: inline-flex; align-items: center; gap: 7px; padding: 4px 11px; font-size: 12px; font-weight: 600; color: var(--text-primary);
+    background: rgba(59, 130, 246, .12); border: 1px solid rgba(59, 130, 246, .3); border-radius: 999px; }
+  .cfg-chip em { font-style: normal; font-size: 10.5px; font-weight: 700; padding: 0 6px; border-radius: 999px; background: var(--brand-500); color: #fff; }
+  .cfg-empty { font-size: 12px; color: var(--text-muted); }
+  .cfg-table { width: 100%; border-collapse: collapse; }
+  .cfg-table th { text-align: right; padding: 9px 12px; font-size: 10.5px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
+    color: var(--text-secondary); background: var(--bg-card-2); border-bottom: 1px solid var(--border); }
+  .cfg-table td { text-align: right; padding: 9px 12px; font-size: 12.5px; color: var(--text-primary); border-bottom: 1px solid var(--border); }
+  .cfg-table th:first-child, .cfg-table td:first-child { text-align: left; font-weight: 700; }
+  .cfg-table tr:last-child td { border-bottom: none; }
+  .cfg-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .cfg-cat-note { font-size: 11.5px; color: var(--text-muted); margin-top: 6px; }
+  .cfg-group-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+  .cfg-group-head h4 { margin: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .cfg-group-hint { font-size: 11.5px; font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--text-muted); }
+  .cfg-count-pill { font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--bg-card-2); color: var(--text-secondary); border: 1px solid var(--border); text-transform: none; letter-spacing: 0; }
+  .cfg-add-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .cfg-add-inp { height: 34px; min-width: 220px; padding: 0 12px; font-size: 12.5px; font-weight: 600; color: var(--text-primary); background: var(--bg-card-2); border: 1px solid var(--border); border-radius: 9px; outline: none; transition: border-color .15s, box-shadow .15s; }
+  .cfg-add-inp:focus { border-color: var(--brand-400); box-shadow: 0 0 0 2px rgba(59, 130, 246, .18); }
+  .cfg-fam-select { height: 30px; padding: 0 10px; font-size: 12px; font-weight: 700; color: var(--brand-400); background: rgba(59, 130, 246, .12); border: 1px solid rgba(59, 130, 246, .35); border-radius: 8px; outline: none; cursor: pointer; }
+  .cfg-chip { display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px; font-size: 12px; font-weight: 600; color: var(--text-primary); background: rgba(59, 130, 246, .10); border: 1px solid rgba(59, 130, 246, .28); border-radius: 999px; transition: all .15s; }
+  .cfg-chip-sel { cursor: pointer; user-select: none; padding: 6px 12px; }
+  .cfg-chip-sel:hover { border-color: var(--brand-400); background: rgba(59, 130, 246, .18); transform: translateY(-1px); }
+  .cfg-chip-sel.active { background: var(--brand-500); border-color: var(--brand-500); color: #fff; box-shadow: 0 4px 12px rgba(26, 86, 219, .32); }
+  .cfg-chip-sel.active em { background: rgba(255, 255, 255, .24); color: #fff; }
+  .cfg-chip-meta { font-size: 10.5px; font-weight: 600; padding: 1px 7px; border-radius: 999px; background: rgba(148, 163, 184, .18); color: var(--text-secondary); }
+  .cfg-chip-sel.active .cfg-chip-meta { background: rgba(255, 255, 255, .22); color: #fff; }
+  .cfg-chip-del { width: 18px; height: 18px; padding: 0; margin-left: 2px; border: none; border-radius: 50%; background: rgba(148, 163, 184, .22); color: var(--text-secondary); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; transition: background .15s, color .15s; }
+  .cfg-chip-sel.active .cfg-chip-del { background: rgba(255, 255, 255, .22); color: #fff; }
+  .cfg-chip-del:hover { background: var(--danger) !important; color: #fff !important; }
+  .cfg-depto-group { border-left: 3px solid var(--brand-500); }
+
+  @media (max-width: 1250px) { .cfg-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 800px)  { .cfg-cards { grid-template-columns: 1fr; } .cfg-panel-body { grid-template-columns: 1fr; } }
+</style>
+
+<div class="cfg-hub" id="cfg-hub">
+
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1 class="page-title">Configuración del sistema</h1>
+      <p class="page-subtitle">Administra los parámetros de tu empresa, sucursales e integraciones desde un solo lugar.</p>
+    </div>
+  </div>
+
+  <!-- ── Botones (Navegación por Flechas y Atajos F1 - F9) ── -->
+  <div class="cfg-cards" id="cfg-cards" role="tablist" aria-label="Módulos de configuración">
+    <button type="button" class="cfg-card active" data-cfg="general" data-fkey="F1" data-click="cfgShowSection" data-click-arg="general">
+      <span class="cfg-card-ico"><i class="fa-solid fa-building"></i></span>
+      <span class="cfg-card-txt">
+        <div class="cfg-card-head-row"><div class="cfg-card-title">Información general</div><span class="cfg-fkey">F1</span></div>
+        <div class="cfg-card-sub"><span id="cfg-sub-general">Empresa, tenant y plan</span></div>
+      </span>
+      <i class="fa-solid fa-chevron-right cfg-card-arrow"></i>
+    </button>
+    <button type="button" class="cfg-card" data-cfg="sucursales" data-fkey="F2" data-click="cfgShowSection" data-click-arg="sucursales">
+      <span class="cfg-card-ico"><i class="fa-solid fa-store"></i></span>
+      <span class="cfg-card-txt">
+        <div class="cfg-card-head-row"><div class="cfg-card-title">Sucursales</div><span class="cfg-fkey">F2</span></div>
+        <div class="cfg-card-sub"><span class="cfg-dot" id="cfg-dot-sucursales"></span><span id="cfg-sub-sucursales">Sucursales activas</span></div>
+      </span>
+      <i class="fa-solid fa-chevron-right cfg-card-arrow"></i>
+    </button>
+    <button type="button" class="cfg-card" data-cfg="whatsapp" data-fkey="F3" data-click="cfgShowSection" data-click-arg="whatsapp">
+      <span class="cfg-card-ico"><i class="fa-solid fa-share-nodes"></i></span>
+      <span class="cfg-card-txt">
+        <div class="cfg-card-head-row"><div class="cfg-card-title">Redes Sociales</div><span class="cfg-fkey">F3</span></div>
+        <div class="cfg-card-sub"><span class="cfg-dot" id="cfg-dot-whatsapp"></span><span id="cfg-sub-whatsapp">WhatsApp, Facebook, Instagram, Correo y SMS</span></div>
+      </span>
+      <i class="fa-solid fa-chevron-right cfg-card-arrow"></i>
+    </button>
+    <button type="button" class="cfg-card" data-cfg="sat" data-fkey="F4" data-click="cfgShowSection" data-click-arg="sat">
+      <span class="cfg-card-ico"><i class="fa-solid fa-file-invoice-dollar"></i></span>
+      <span class="cfg-card-txt">
+        <div class="cfg-card-head-row"><div class="cfg-card-title">SAT</div><span class="cfg-fkey">F4</span></div>
+        <div class="cfg-card-sub"><span class="cfg-dot" id="cfg-dot-sat"></span><span id="cfg-sub-sat">Configuración CFDI / Modo</span></div>
+      </span>
+      <i class="fa-solid fa-chevron-right cfg-card-arrow"></i>
+    </button>
+    <button type="button" class="cfg-card" data-cfg="carga" data-fkey="F5" data-click="cfgShowSection" data-click-arg="carga">
+      <span class="cfg-card-ico"><i class="fa-solid fa-file-import"></i></span>
+      <span class="cfg-card-txt">
+        <div class="cfg-card-head-row"><div class="cfg-card-title">Carga inicial</div><span class="cfg-fkey">F5</span></div>
+        <div class="cfg-card-sub"><span>Productos, clientes y catálogos</span></div>
+      </span>
+      <i class="fa-solid fa-chevron-right cfg-card-arrow"></i>
+    </button>
+    <button type="button" class="cfg-card" data-cfg="terminales" data-fkey="F6" data-click="cfgShowSection" data-click-arg="terminales">
+      <span class="cfg-card-ico"><i class="fa-solid fa-desktop"></i></span>
+      <span class="cfg-card-txt">
+        <div class="cfg-card-head-row"><div class="cfg-card-title">Terminales</div><span class="cfg-fkey">F6</span></div>
+        <div class="cfg-card-sub"><span class="cfg-dot" id="cfg-dot-terminales"></span><span id="cfg-sub-terminales">Terminales y acceso</span></div>
+      </span>
+      <i class="fa-solid fa-chevron-right cfg-card-arrow"></i>
+    </button>
+    <button type="button" class="cfg-card" data-cfg="parametros" data-fkey="F7" data-click="cfgShowSection" data-click-arg="parametros">
+      <span class="cfg-card-ico"><i class="fa-solid fa-sliders"></i></span>
+      <span class="cfg-card-txt">
+        <div class="cfg-card-head-row"><div class="cfg-card-title">Parámetros y folios</div><span class="cfg-fkey">F7</span></div>
+        <div class="cfg-card-sub"><span id="cfg-sub-parametros">Moneda, IVA y series</span></div>
+      </span>
+      <i class="fa-solid fa-chevron-right cfg-card-arrow"></i>
+    </button>
+    <button type="button" class="cfg-card" data-cfg="catalogos" data-fkey="F8" data-click="cfgShowSection" data-click-arg="catalogos">
+      <span class="cfg-card-ico"><i class="fa-solid fa-book-open"></i></span>
+      <span class="cfg-card-txt">
+        <div class="cfg-card-head-row"><div class="cfg-card-title">Catálogos</div><span class="cfg-fkey">F8</span></div>
+        <div class="cfg-card-sub"><span>Productos, precios y generales</span></div>
+      </span>
+      <i class="fa-solid fa-chevron-right cfg-card-arrow"></i>
+    </button>
+    <button type="button" class="cfg-card" data-cfg="impresoras" data-fkey="F9" data-click="cfgShowSection" data-click-arg="impresoras">
+      <span class="cfg-card-ico"><i class="fa-solid fa-print"></i></span>
+      <span class="cfg-card-txt">
+        <div class="cfg-card-head-row"><div class="cfg-card-title">Impresoras</div><span class="cfg-fkey">F9</span></div>
+        <div class="cfg-card-sub"><span class="cfg-dot ok" id="cfg-dot-impresoras"></span><span id="cfg-sub-impresoras">Tickets, documentos y asignación</span></div>
+      </span>
+      <i class="fa-solid fa-chevron-right cfg-card-arrow"></i>
+    </button>
+  </div>
+
+  <!-- ══ 1. INFORMACIÓN GENERAL ══ -->
+  <section class="cfg-sec on" data-cfg-sec="general">
+    <div class="cfg-panel">
+      <div class="cfg-panel-head">
+        <div class="cfg-panel-title">
+          <span class="cfg-card-ico"><i class="fa-solid fa-building"></i></span>
+          <div><h2>Empresa y tenant</h2><p>Datos generales de tu empresa, tenant y plan activo.</p></div>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" data-click="cfgShowSection" data-click-arg="parametros">
+          <i class="fa-solid fa-pen"></i> Editar
+        </button>
+      </div>
+      <div class="cfg-panel-body">
+        <div>
+          <div class="cfg-field"><label>ID del tenant</label><input class="form-control" type="text" id="config-empresa-id" readonly placeholder="—"></div>
+          <div class="cfg-field"><label>Usuarios activos</label><input class="form-control" type="text" id="config-total-users" readonly placeholder="—"></div>
+          <div class="cfg-field"><label>Sucursales registradas</label><input class="form-control" type="text" id="config-sucursales" readonly placeholder="—"></div>
+        </div>
+        <div>
+          <div class="cfg-field"><label>Plan activo</label><input class="form-control" type="text" id="config-plan" readonly placeholder="—"></div>
+          <div class="cfg-field"><label>Nombre de empresa</label><input class="form-control" type="text" id="cfg-info-nombre" readonly placeholder="—"></div>
+          <div class="cfg-field"><label>Moneda</label><input class="form-control" type="text" id="cfg-info-moneda" readonly placeholder="—"></div>
+          <div class="cfg-field"><label>Zona horaria</label><input class="form-control" type="text" id="cfg-info-zona" readonly placeholder="—"></div>
+          <div class="cfg-field"><label>IVA</label><input class="form-control" type="text" id="cfg-info-iva" readonly placeholder="—"></div>
+        </div>
+        <div class="cfg-note"><i class="fa-solid fa-circle-info"></i> Para cambiar el nombre, la moneda, la zona horaria o el IVA entra a <b>Parámetros y folios</b>.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 2. SUCURSALES ══ -->
+  <section class="cfg-sec" data-cfg-sec="sucursales">
+<!-- ── P7: CRUD SUCURSALES ─────────────────────────────────────────────── -->
+<div class="card" id="card-sucursales">
+  <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+    <span><i class="fa-solid fa-store"></i> Sucursales</span>
+    <button class="btn btn-primary btn-sm" data-click="abrirModalSucursal">
+      <i class="fa-solid fa-plus"></i> Nueva Sucursal
+    </button>
+  </div>
+  <div id="sucursales-table-wrap" style="overflow-x:auto;margin-top:8px;">
+    <table class="data-table" style="min-width:520px;">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Dirección</th>
+          <th>Teléfono</th>
+          <th>Estado</th>
+          <th style="width:90px;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="sucursales-tbody">
+        <tr><td colspan="5" style="text-align:center;padding:18px;color:var(--text-muted);">Cargando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  </section>
+
+  <!-- ══ 3. WHATSAPP ══ -->
+  <section class="cfg-sec" data-cfg-sec="whatsapp">
+<!-- ── FASE C: INTEGRACIÓN WHATSAPP (TWILIO) ──────────────────────────── -->
+<div class="card" id="card-whatsapp">
+  <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+    <span><i class="fa-brands fa-whatsapp" style="color:#25D366;"></i> Integración WhatsApp — Twilio</span>
+    <span id="wa-status-badge" style="font-size:0.7rem;font-weight:700;padding:2px 10px;border-radius:999px;background:rgba(148,163,184,0.15);color:var(--text-muted);">—</span>
+  </div>
+  <p class="page-subtitle" style="margin:4px 0 12px;">
+    Canal saliente para avisos al cliente (resguardos, apartados, CxC, anticipos).
+    Las credenciales las da de alta el Admin del Tenant en su propia cuenta de Twilio;
+    el sistema no trae ninguna precargada.
+  </p>
+  <div class="grid-2">
+    <div class="form-group">
+      <label class="form-label">Estado</label>
+      <select class="form-control" id="wa-enabled">
+        <option value="0">Deshabilitado</option>
+        <option value="1">Habilitado</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Account SID</label>
+      <input class="form-control" id="wa-account-sid" placeholder="ACxxxxxxxxxxxxxxxx" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Auth Token</label>
+      <input class="form-control" id="wa-auth-token" type="password" placeholder="(sin cambios)" autocomplete="new-password">
+      <small style="color:var(--text-muted);font-size:0.7rem;">Se guarda cifrado del lado servidor y nunca se vuelve a mostrar. Déjalo vacío para conservar el actual.</small>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Número remitente (From)</label>
+      <input class="form-control" id="wa-from-number" placeholder="+52155XXXXXXXX" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Messaging Service SID <span style="color:var(--text-muted);">(opcional)</span></label>
+      <input class="form-control" id="wa-msg-sid" placeholder="MGxxxxxxxxxxxxxxxx" autocomplete="off">
+    </div>
+  </div>
+  <div id="wa-save-msg" style="display:none;font-size:0.75rem;padding:6px 10px;border-radius:8px;margin-top:4px;"></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+    <button class="btn btn-primary btn-sm" data-click="guardarConfigWhatsApp">
+      <i class="fa-solid fa-floppy-disk"></i> Guardar
+    </button>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <input class="form-control" id="wa-test-to" placeholder="Número de prueba +52..." style="width:190px;height:32px;font-size:0.8rem;">
+      <button class="btn btn-secondary btn-sm" data-click="probarWhatsApp">
+        <i class="fa-solid fa-paper-plane"></i> Enviar prueba
+      </button>
+    </div>
+  </div>
+  <div id="wa-log-wrap" style="margin-top:14px;overflow-x:auto;">
+    <table class="data-table" style="min-width:520px;">
+      <thead><tr><th style="width:150px;">Fecha</th><th>Evento</th><th>Detalle</th></tr></thead>
+      <tbody id="wa-log-tbody">
+        <tr><td colspan="3" style="text-align:center;padding:14px;color:var(--text-muted);">Sin actividad</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ── MENSAJERÍA MULTICANAL: FACEBOOK, INSTAGRAM, CORREO Y SMS ── -->
+<div class="card" id="card-mensajeria" style="margin-top:20px;">
+  <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+    <span>💬 Mensajería — Facebook, Instagram, correo y SMS</span>
+  </div>
+  <p class="page-subtitle" style="margin:4px 0 16px;">
+    Cada canal se conecta con los datos del proveedor que contrates (Chatwoot o un servicio propio). Llena la URL del servicio, la cuenta, la bandeja y el token; el sistema no trae ninguno precargado.
+  </p>
+
+  <!-- Canal 1: Facebook -->
+  <div class="msg-ch-block" data-msg-ch="facebook">
+    <div class="msg-ch-head">
+      <div class="msg-ch-title"><i class="fa-brands fa-facebook" style="color:#1877F2;font-size:16px;"></i> Facebook</div>
+      <span class="msg-ch-badge off" id="msg-badge-facebook">deshabilitado</span>
+    </div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label">Estado</label>
+        <select class="form-control" id="msg-enabled-facebook" data-change="onMsgChannelStatusChange">
+          <option value="0">Deshabilitado</option>
+          <option value="1">Habilitado</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Proveedor</label>
+        <select class="form-control" id="msg-provider-facebook">
+          <option value="chatwoot">Chatwoot</option>
+          <option value="propio">Servicio propio</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">URL del servicio</label>
+        <input class="form-control" type="text" id="msg-url-facebook" placeholder="https://app.chatwoot.com" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Id de la cuenta</label>
+        <input class="form-control" type="text" id="msg-account-facebook" placeholder="Ej. 123" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Id de la bandeja</label>
+        <input class="form-control" type="text" id="msg-inbox-facebook" placeholder="Ej. 7" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Token de acceso</label>
+        <input class="form-control" type="password" id="msg-token-facebook" placeholder="Token de acceso" autocomplete="new-password">
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:6px;">
+      <button type="button" class="btn btn-secondary btn-sm" data-click="probarCanalMensajeria" data-click-arg="facebook">
+        🔌 Probar conexión
+      </button>
+      <span id="msg-test-facebook" style="font-size:0.75rem;color:var(--text-secondary);"></span>
+    </div>
+  </div>
+
+  <!-- Canal 2: Instagram -->
+  <div class="msg-ch-block" data-msg-ch="instagram">
+    <div class="msg-ch-head">
+      <div class="msg-ch-title"><i class="fa-brands fa-instagram" style="color:#E4405F;font-size:16px;"></i> Instagram</div>
+      <span class="msg-ch-badge off" id="msg-badge-instagram">deshabilitado</span>
+    </div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label">Estado</label>
+        <select class="form-control" id="msg-enabled-instagram" data-change="onMsgChannelStatusChange">
+          <option value="0">Deshabilitado</option>
+          <option value="1">Habilitado</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Proveedor</label>
+        <select class="form-control" id="msg-provider-instagram">
+          <option value="chatwoot">Chatwoot</option>
+          <option value="propio">Servicio propio</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">URL del servicio</label>
+        <input class="form-control" type="text" id="msg-url-instagram" placeholder="https://app.chatwoot.com" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Id de la cuenta</label>
+        <input class="form-control" type="text" id="msg-account-instagram" placeholder="Ej. 123" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Id de la bandeja</label>
+        <input class="form-control" type="text" id="msg-inbox-instagram" placeholder="Ej. 7" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Token de acceso</label>
+        <input class="form-control" type="password" id="msg-token-instagram" placeholder="Token de acceso" autocomplete="new-password">
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:6px;">
+      <button type="button" class="btn btn-secondary btn-sm" data-click="probarCanalMensajeria" data-click-arg="instagram">
+        🔌 Probar conexión
+      </button>
+      <span id="msg-test-instagram" style="font-size:0.75rem;color:var(--text-secondary);"></span>
+    </div>
+  </div>
+
+  <!-- Canal 3: Correo electrónico -->
+  <div class="msg-ch-block" data-msg-ch="correo">
+    <div class="msg-ch-head">
+      <div class="msg-ch-title"><i class="fa-solid fa-envelope" style="color:#3b82f6;font-size:15px;"></i> Correo electrónico</div>
+      <span class="msg-ch-badge off" id="msg-badge-correo">deshabilitado</span>
+    </div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label">Estado</label>
+        <select class="form-control" id="msg-enabled-correo" data-change="onMsgChannelStatusChange">
+          <option value="0">Deshabilitado</option>
+          <option value="1">Habilitado</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Proveedor</label>
+        <select class="form-control" id="msg-provider-correo">
+          <option value="chatwoot">Chatwoot</option>
+          <option value="propio">Servicio propio</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">URL del servicio</label>
+        <input class="form-control" type="text" id="msg-url-correo" placeholder="https://app.chatwoot.com" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Id de la cuenta</label>
+        <input class="form-control" type="text" id="msg-account-correo" placeholder="Ej. 123" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Id de la bandeja</label>
+        <input class="form-control" type="text" id="msg-inbox-correo" placeholder="Ej. 7" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Token de acceso</label>
+        <input class="form-control" type="password" id="msg-token-correo" placeholder="Token de acceso" autocomplete="new-password">
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:6px;">
+      <button type="button" class="btn btn-secondary btn-sm" data-click="probarCanalMensajeria" data-click-arg="correo">
+        🔌 Probar conexión
+      </button>
+      <span id="msg-test-correo" style="font-size:0.75rem;color:var(--text-secondary);"></span>
+    </div>
+  </div>
+
+  <!-- Canal 4: SMS -->
+  <div class="msg-ch-block" data-msg-ch="sms">
+    <div class="msg-ch-head">
+      <div class="msg-ch-title"><i class="fa-solid fa-comment-sms" style="color:#10b981;font-size:15px;"></i> SMS</div>
+      <span class="msg-ch-badge off" id="msg-badge-sms">deshabilitado</span>
+    </div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label">Estado</label>
+        <select class="form-control" id="msg-enabled-sms" data-change="onMsgChannelStatusChange">
+          <option value="0">Deshabilitado</option>
+          <option value="1">Habilitado</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Proveedor</label>
+        <select class="form-control" id="msg-provider-sms">
+          <option value="chatwoot">Chatwoot</option>
+          <option value="propio">Servicio propio</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">URL del servicio</label>
+        <input class="form-control" type="text" id="msg-url-sms" placeholder="https://app.chatwoot.com" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Id de la cuenta</label>
+        <input class="form-control" type="text" id="msg-account-sms" placeholder="Ej. 123" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Id de la bandeja</label>
+        <input class="form-control" type="text" id="msg-inbox-sms" placeholder="Ej. 7" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Token de acceso</label>
+        <input class="form-control" type="password" id="msg-token-sms" placeholder="Token de acceso" autocomplete="new-password">
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:6px;">
+      <button type="button" class="btn btn-secondary btn-sm" data-click="probarCanalMensajeria" data-click-arg="sms">
+        🔌 Probar conexión
+      </button>
+      <span id="msg-test-sms" style="font-size:0.75rem;color:var(--text-secondary);"></span>
+    </div>
+  </div>
+
+  <div id="msg-save-msg" style="display:none;font-size:0.75rem;padding:6px 10px;border-radius:8px;margin-bottom:8px;"></div>
+  <button type="button" class="btn btn-primary btn-sm" data-click="guardarMensajeriaCanales">
+    💾 Guardar mensajería
+  </button>
+</div>
+  </section>
+
+  <!-- ══ 4. SAT ══ -->
+  <section class="cfg-sec" data-cfg-sec="sat">
+<!-- ── CP2: DATOS FISCALES / FACTURACIÓN CFDI ──────────────────────────── -->
+<div class="card" id="card-cfdi">
+  <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+    <span><i class="fa-solid fa-file-invoice-dollar" style="color:#0ea5e9;"></i> Datos Fiscales — Facturación CFDI</span>
+    <span id="cfdi-status-badge" style="font-size:0.7rem;font-weight:700;padding:2px 10px;border-radius:999px;background:rgba(148,163,184,0.15);color:var(--text-muted);">—</span>
+  </div>
+  <p class="page-subtitle" style="margin:4px 0 12px;">
+    Captura los datos fiscales de tu empresa para emitir facturas CFDI 4.0.
+  </p>
+
+  <!-- ── Modo de gestión del PAC ─────────────────────────────────────── -->
+  <div class="form-group" style="margin-bottom:10px;">
+    <label class="form-label"><i class="fa-solid fa-network-wired"></i> Gestión del PAC (Proveedor de Certificación)</label>
+    <select class="form-control" id="cfdi-pac-mode" data-change="onCfdiPacModeChange">
+      <option value="platform">A través del sistema (CalebSys — compra folios al reseller)</option>
+      <option value="own">Cuenta propia de Facturama</option>
+      <option value="other">PAC externo (otro proveedor o sistema)</option>
+    </select>
+  </div>
+
+  <!-- Info: mode = platform (visible para el admin del tenant, no para SUPERADMIN) -->
+  <div id="cfdi-pac-platform-info" style="display:none;background:rgba(14,165,233,0.08);border:1px solid rgba(14,165,233,0.25);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:0.82rem;">
+    <i class="fa-solid fa-circle-info" style="color:#0ea5e9;margin-right:6px;"></i>
+    Tu facturación CFDI está gestionada por el sistema CalebSys.
+    Solo configura tus <strong>datos fiscales</strong> y el <strong>Sello Digital (CSD)</strong> de tu RFC.
+    El entorno y las credenciales del PAC las administra el proveedor.
+  </div>
+
+  <!-- Bloque de credenciales PAC: SUPERADMIN siempre · tenant admin solo si pac_mode=own -->
+  <div id="cfdi-pac-section" style="display:none;">
+    <div style="font-size:0.75rem;font-weight:700;color:var(--text-muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;">
+      <i class="fa-solid fa-key"></i> Credenciales Facturama
+    </div>
+    <div class="grid-2" style="margin-bottom:12px;">
+      <div class="form-group">
+        <label class="form-label">Entorno</label>
+        <select class="form-control" id="cfdi-environment">
+          <option value="mock">Simulación (sin PAC)</option>
+          <option value="sandbox">Pruebas (sandbox Facturama)</option>
+          <option value="production">Producción (timbra ante el SAT)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Modalidad</label>
+        <select class="form-control" id="cfdi-api-mode">
+          <option value="multiemisor">API Multiemisor — varios RFC emisores</option>
+          <option value="web">API Web — un solo RFC emisor (el de la cuenta)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Usuario API</label>
+        <input class="form-control" id="cfdi-api-user" placeholder="usuario de Facturama" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contraseña API</label>
+        <input class="form-control" id="cfdi-api-password" type="password" placeholder="Contraseña de la API" autocomplete="new-password">
+        <small style="color:var(--text-muted);font-size:0.7rem;">Déjala vacía para conservar la actual.</small>
+      </div>
+    </div>
+    <div style="border-top:1px dashed var(--border);margin-bottom:12px;"></div>
+  </div>
+
+  <!-- Info: mode = other -->
+  <div id="cfdi-pac-other-info" style="display:none;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:0.82rem;">
+    <i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b;margin-right:6px;"></i>
+    Este tenant gestiona su facturación con un <strong>sistema o PAC externo</strong>.
+    El módulo CFDI de CalebSys está deshabilitado para esta empresa — el timbrado ocurre fuera del sistema.
+  </div>
+
+  <div class="grid-2">
+    <div class="form-group">
+      <label class="form-label">Estado</label>
+      <select class="form-control" id="cfdi-enabled">
+        <option value="0">Deshabilitado</option>
+        <option value="1">Habilitado</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">RFC del emisor</label>
+      <input class="form-control" id="cfdi-rfc-emisor" placeholder="XAXX010101000" autocomplete="off" style="text-transform:uppercase;">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Razón social del emisor</label>
+      <input class="form-control" id="cfdi-nombre-emisor" placeholder="Tal como está en la constancia fiscal" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Régimen fiscal del emisor</label>
+      <input class="form-control" id="cfdi-regimen-emisor" placeholder="601, 612, 626…" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Lugar de expedición (CP)</label>
+      <input class="form-control" id="cfdi-lugar" placeholder="34000" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Serie</label>
+      <input class="form-control" id="cfdi-serie" placeholder="A" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Folios</label>
+      <select class="form-control" id="cfdi-folios-mode">
+        <option value="local">Consecutivo del sistema</option>
+        <option value="pac">Los asigna Facturama</option>
+      </select>
+    </div>
+  </div>
+  <div id="cfdi-save-msg" style="display:none;font-size:0.75rem;padding:6px 10px;border-radius:8px;margin-top:4px;"></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+    <button class="btn btn-primary btn-sm" data-click="guardarConfigCfdi">
+      <i class="fa-solid fa-floppy-disk"></i> Guardar
+    </button>
+    <button class="btn btn-secondary btn-sm" data-click="probarCfdi">
+      <i class="fa-solid fa-vial"></i> Probar timbrado
+    </button>
+    <button class="btn btn-secondary btn-sm" data-click="sembrarCatalogosSat">
+      <i class="fa-solid fa-list-check"></i> Sembrar catálogos SAT
+    </button>
+  </div>
+
+  <!-- Sello digital (CSD) — sin esto el PAC no timbra -->
+  <div id="cfdi-csd-section" style="margin-top:18px;border-top:1px solid var(--border);padding-top:14px;">
+    <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px;">
+      <i class="fa-solid fa-certificate"></i> Sello digital del emisor (CSD)
+    </div>
+    <p class="page-subtitle" style="margin:0 0 10px;">
+      Facturama solo puede timbrar para un RFC cuyo sello digital tenga cargado.
+      Sube el <code>.cer</code> y el <code>.key</code> que el SAT le entregó al contribuyente.
+      Los archivos se reenvían al PAC y no se guardan en este sistema.
+    </p>
+    <div id="cfdi-csd-upload-form">
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">RFC <span style="color:var(--text-muted);">(vacío = el del emisor)</span></label>
+          <input class="form-control" id="csd-rfc" placeholder="RFC del sello" autocomplete="off" style="text-transform:uppercase;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña de la llave</label>
+          <input class="form-control" id="csd-password" type="password" autocomplete="new-password">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Certificado (.cer)</label>
+          <input class="form-control" id="csd-cer" type="file" accept=".cer">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Llave privada (.key)</label>
+          <input class="form-control" id="csd-key" type="file" accept=".key">
+        </div>
+      </div>
+      <button class="btn btn-secondary btn-sm" data-click="subirCsd">
+        <i class="fa-solid fa-upload"></i> Cargar sello
+      </button>
+    </div>
+    <div style="margin-top:12px;overflow-x:auto;">
+      <table class="data-table" style="min-width:420px;">
+        <thead><tr><th>RFC</th><th>Vigencia</th><th style="width:90px;"></th></tr></thead>
+        <tbody id="cfdi-csd-tbody">
+          <tr><td colspan="3" style="text-align:center;padding:12px;color:var(--text-muted);">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+  </section>
+
+  <!-- ══ 5. CARGA INICIAL ══ -->
+  <section class="cfg-sec" data-cfg-sec="carga">
+<!-- ── S-1: CONFIGURACIÓN INICIAL — IMPORTAR CATÁLOGOS ───────────────── -->
+<div class="card" id="card-import">
+  <div class="card-title"><i class="fa-solid fa-file-import"></i> Configuración inicial — importar catálogos</div>
+  <p class="page-subtitle" style="margin:4px 0 12px;">
+    Sube tus bases actuales en Excel para no frenar la operación. Descarga la
+    plantilla, llénala y súbela. «Simular» valida sin escribir nada; «Importar»
+    aplica (crea nuevos, actualiza por clave: SKU en productos, código/RFC en
+    clientes y proveedores, código en empleados). El tipo «Apertura» registra el
+    balance inicial de cuentas contables SAT — debe cuadrar DEBE = HABER.
+  </p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+    <select class="form-control" id="imp-tipo" style="max-width:190px;">
+      <option value="productos">Productos</option>
+      <option value="clientes">Clientes</option>
+      <option value="proveedores">Proveedores</option>
+      <option value="empleados">Empleados</option>
+      <option value="apertura">Apertura contable SAT</option>
+    </select>
+    <button class="btn btn-secondary btn-sm" data-click="descargarPlantilla">
+      <i class="fa-solid fa-download"></i> Descargar plantilla
+    </button>
+    <input type="file" id="imp-file" accept=".xlsx,.csv"
+           style="font-size:0.8rem;max-width:260px;">
+    <button class="btn btn-secondary btn-sm" data-click="importarCatalogo" data-click-arg="true" data-click-arg-type="bool">
+      <i class="fa-solid fa-flask"></i> Simular
+    </button>
+    <button class="btn btn-primary btn-sm" data-click="importarCatalogo" data-click-arg="false" data-click-arg-type="bool">
+      <i class="fa-solid fa-upload"></i> Importar
+    </button>
+  </div>
+  <div id="imp-result" style="display:none;margin-top:12px;font-size:0.8rem;
+       border:1px solid var(--border);border-radius:10px;padding:10px 12px;"></div>
+</div>
+  </section>
+
+  <!-- ══ 6. TERMINALES ══ -->
+  <section class="cfg-sec" data-cfg-sec="terminales">
+<!-- ── D4: TERMINALES AUTORIZADAS POR SEDE ───────────────────────────── -->
+<div class="card" id="card-terminales">
+  <div class="card-title"><i class="fa-solid fa-desktop"></i> Terminales autorizadas por sede</div>
+  <p class="page-subtitle" style="margin:4px 0 12px;">
+    Con esto activo, el personal <strong>solo puede iniciar sesión desde las
+    terminales registradas</strong> de cada sede, y la sesión queda atada a esa
+    sede (para roles de gerente hacia abajo). El <code>terminal_id</code> se fija
+    en cada equipo abriendo el login con <code>?terminal=&lt;id&gt;</code> una vez.
+  </p>
+  <div class="form-group" style="max-width:280px;">
+    <label class="form-label">Exigir terminal autorizada</label>
+    <select class="form-control" id="ms-enforce">
+      <option value="0">No (login desde cualquier lado)</option>
+      <option value="1">Sí</option>
+    </select>
+  </div>
+  <div style="overflow-x:auto;margin-top:6px;">
+    <table class="data-table" style="min-width:520px;">
+      <thead><tr><th style="width:160px;">terminal_id</th><th style="width:140px;">Sede (sucursal_id)</th><th>Etiqueta</th><th style="width:60px;"></th></tr></thead>
+      <tbody id="ms-tbody"><tr><td colspan="4" style="text-align:center;padding:14px;color:var(--text-muted);">Cargando…</td></tr></tbody>
+    </table>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center;">
+    <input class="form-control" id="ms-new-id"    placeholder="TERM-9"        style="max-width:150px;">
+    <input class="form-control" id="ms-new-suc"   placeholder="MAG-002"       style="max-width:130px;">
+    <input class="form-control" id="ms-new-label" placeholder="Caja 1 Sucursal" style="max-width:220px;">
+    <button class="btn btn-secondary btn-sm" data-click="agregarTerminal"><i class="fa-solid fa-plus"></i> Agregar</button>
+  </div>
+  <div id="ms-msg" style="display:none;font-size:0.75rem;padding:6px 10px;border-radius:8px;margin-top:8px;"></div>
+  <button class="btn btn-primary btn-sm" style="margin-top:10px;" data-click="guardarTerminales">
+    <i class="fa-solid fa-floppy-disk"></i> Guardar terminales
+  </button>
+</div>
+  </section>
+
+  <!-- ══ 7. PARÁMETROS Y FOLIOS ══ -->
+  <section class="cfg-sec" data-cfg-sec="parametros">
+    <div class="card" id="card-adminconfig">
+      <div class="card-title"><i class="fa-solid fa-sliders"></i> Parámetros, folios y series</div>
+<!-- ── D3-A: Parámetros generales ─────────────────────────────────── -->
+  <div style="font-size:0.72rem;font-weight:700;color:var(--text-muted);letter-spacing:.06em;text-transform:uppercase;margin:4px 0 10px;">
+    <i class="fa-solid fa-gear"></i> Parámetros generales
+  </div>
+  <div class="grid-2" style="margin-bottom:6px;">
+    <div class="form-group">
+      <label class="form-label">Nombre de la empresa</label>
+      <input class="form-control" id="acfg-empresa-nombre" placeholder="Maderas y Materiales Magdaleno">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Moneda</label>
+      <select class="form-control" id="acfg-moneda">
+        <option value="MXN">MXN — Peso mexicano</option>
+        <option value="USD">USD — Dólar americano</option>
+        <option value="EUR">EUR — Euro</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">IVA (%)</label>
+      <input class="form-control" type="number" id="acfg-iva" min="0" max="100" step="0.01" value="16">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Zona horaria</label>
+      <input class="form-control" id="acfg-zona" placeholder="America/Mazatlan">
+    </div>
+  </div>
+  <button class="btn btn-primary btn-sm" data-click="guardarParams">
+    <i class="fa-solid fa-floppy-disk"></i> Guardar parámetros
+  </button>
+  <div id="acfg-params-msg" style="display:none;font-size:0.75rem;padding:5px 10px;border-radius:8px;margin-top:6px;"></div>
+<!-- ── D3-B: Series y folios de documentos ─────────────────────────── -->
+  <div style="border-top:1px solid var(--border);margin-top:18px;padding-top:14px;">
+    <div style="font-size:0.72rem;font-weight:700;color:var(--text-muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;">
+      <i class="fa-solid fa-hashtag"></i> Series y folios de documentos
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="data-table" style="min-width:460px;">
+        <thead>
+          <tr>
+            <th>Documento</th>
+            <th style="width:110px;">Serie</th>
+            <th style="width:130px;">Siguiente #</th>
+            <th style="width:80px;"></th>
+          </tr>
+        </thead>
+        <tbody id="acfg-folios-tbody">
+          <tr><td colspan="4" style="text-align:center;padding:14px;color:var(--text-muted);">Cargando…</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="acfg-folios-msg" style="display:none;font-size:0.75rem;padding:5px 10px;border-radius:8px;margin-top:6px;"></div>
+  </div>
+    </div>
+
+  </section>
+
+  <!-- ══ 8. CATÁLOGOS (Productos · Precios · Generales) ══ -->
+  <section class="cfg-sec" data-cfg-sec="catalogos">
+    <div class="cfg-subnav" id="cfg-subnav">
+      <button type="button" class="cfg-subbtn active" data-cfgcat="productos" data-click="cfgShowCatalogo" data-click-arg="productos"><i class="fa-solid fa-box-open"></i> Productos</button>
+      <button type="button" class="cfg-subbtn" data-cfgcat="precios" data-click="cfgShowCatalogo" data-click-arg="precios"><i class="fa-solid fa-tags"></i> Precios</button>
+      <button type="button" class="cfg-subbtn" data-cfgcat="generales" data-click="cfgShowCatalogo" data-click-arg="generales"><i class="fa-solid fa-list-ul"></i> Generales</button>
+    </div>
+
+    <div class="cfg-sub on" data-cfg-sub="productos"><div id="cfg-prod-body"><div class="cfg-empty">Cargando catálogo de productos…</div></div></div>
+
+    <div class="cfg-sub" data-cfg-sub="precios"><div id="cfg-precios-body"><div class="cfg-empty">Cargando precios…</div></div></div>
+
+    <div class="cfg-sub" data-cfg-sub="generales">
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-list-ul"></i> Formas de pago, unidades de medida y bancos</div>
+<!-- ── D3-C: Catálogos maestros ────────────────────────────────────── -->
+  <div style="margin:0;padding:0;">
+    <div style="font-size:0.72rem;font-weight:700;color:var(--text-muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px;">
+      <i class="fa-solid fa-list-ul"></i> Catálogos maestros
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label class="form-label">Formas de pago</label>
+      <div id="chips-formas-pago" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;min-height:28px;"></div>
+      <div style="display:flex;gap:6px;">
+        <input class="form-control" id="chip-input-formas-pago" placeholder="Ej. Cheque" style="max-width:220px;height:32px;font-size:0.82rem;"
+               data-keydown="agregarChip" data-keydown-key="Enter" data-keydown-prevent="true" data-click-arg="formas_pago">
+        <button class="btn btn-secondary btn-sm" data-click="agregarChip" data-click-arg="formas_pago"><i class="fa-solid fa-plus"></i></button>
+        <button class="btn btn-primary btn-sm" data-click="guardarCatalogo" data-click-arg="formas_pago"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label class="form-label">Unidades de medida</label>
+      <div id="chips-unidades" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;min-height:28px;"></div>
+      <div style="display:flex;gap:6px;">
+        <input class="form-control" id="chip-input-unidades" placeholder="Ej. PZA, KG, M2" style="max-width:220px;height:32px;font-size:0.82rem;"
+               data-keydown="agregarChip" data-keydown-key="Enter" data-keydown-prevent="true" data-click-arg="unidades">
+        <button class="btn btn-secondary btn-sm" data-click="agregarChip" data-click-arg="unidades"><i class="fa-solid fa-plus"></i></button>
+        <button class="btn btn-primary btn-sm" data-click="guardarCatalogo" data-click-arg="unidades"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom:6px;">
+      <label class="form-label">Bancos</label>
+      <div id="chips-bancos" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;min-height:28px;"></div>
+      <div style="display:flex;gap:6px;">
+        <input class="form-control" id="chip-input-bancos" placeholder="Ej. BBVA, Banamex" style="max-width:220px;height:32px;font-size:0.82rem;"
+               data-keydown="agregarChip" data-keydown-key="Enter" data-keydown-prevent="true" data-click-arg="bancos">
+        <button class="btn btn-secondary btn-sm" data-click="agregarChip" data-click-arg="bancos"><i class="fa-solid fa-plus"></i></button>
+        <button class="btn btn-primary btn-sm" data-click="guardarCatalogo" data-click-arg="bancos"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+      </div>
+    </div>
+    <div id="acfg-catalog-msg" style="display:none;font-size:0.75rem;padding:5px 10px;border-radius:8px;margin-top:6px;"></div>
+  </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 9. IMPRESORAS (F9) + CONFIGURACIÓN DEL TICKET ══ -->
+  <section class="cfg-sec" data-cfg-sec="impresoras">
+    <!-- Contenedor A: Impresoras -->
+    <div class="card" id="card-impresoras">
+      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>🖨️ Impresoras</span>
+        <button type="button" class="btn btn-primary btn-sm" data-click="abrirModalImpresora">
+          <i class="fa-solid fa-plus"></i> Agregar
+        </button>
+      </div>
+      <p class="page-subtitle" style="margin:6px 0 14px;line-height:1.5;">
+        Cada impresora recibe un número en el orden en que se da de alta; ese número es el mismo en todas las terminales y aparece en la ficha de cada producto («Enviar a impresor») para imprimir su ticket en el área que corresponda (caja, almacén...). La asignación por tipo de documento sí es de este equipo.
+      </p>
+
+      <!-- Listado de Impresoras Registradas -->
+      <div class="prt-list" id="cfg-printers-list"></div>
+
+      <!-- Subsección: Asignación por tipo de documento -->
+      <div style="border-top:1px solid var(--border);margin-top:18px;padding-top:14px;">
+        <div style="font-size:0.75rem;font-weight:800;color:var(--text-secondary);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px;">
+          🔗 ASIGNACIÓN POR TIPO DE DOCUMENTO
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Ticket de Venta</label>
+            <select class="form-control" id="prt-asig-venta"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ticket de Cierre de Caja</label>
+            <select class="form-control" id="prt-asig-cierre"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Remisión</label>
+            <select class="form-control" id="prt-asig-remision"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">CFDI / Factura</label>
+            <select class="form-control" id="prt-asig-cfdi"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Orden de Compra</label>
+            <select class="form-control" id="prt-asig-oc"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Etiqueta de precios</label>
+            <select class="form-control" id="prt-asig-etiqueta"></select>
+          </div>
+        </div>
+        <div id="prt-asig-msg" style="display:none;font-size:0.75rem;padding:6px 10px;border-radius:8px;margin-top:4px;"></div>
+        <button type="button" class="btn btn-primary btn-sm" style="margin-top:8px;" data-click="guardarAsignacionImpresoras">
+          💾 Guardar asignación
+        </button>
+      </div>
+    </div>
+
+    <!-- Contenedor B: Configuración del Ticket -->
+    <div class="card" style="margin-top:20px;" id="card-ticket">
+      <div class="card-title">🧾 Configuración del Ticket</div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Encabezado del Ticket</label>
+          <textarea class="form-control" id="ticket-header" rows="3" placeholder="Texto del encabezado..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Pie del Ticket</label>
+          <textarea class="form-control" id="ticket-footer" rows="3" placeholder="Gracias por su compra"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Impuesto IVA (%)</label>
+          <input class="form-control" type="number" id="ticket-iva" value="16" min="0" max="100" step="0.01">
+        </div>
+      </div>
+      <div id="ticket-save-msg" style="display:none;font-size:0.75rem;padding:6px 10px;border-radius:8px;margin-top:4px;"></div>
+      <button type="button" class="btn btn-primary btn-sm" style="margin-top:8px;" data-click="guardarConfigTicket">
+        💾 Guardar Ticket
+      </button>
+    </div>
+  </section>
+
+</div>
+
+<!-- Modal Agregar / Editar Impresora -->
+<div class="modal-backdrop" id="modal-impresora" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:10010;align-items:center;justify-content:center;">
+  <div class="modal" style="width:460px;max-width:96vw;">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-prt-title"><i class="fa-solid fa-print" style="color:var(--brand-400);margin-right:8px;"></i>Agregar Impresora</div>
+      <button type="button" class="modal-close" data-click="cerrarModalImpresora"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="prt-edit-id">
+      <div class="form-group">
+        <label class="form-label">Nombre / Propósito *</label>
+        <input class="form-control" id="prt-name" placeholder="Ej. TICKETS: Ventas, Caja, Almacén">
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Formato / Papel</label>
+          <select class="form-control" id="prt-width">
+            <option value="80mm">80mm (Térmica)</option>
+            <option value="58mm">58mm (Térmica)</option>
+            <option value="Carta">Carta / A4 (PDF / Láser)</option>
+            <option value="Etiqueta">Etiqueta adherible</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo de conexión</label>
+          <select class="form-control" id="prt-conn">
+            <option value="Sistema">Sistema (Driver OS)</option>
+            <option value="Red / IP">Red / IP (RAW 9100)</option>
+            <option value="USB">USB Directo</option>
+            <option value="PDF Virtual">PDF Virtual</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Modelo / Cola en Sistema *</label>
+          <input class="form-control" id="prt-model" placeholder="Ej. SAM4S GIANT-100">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Copias</label>
+          <input class="form-control" type="number" id="prt-copies" value="1" min="1" max="5">
+        </div>
+      </div>
+      <div id="prt-error" style="display:none;color:var(--danger);font-size:0.75rem;margin-top:4px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-click="cerrarModalImpresora">Cancelar</button>
+      <button type="button" class="btn btn-primary" data-click="guardarImpresoraModal">
+        <i class="fa-solid fa-floppy-disk"></i> Guardar impresora
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Nueva / Editar Sucursal -->
+<div class="modal-backdrop" id="modal-sucursal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:10000;align-items:center;justify-content:center;">
+  <div class="modal" style="width:420px;max-width:96vw;">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-suc-title"><i class="fa-solid fa-store" style="color:var(--brand-400);margin-right:8px;"></i>Sucursal</div>
+      <button class="modal-close" data-click="cerrarModalSucursal"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="suc-id">
+      <div class="form-group"><label class="form-label">Nombre *</label><input class="form-control" id="suc-name" placeholder="Ej. SUCURSAL NORTE"></div>
+      <div class="form-group"><label class="form-label">Dirección</label><input class="form-control" id="suc-address" placeholder="Calle, número, colonia..."></div>
+      <div class="form-group"><label class="form-label">Teléfono</label><input class="form-control" id="suc-phone" placeholder="10 dígitos"></div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-control" id="suc-email" type="email" placeholder="contacto@sucursal.com"></div>
+      <div class="form-group">
+        <label class="form-label">Estado</label>
+        <select class="form-control" id="suc-status">
+          <option value="ACTIVE">Activa</option>
+          <option value="INACTIVE">Inactiva</option>
+        </select>
+      </div>
+      <div id="suc-error" style="display:none;color:var(--danger);font-size:0.75rem;margin-top:4px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-click="cerrarModalSucursal">Cancelar</button>
+      <button class="btn btn-primary" id="btn-guardar-suc" data-click="guardarSucursal">
+        <i class="fa-solid fa-floppy-disk"></i> Guardar
+      </button>
+    </div>
+  </div>
+</div>

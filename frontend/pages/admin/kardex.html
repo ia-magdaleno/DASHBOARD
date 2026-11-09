@@ -1,0 +1,57 @@
+<!-- PAGE: KARDEX DE MOVIMIENTOS v3 — F-03 -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Kardex de Movimientos</h1>
+    <p class="page-subtitle">Trazabilidad completa · entradas, salidas, ajustes y traslados</p>
+  </div>
+  <div class="page-header-actions">
+    <select id="kardex-filter-warehouse" class="btn btn-secondary btn-sm" style="cursor:pointer;">
+      <option value="">Todas las bodegas</option>
+    </select>
+    <input type="text" id="kardex-filter-sku" class="btn btn-secondary btn-sm"
+           placeholder="Filtrar por SKU..." style="width:160px;" autocomplete="off">
+    <button class="btn btn-secondary btn-sm" data-click="loadKardex">
+      <i class="fa-solid fa-rotate-right"></i> Actualizar
+    </button>
+  </div>
+</div>
+
+<div class="pill-tabs" style="margin-bottom:20px;" id="kardex-tabs">
+  <div class="pill-tab active" data-filter="">Todos</div>
+  <div class="pill-tab" data-filter="COMPRA">Compras</div>
+  <div class="pill-tab" data-filter="VENTA">Ventas</div>
+  <div class="pill-tab" data-filter="DEVOLUCION,DEVOLUCION_VENTA">Devoluciones</div>
+  <div class="pill-tab" data-filter="TRASPASO_ENTRADA,TRASPASO_SALIDA">Traslados</div>
+  <div class="pill-tab" data-filter="MERMA">Mermas</div>
+  <div class="pill-tab" data-filter="AJUSTE_FISICO,AJUSTE_POSITIVO">Ajustes</div>
+</div>
+
+<div class="table-wrapper">
+  <div class="table-toolbar">
+    <div class="table-toolbar-title">
+      Movimientos
+      <span class="badge badge-neutral" id="kardex-count">—</span>
+    </div>
+    <div class="table-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Buscar SKU, producto, referencia..." id="kardex-search-input" autocomplete="off">
+    </div>
+  </div>
+  <div id="kardex-table-body">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <div class="loading-text">Cargando movimientos...</div>
+    </div>
+  </div>
+  <div id="kardex-pagination" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border-color);font-size:13px;color:var(--text-muted);">
+    <span id="kardex-pagination-info">—</span>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-secondary btn-sm" id="kardex-btn-prev" data-click="kardexPrevPage" disabled>
+        <i class="fa-solid fa-chevron-left"></i> Anterior
+      </button>
+      <button class="btn btn-secondary btn-sm" id="kardex-btn-next" data-click="kardexNextPage" disabled>
+        Siguiente <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>

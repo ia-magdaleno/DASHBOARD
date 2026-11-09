@@ -1,0 +1,218 @@
+<!-- PAGE: RECEPCIÓN DE MERCANCÍA 360° — /api/reception-hub -->
+<!-- Dashboard + Asistente de Recepción (5 pasos) + Expediente 360°.            -->
+<!-- Lógica: scripts/loaders/reception-hub.js y reception-wizard.js              -->
+<style>
+  #rh-app { --rh-ok:#16a34a; --rh-warn:#d97706; --rh-bad:#dc2626; --rh-info:#2563eb; }
+  #rh-app .rh-kpis { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:14px; }
+  @media (max-width:1100px){ #rh-app .rh-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  #rh-app .rh-kpi { background:var(--bg-card); border:1px solid var(--border); border-radius:14px; padding:14px 16px; display:flex; gap:12px; align-items:flex-start; }
+  #rh-app .rh-kpi-ico { width:40px; height:40px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:19px; flex:0 0 40px; background:rgba(37,99,235,.12); }
+  #rh-app .rh-kpi-lbl { font-size:11px; font-weight:800; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.4px; }
+  #rh-app .rh-kpi-val { font-size:22px; font-weight:900; color:var(--text-primary); line-height:1.15; margin-top:2px; }
+  #rh-app .rh-kpi-sub { font-size:11.5px; color:var(--text-muted); margin-top:2px; }
+  #rh-app .rh-toolbar { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:12px; }
+  #rh-app .rh-input, #rh-app .rh-select, #rh-app .rh-textarea {
+    height:36px; padding:0 10px; border:1.5px solid var(--border); border-radius:9px; background:var(--bg-card-2);
+    color:var(--text-primary); font-size:13px; font-weight:600; outline:none; font-family:inherit; }
+  #rh-app .rh-textarea { height:auto; padding:8px 10px; resize:vertical; min-height:60px; width:100%; }
+  #rh-app .rh-input:focus, #rh-app .rh-select:focus, #rh-app .rh-textarea:focus { border-color:var(--brand-400,#3b82f6); box-shadow:0 0 0 3px rgba(59,130,246,.18); }
+  #rh-app .rh-btn { height:36px; padding:0 14px; border-radius:9px; border:1px solid var(--border); background:var(--bg-card-2);
+    color:var(--text-primary); font-size:12.5px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:7px; white-space:nowrap; }
+  #rh-app .rh-btn:hover { border-color:var(--brand-400,#3b82f6); }
+  #rh-app .rh-btn:disabled { opacity:.5; cursor:not-allowed; }
+  #rh-app .rh-btn.primary { background:linear-gradient(135deg,#2563eb,#1d4ed8); border-color:#1d4ed8; color:#fff; }
+  #rh-app .rh-btn.success { background:linear-gradient(135deg,#16a34a,#15803d); border-color:#15803d; color:#fff; }
+  #rh-app .rh-btn.danger  { background:#fef2f2; border-color:#fca5a5; color:#b91c1c; }
+  #rh-app .rh-btn.sm { height:28px; padding:0 9px; font-size:11.5px; border-radius:7px; }
+  #rh-app .rh-table-wrap { overflow:auto; border:1px solid var(--border); border-radius:12px; background:var(--bg-card); }
+  #rh-app table.rh-table { width:100%; border-collapse:collapse; font-size:12.5px; }
+  #rh-app table.rh-table th { position:sticky; top:0; background:var(--bg-card-2); color:var(--text-secondary); font-size:10.5px; font-weight:800;
+    letter-spacing:.5px; text-transform:uppercase; padding:10px 10px; text-align:left; border-bottom:1px solid var(--border); white-space:nowrap; }
+  #rh-app table.rh-table td { padding:9px 10px; border-bottom:1px solid var(--border); color:var(--text-primary); vertical-align:middle; }
+  #rh-app table.rh-table tr:last-child td { border-bottom:none; }
+  #rh-app table.rh-table tbody tr:hover { background:var(--bg-hover, rgba(59,130,246,.05)); }
+  #rh-app .rh-num { text-align:right; font-variant-numeric:tabular-nums; }
+  #rh-app .rh-mono { font-family:ui-monospace,Consolas,monospace; }
+  #rh-app .rh-muted { color:var(--text-muted); font-size:11px; }
+  #rh-app .rh-badge { display:inline-flex; align-items:center; gap:5px; padding:2px 9px; border-radius:999px; font-size:11px; font-weight:800; border:1px solid transparent; white-space:nowrap; }
+  #rh-app .rh-badge.ok   { background:rgba(22,163,74,.12);  color:#15803d; border-color:rgba(22,163,74,.35); }
+  #rh-app .rh-badge.warn { background:rgba(217,119,6,.13);  color:#b45309; border-color:rgba(217,119,6,.38); }
+  #rh-app .rh-badge.bad  { background:rgba(220,38,38,.11);  color:#b91c1c; border-color:rgba(220,38,38,.35); }
+  #rh-app .rh-badge.info { background:rgba(37,99,235,.11);  color:#1d4ed8; border-color:rgba(37,99,235,.33); }
+  #rh-app .rh-badge.gray { background:rgba(100,116,139,.13); color:#475569; border-color:rgba(100,116,139,.3); }
+  #rh-app .rh-stars { color:#f59e0b; letter-spacing:1px; white-space:nowrap; }
+  #rh-app .rh-stars .off { color:#cbd5e1; }
+  #rh-app .rh-actions { display:flex; gap:5px; flex-wrap:nowrap; }
+  #rh-app .rh-ico-btn { width:30px; height:30px; border-radius:8px; border:1px solid var(--border); background:var(--bg-card-2); cursor:pointer; font-size:14px; display:inline-flex; align-items:center; justify-content:center; position:relative; }
+  #rh-app .rh-ico-btn:hover { border-color:var(--brand-400,#3b82f6); background:rgba(59,130,246,.1); }
+  #rh-app .rh-ico-btn[disabled] { opacity:.35; cursor:not-allowed; }
+  #rh-app .rh-ico-btn .rh-dot { position:absolute; top:-5px; right:-5px; min-width:15px; height:15px; border-radius:99px; background:#dc2626; color:#fff; font-size:9px; font-weight:900; display:flex; align-items:center; justify-content:center; padding:0 3px; }
+
+  /* Overlays (Asistente y visores) */
+  .rh-overlay { position:fixed; inset:0; z-index:9000; display:none; align-items:center; justify-content:center; background:rgba(15,23,42,.58); backdrop-filter:blur(2px); padding:18px; }
+  .rh-overlay.open { display:flex; }
+  .rh-dialog { background:var(--bg-card,#fff); color:var(--text-primary); border:1.5px solid var(--border); border-radius:16px; box-shadow:0 28px 70px rgba(15,23,42,.45);
+    width:min(1180px,100%); max-height:calc(100vh - 36px); display:flex; flex-direction:column; overflow:hidden; }
+  .rh-dialog.narrow { width:min(820px,100%); }
+  .rh-dlg-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:13px 18px; background:var(--bg-card-2); border-bottom:1px solid var(--border); }
+  .rh-dlg-title { font-size:16px; font-weight:900; display:flex; align-items:center; gap:10px; }
+  .rh-dlg-x { width:32px; height:32px; border-radius:9px; border:1px solid var(--border); background:var(--bg-card); cursor:pointer; font-size:15px; color:var(--text-secondary); }
+  .rh-dlg-body { padding:16px 18px; overflow:auto; flex:1; min-height:200px; }
+  .rh-dlg-foot { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 18px; background:var(--bg-card-2); border-top:1px solid var(--border); flex-wrap:wrap; }
+
+  /* Asistente como PÁGINA COMPLETA (no flotante): ocupa el área de contenido, oculta el dashboard mientras está abierto */
+  #rh-app:has(#rh-wizard.open) > *:not(#rh-wizard):not(.rh-overlay):not(.rh-lightbox):not(.rh-toast) { display:none !important; }
+  #rh-wizard.rh-overlay { position:static; inset:auto; z-index:auto; background:none; backdrop-filter:none; padding:0; align-items:stretch; justify-content:stretch; }
+  #rh-wizard.rh-overlay.open { display:block; }
+  #rh-wizard .rh-dialog { width:100%; max-height:none; overflow:visible; box-shadow:none; border-radius:14px; }
+  #rh-wizard .rh-dlg-body { overflow:visible; min-height:60vh; flex:none; }
+  #rh-wizard .rh-steps { position:sticky; top:-28px; z-index:20; margin-top:0; }
+  #rh-wizard .rh-dlg-foot { position:sticky; bottom:-28px; z-index:25; box-shadow:0 -6px 18px rgba(15,23,42,.12); border-radius:0 0 14px 14px; }
+  /* Stepper */
+  .rh-steps { display:flex; gap:6px; padding:10px 18px; border-bottom:1px solid var(--border); background:var(--bg-card); overflow-x:auto; }
+  .rh-step { display:flex; align-items:center; gap:8px; padding:6px 12px; border-radius:999px; border:1px solid var(--border); font-size:12px; font-weight:800; color:var(--text-secondary); white-space:nowrap; background:var(--bg-card-2); }
+  .rh-step b { width:22px; height:22px; border-radius:50%; background:#cbd5e1; color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:11px; }
+  .rh-step.active { border-color:#2563eb; color:#1d4ed8; background:rgba(37,99,235,.1); }
+  .rh-step.active b { background:#2563eb; }
+  .rh-step.done b { background:#16a34a; }
+  .rh-step.done { color:#15803d; }
+
+  /* Bloques del asistente */
+  .rh-card { background:var(--bg-card-2); border:1px solid var(--border); border-radius:12px; padding:13px 14px; margin-bottom:12px; }
+  .rh-card > h4 { margin:0 0 9px; font-size:13px; font-weight:900; display:flex; align-items:center; gap:8px; }
+  .rh-grid { display:grid; gap:10px; }
+  .rh-grid.c2 { grid-template-columns:1fr 1fr; } .rh-grid.c3 { grid-template-columns:repeat(3,1fr); } .rh-grid.c4 { grid-template-columns:repeat(4,1fr); }
+  @media (max-width:900px){ .rh-grid.c2,.rh-grid.c3,.rh-grid.c4 { grid-template-columns:1fr; } }
+  .rh-field label { display:block; font-size:10.5px; font-weight:800; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.4px; margin-bottom:4px; }
+  .rh-field .rh-input, .rh-field .rh-select { width:100%; }
+  .rh-choice { display:flex; align-items:flex-start; gap:9px; padding:10px 12px; border:1.5px solid var(--border); border-radius:11px; background:var(--bg-card); cursor:pointer; font-size:12.5px; font-weight:700; }
+  .rh-choice:hover { border-color:#93c5fd; }
+  .rh-choice.sel { border-color:#2563eb; background:rgba(37,99,235,.09); }
+  .rh-choice small { display:block; font-weight:600; color:var(--text-muted); font-size:11px; margin-top:2px; }
+  .rh-drop { border:2px dashed #94a3b8; border-radius:13px; padding:18px 14px; text-align:center; background:var(--bg-card); cursor:pointer; transition:all .15s; }
+  .rh-drop:hover, .rh-drop.over { border-color:#2563eb; background:rgba(37,99,235,.07); }
+  .rh-drop .big { font-size:28px; } .rh-drop p { margin:4px 0 0; font-size:12px; color:var(--text-secondary); font-weight:600; }
+  .rh-file-chip { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:99px; background:rgba(22,163,74,.12); border:1px solid rgba(22,163,74,.35); color:#15803d; font-size:11.5px; font-weight:800; margin:3px 4px 0 0; }
+  .rh-file-chip button { border:none; background:none; cursor:pointer; color:#b91c1c; font-weight:900; }
+  .rh-alert { padding:9px 12px; border-radius:10px; font-size:12px; font-weight:700; margin:8px 0; border:1px solid; }
+  .rh-alert.warn { background:#fffbeb; border-color:#fcd34d; color:#92400e; }
+  .rh-alert.bad  { background:#fef2f2; border-color:#fca5a5; color:#991b1b; }
+  .rh-alert.ok   { background:#f0fdf4; border-color:#86efac; color:#166534; }
+  .rh-alert.info { background:#eff6ff; border-color:#93c5fd; color:#1e40af; }
+  .rh-subrow td { background:rgba(37,99,235,.04); }
+  .rh-ac { position:relative; }
+  .rh-ac-list { position:absolute; left:0; right:0; top:100%; z-index:20; max-height:230px; overflow:auto; background:var(--bg-card); border:1.5px solid #2563eb; border-radius:9px; box-shadow:0 12px 28px rgba(15,23,42,.25); }
+  .rh-ac-item { padding:7px 10px; font-size:12px; cursor:pointer; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; gap:10px; }
+  .rh-ac-item:hover, .rh-ac-item.hl { background:rgba(37,99,235,.12); }
+  .rh-qty { width:70px; text-align:right; }
+  #rh-wz-body .rh-table td { padding:7px 6px; }
+  #rh-wz-body .rh-table th { padding:9px 6px; white-space:normal; line-height:1.25; vertical-align:bottom; }
+  @keyframes rhflash { 0% { background:rgba(245,158,11,.55); } 100% { background:transparent; } }
+  .rh-flash td { animation:rhflash 1.8s ease-out; }
+  .rh-sig { border:1.5px dashed #94a3b8; border-radius:10px; background:#fff; width:100%; height:130px; touch-action:none; cursor:crosshair; display:block; }
+  .rh-star-in { font-size:24px; cursor:pointer; color:#cbd5e1; letter-spacing:2px; user-select:none; }
+  .rh-star-in .on { color:#f59e0b; }
+  .rh-thumbs { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .rh-thumb { position:relative; width:92px; height:72px; border-radius:8px; overflow:hidden; border:1px solid var(--border); background:#e2e8f0; }
+  .rh-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .rh-thumb button { position:absolute; top:2px; right:2px; width:18px; height:18px; border-radius:50%; border:none; background:rgba(220,38,38,.92); color:#fff; font-size:10px; cursor:pointer; }
+  .rh-gallery { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:10px; }
+  .rh-gal-item { border:1px solid var(--border); border-radius:10px; overflow:hidden; background:var(--bg-card-2); cursor:zoom-in; }
+  .rh-gal-item img { width:100%; height:130px; object-fit:cover; display:block; background:#e2e8f0; }
+  .rh-gal-item div { padding:6px 8px; font-size:11px; font-weight:700; color:var(--text-secondary); }
+  .rh-acc { border:1px solid var(--border); border-radius:11px; margin-bottom:8px; overflow:hidden; background:var(--bg-card); }
+  .rh-acc > summary { list-style:none; cursor:pointer; padding:10px 14px; font-weight:900; font-size:13px; display:flex; align-items:center; gap:10px; background:var(--bg-card-2); }
+  .rh-acc > summary::-webkit-details-marker { display:none; }
+  .rh-acc[open] > summary { border-bottom:1px solid var(--border); }
+  .rh-acc .rh-acc-body { padding:11px 14px; font-size:12.5px; }
+  .rh-kv { display:grid; grid-template-columns:200px 1fr; gap:4px 12px; }
+  .rh-kv dt { color:var(--text-secondary); font-weight:800; font-size:11.5px; } .rh-kv dd { margin:0; font-weight:600; word-break:break-word; }
+  .rh-timeline { border-left:3px solid #cbd5e1; margin-left:6px; padding-left:14px; }
+  .rh-timeline > div { position:relative; margin-bottom:10px; font-size:12px; }
+  .rh-timeline > div::before { content:''; position:absolute; left:-21px; top:3px; width:11px; height:11px; border-radius:50%; background:#2563eb; border:2px solid #fff; }
+  .rh-lightbox { position:fixed; inset:0; z-index:9600; background:rgba(2,6,23,.88); display:none; align-items:center; justify-content:center; padding:20px; cursor:zoom-out; }
+  .rh-lightbox.open { display:flex; } .rh-lightbox img { max-width:96vw; max-height:92vh; border-radius:8px; background:#fff; }
+  .rh-toast { position:fixed; right:22px; bottom:22px; z-index:9700; display:flex; flex-direction:column; gap:8px; }
+  .rh-toast div { padding:10px 14px; border-radius:10px; font-size:12.5px; font-weight:800; color:#fff; box-shadow:0 10px 24px rgba(0,0,0,.3); max-width:420px; }
+  .rh-toast .ok { background:#16a34a; } .rh-toast .bad { background:#dc2626; } .rh-toast .info { background:#2563eb; } .rh-toast .warn { background:#d97706; }
+</style>
+
+<div id="rh-app">
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1 class="page-title">Recepción de Mercancía</h1>
+      <p class="page-subtitle">Asistente de recepción, costeo real (Landed Cost), evidencias, incidencias y expediente 360° — afecta inventario, Kardex, CxP y gastos.</p>
+    </div>
+    <div class="page-header-actions">
+      <button type="button" class="btn btn-primary btn-sm" data-rh="wizard-open" id="rh-btn-new">
+        <i class="fa-solid fa-plus"></i> Registrar Recepción
+      </button>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="rh-kpis" id="rh-kpis">
+    <div class="rh-kpi"><div class="rh-kpi-ico">📦</div><div><div class="rh-kpi-lbl">Recepciones del Mes</div><div class="rh-kpi-val" id="rh-k1">—</div><div class="rh-kpi-sub" id="rh-k1s">Cargando…</div></div></div>
+    <div class="rh-kpi"><div class="rh-kpi-ico">🚛</div><div><div class="rh-kpi-lbl">Flete / Maniobras Prorrateados</div><div class="rh-kpi-val" id="rh-k2">—</div><div class="rh-kpi-sub" id="rh-k2s">% promedio sobre compras</div></div></div>
+    <div class="rh-kpi"><div class="rh-kpi-ico">⚠️</div><div><div class="rh-kpi-lbl">Incidencias / NC Pendientes</div><div class="rh-kpi-val" id="rh-k3">—</div><div class="rh-kpi-sub" id="rh-k3s">Faltantes o daños por resolver</div></div></div>
+    <div class="rh-kpi"><div class="rh-kpi-ico">⭐</div><div><div class="rh-kpi-lbl">Calificación Prom. Proveedores</div><div class="rh-kpi-val" id="rh-k4">—</div><div class="rh-kpi-sub" id="rh-k4s">Basada en entregas reales</div></div></div>
+  </div>
+
+  <!-- Filtros + tabla histórica -->
+  <div class="card" style="padding:14px;">
+    <div class="rh-toolbar">
+      <input type="text" class="rh-input" id="rh-search" style="min-width:320px;flex:1;max-width:520px;" autocomplete="off"
+             placeholder="Buscar por Folio, Proveedor, UUID de Factura o Folio de OC…">
+      <select class="rh-select" id="rh-status">
+        <option value="">Todos los estatus</option>
+        <option value="COMPLETA">Completa</option>
+        <option value="INCIDENCIA">Con Incidencia / Faltantes</option>
+        <option value="NC_PENDIENTE">Nota de Crédito Pendiente</option>
+      </select>
+      <button type="button" class="rh-btn" data-rh="refresh" title="Actualizar"><i class="fa-solid fa-arrows-rotate"></i></button>
+      <span class="rh-muted" id="rh-count" style="margin-left:auto;"></span>
+    </div>
+    <div class="rh-table-wrap">
+      <table class="rh-table">
+        <thead>
+          <tr>
+            <th>Folio Recepción</th><th>Origen / OC</th><th>Proveedor</th><th>Factura Mercancía (UUID/Folio)</th>
+            <th class="rh-num">Flete / Landed Cost</th><th>Estado Físico</th><th>Calificación</th>
+            <th class="rh-num">Total Factura</th><th>Pago / CxP</th><th>Acciones (1-clic)</th>
+          </tr>
+        </thead>
+        <tbody id="rh-tbody">
+          <tr><td colspan="10" style="text-align:center;padding:34px;color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Cargando recepciones…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Asistente (Wizard) -->
+  <div class="rh-overlay" id="rh-wizard" aria-hidden="true">
+    <div class="rh-dialog" role="dialog" aria-modal="true" aria-label="Asistente de Recepción de Mercancía">
+      <div class="rh-dlg-head">
+        <div class="rh-dlg-title"><span style="font-size:22px;">🚚</span> Asistente de Recepción de Mercancía</div>
+        <button type="button" class="rh-dlg-x" data-rh="wizard-close" title="Cerrar (se pierde lo capturado)">✕</button>
+      </div>
+      <div class="rh-steps" id="rh-wz-steps"></div>
+      <div class="rh-dlg-body" id="rh-wz-body"></div>
+      <div class="rh-dlg-foot" id="rh-wz-foot"></div>
+    </div>
+  </div>
+
+  <!-- Visor (Factura / Evidencias / Incidencia / Expediente 360°) -->
+  <div class="rh-overlay" id="rh-viewer" aria-hidden="true">
+    <div class="rh-dialog" id="rh-viewer-dlg" role="dialog" aria-modal="true">
+      <div class="rh-dlg-head">
+        <div class="rh-dlg-title" id="rh-viewer-title">Expediente</div>
+        <button type="button" class="rh-dlg-x" data-rh="viewer-close" title="Cerrar (ESC)">✕</button>
+      </div>
+      <div class="rh-dlg-body" id="rh-viewer-body"></div>
+      <div class="rh-dlg-foot" id="rh-viewer-foot"></div>
+    </div>
+  </div>
+
+  <div class="rh-lightbox" id="rh-lightbox" data-rh="lightbox-close"><img id="rh-lightbox-img" alt="Evidencia"></div>
+  <div class="rh-toast" id="rh-toast"></div>
+</div>

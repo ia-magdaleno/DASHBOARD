@@ -1,0 +1,24 @@
+<!-- COMPONENT: Modal Base -->
+<!-- Trigger: openModal('modal-id') / closeModal('modal-id') -->
+<div class="modal-backdrop" id="modal-example">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa-solid fa-tag" style="color:var(--brand-400);margin-right:8px;"></i>Título del Modal</div>
+      <button class="modal-close" onclick="closeModal('modal-example')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <!-- Content -->
+      <div class="form-group">
+        <label class="form-label">Campo *</label>
+        <input class="form-control" type="text" placeholder="Valor...">
+      </div>
+      <div class="empty-module-label" style="margin-top:4px;">
+        <i class="fa-solid fa-info-circle"></i> Formulario diseñado — guardado pendiente de endpoint
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-example')">Cancelar</button>
+      <button class="btn btn-primary">Confirmar</button>
+    </div>
+  </div>
+</div>

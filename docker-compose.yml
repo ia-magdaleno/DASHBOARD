@@ -1,0 +1,44 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: calebsys_redis
+    restart: unless-stopped
+    command: redis-server --save "" --appendonly no --maxmemory 64mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6389:6379"   # Host 6379/6380/6381 ocupados; 6389 libre
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  calebsys:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: calebsys-pos:local
+    container_name: calebsys_pos
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+    ports:
+      # Host 8010 -> puertos 8000/8001/8002/8091/8092/9000 ya están ocupados
+      # por otros contenedores tuyos (EHRbase, LMConect-IQ, etc). Dentro del
+      # contenedor sigue siendo 8000; cambia solo el lado izquierdo si hace falta.
+      - "8010:8000"
+    env_file:
+      - .env
+    environment:
+      # local = SQLite en disco (demo/dev sin Supabase)
+      # cloud = PostgreSQL Supabase (producción)
+      DEPLOYMENT_MODE: local
+      # Redis — apunta al servicio hermano dentro de la red docker-compose
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      # Bind mount: cambios en ./frontend se reflejan en el contenedor
+      # sin rebuild. Solo para desarrollo — comentar en producción.
+      - ./frontend:/app/frontend
+      # Persistencia de la BD SQLite local entre rebuilds (modo local/demo).
+      # El archivo vive en el host: ./deploy_data/calebsys_local.db
+      - ./deploy_data/calebsys_local.db:/app/backend/calebsys_local.db

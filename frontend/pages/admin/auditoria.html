@@ -1,0 +1,56 @@
+<!-- ============================================================
+     PAGE: AUDITORÍA — Módulo Administración CALEBSYS
+     Conectado a /api/admin/audit-logs · Fase 2 MVP
+     ============================================================ -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Auditoría del Sistema</h1>
+    <p class="page-subtitle">Log de acciones, severidad y trazabilidad de operaciones críticas</p>
+  </div>
+  <div class="page-header-actions" style="display:flex;gap:8px;align-items:center;">
+    <span id="audit-count" style="font-size:0.75rem;color:var(--text-muted);padding:4px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;">—</span>
+    <button data-click="__safe" data-click-arg="loadAuditLogs"
+            style="padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface);font-size:0.78rem;font-weight:600;cursor:pointer;color:var(--text-main);display:flex;align-items:center;gap:6px;">
+      <i class="fa-solid fa-rotate-right"></i> Actualizar
+    </button>
+  </div>
+</div>
+
+<!-- Pill-tabs severidad -->
+<div class="pill-tabs" id="audit-tabs" style="margin-bottom:16px;">
+  <div class="pill-tab active" data-sev="">Todos</div>
+  <div class="pill-tab" data-sev="INFO" style="color:#3b82f6;">INFO</div>
+  <div class="pill-tab" data-sev="WARNING" style="color:#f59e0b;">WARNING</div>
+  <div class="pill-tab" data-sev="CRITICAL" style="color:#ef4444;">CRITICAL</div>
+  <div class="pill-tab" data-sev="SECURITY" style="color:#8b5cf6;">SECURITY</div>
+</div>
+
+<!-- Barra de búsqueda -->
+<div class="table-wrapper">
+  <div class="table-toolbar">
+    <div class="table-toolbar-title">Registro de Auditoría</div>
+    <div class="table-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="audit-search" placeholder="Buscar acción, usuario...">
+    </div>
+  </div>
+  <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:0.78rem;">
+      <thead>
+        <tr>
+          <th style="padding:8px 12px;text-align:left;color:var(--text-muted);font-size:0.68rem;text-transform:uppercase;border-bottom:1px solid var(--border);">Fecha/Hora</th>
+          <th style="padding:8px 12px;text-align:left;color:var(--text-muted);font-size:0.68rem;text-transform:uppercase;border-bottom:1px solid var(--border);">Usuario</th>
+          <th style="padding:8px 12px;text-align:left;color:var(--text-muted);font-size:0.68rem;text-transform:uppercase;border-bottom:1px solid var(--border);">Acción</th>
+          <th style="padding:8px 12px;text-align:left;color:var(--text-muted);font-size:0.68rem;text-transform:uppercase;border-bottom:1px solid var(--border);">Severidad</th>
+          <th style="padding:8px 12px;text-align:left;color:var(--text-muted);font-size:0.68rem;text-transform:uppercase;border-bottom:1px solid var(--border);">IP</th>
+          <th style="padding:8px 12px;text-align:left;color:var(--text-muted);font-size:0.68rem;text-transform:uppercase;border-bottom:1px solid var(--border);">Detalles</th>
+        </tr>
+      </thead>
+      <tbody id="audit-tbody">
+        <tr><td colspan="6" style="padding:40px;text-align:center;color:var(--text-muted);">
+          <i class="fa-solid fa-circle-notch fa-spin"></i> Cargando...
+        </td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

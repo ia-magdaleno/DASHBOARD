@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CALEBSYS — Sistema Empresarial</title>
+  <link rel="stylesheet" href="../styles/variables.css">
+  <link rel="stylesheet" href="../styles/components.css">
+  <link rel="stylesheet" href="../styles/dashboard.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="sb-logo-area">
+      <div class="sb-logo-icon">C</div>
+      <div>
+        <div class="sb-logo-text">CALEB<span>SYS</span></div>
+      </div>
+    </div>
+    <div class="sb-tagline">SISTEMA EMPRESARIAL<br>EDICIÓN FRANQUICIAS</div>
+
+    <div class="sb-company" onclick="openModule('admin')">
+      <div class="sb-comp-icon">🏪</div>
+      <div class="sb-comp-info">
+        <div class="sb-comp-name">Magdaleno</div>
+        <div class="sb-comp-desc">MAG-001 - Maderas &<br>Materiales</div>
+      </div>
+      <div style="color: rgba(255,255,255,0.3); font-size: 0.8rem;">▼</div>
+    </div>
+
+    <div class="sb-section-title">NAVEGACIÓN</div>
+    <div class="sb-nav">
+      <div class="sb-item active" onclick="openModule('home')" id="nav-home">
+        <div class="sb-item-icon">🏠</div>
+        <div class="sb-item-label">Inicio</div>
+        <div class="sb-item-key">ESC</div>
+      </div>
+      <div class="sb-item" onclick="openModule('pos')" id="nav-pos">
+        <div class="sb-item-icon">🖥️</div>
+        <div class="sb-item-label">Punto de Venta</div>
+        <div class="sb-item-key">F1</div>
+      </div>
+      <div class="sb-item" onclick="openModule('admin')" id="nav-admin">
+        <div class="sb-item-icon">⚙️</div>
+        <div class="sb-item-label">Administración</div>
+        <div class="sb-item-key">F2</div>
+      </div>
+      <div class="sb-item" onclick="openModule('social')" id="nav-social">
+        <div class="sb-item-icon">📱</div>
+        <div class="sb-item-label">Redes Sociales</div>
+        <div class="sb-item-key">F3</div>
+      </div>
+      <div class="sb-item" onclick="openModule('gps')" id="nav-gps">
+        <div class="sb-item-icon">📍</div>
+        <div class="sb-item-label">GPS Tracking</div>
+        <div class="sb-item-key">F4</div>
+      </div>
+      <div class="sb-item" onclick="openModule('contabilidad')" id="nav-contabilidad">
+        <div class="sb-item-icon">📊</div>
+        <div class="sb-item-label">El Contador</div>
+        <div class="sb-item-key">F6</div>
+      </div>
+      <div class="sb-item" onclick="openModule('ia')" id="nav-ia">
+        <div class="sb-item-icon">🤖</div>
+        <div class="sb-item-label">iAMAGDALENO IA</div>
+        <div class="sb-item-key">F9</div>
+      </div>
+    </div>
+
+    <div class="sb-footer">
+      <div class="sb-user" onclick="openModule('perfil')">
+        <div id="sb-initials" style="display:none;"></div><img src="https://ui-avatars.com/api/?name=Admin&background=6366f1&color=fff&rounded=true&bold=true" class="sb-avatar" alt="A">
+        <div class="sb-user-info">
+          <div class="sb-user-name" id="sb-username">Admin .</div>
+          <div class="sb-user-role" id="sb-role">Admin</div>
+        </div>
+        <div class="sb-status"></div>
+        <div style="font-size: 0.7rem; color: var(--green); font-weight: 600;">En línea</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div id="main">
+    
+    <!-- TOPBAR -->
+    <header id="topbar">
+      <button class="tb-menu-btn">☰</button>
+      <div id="tb-module-name" style="display:none;">Inicio</div>
+      <div class="tb-search">
+        <span style="color:var(--text-light)">🔍</span>
+        <input type="text" placeholder="Buscar módulo, cliente, producto...">
+        <span class="tb-search-key">⌘ K</span>
+      </div>
+      <div class="tb-actions">
+        <div class="tb-icon" title="Notificaciones">
+          🔔<div class="tb-badge"></div>
+        </div>
+        <div class="tb-icon" title="Mensajes">
+          💬
+        </div>
+        <div class="tb-profile" onclick="openModule('perfil')">
+          <img src="https://ui-avatars.com/api/?name=Antonio+M&background=1e293b&color=fff" alt="User">
+          <div class="tb-profile-info">
+            <span class="tb-profile-name">Antonio M.</span>
+            <span class="tb-profile-role">Administrador</span>
+          </div>
+          <span style="color:var(--text-light); font-size:0.7rem; margin-left:4px;">▼</span>
+        </div>
+      </div>
+    </header>
+
+    <div id="tabs-bar" style="display:none;"><button class="new-tab-btn">+</button></div>
+    <!-- CONTENT -->
+    <div id="content-area">
+      
+      <!-- HOME PANEL -->
+      <div class="module-panel active" id="panel-home">
+        
+        <!-- DASHBOARD LAYOUT -->
+        <div class="dash-layout">
+          
+          <div class="dash-main">
+            <!-- GREETING -->
+            <div class="greeting-banner">
+              <div class="greeting-content">
+                <h1 class="greeting-title">¡Buenos días, Antonio! 👋</h1>
+                <p class="greeting-sub">Bienvenido a CALEBSYS - Magdaleno Maderas & Materiales</p>
+              </div>
+              <div class="greeting-datebox">
+                <div class="greeting-datebox-info">
+                  <div class="g-date" id="tb-date">Viernes, 24 de Mayo 2024</div>
+                  <div class="g-time" id="tb-time">10:30 AM</div>
+                </div>
+                <div class="g-icon">📅</div>
+              </div>
+            </div>
+
+            <!-- STATS -->
+            <div class="stats-row">
+              <div class="stat-card">
+                <div class="stat-top">
+                  <div class="stat-icon bg-blue" style="color:white; background:#3B82F6; box-shadow:0 4px 10px rgba(59,130,246,0.3);">💰</div>
+                  <div class="stat-info">
+                    <div class="stat-title">VENTAS HOY</div>
+                    <div class="stat-value" id="kpi-ventas">$24,750.00</div>
+                    <div class="stat-desc">vs. ayer $20,890.00</div>
+                  </div>
+                  <div class="stat-trend trend-up" id="kpi-delta-ventas">↑ 18.6%</div>
+                </div>
+                <div class="stat-chart chart-blue"></div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-top">
+                  <div class="stat-icon bg-purple" style="color:white; background:#8B5CF6; box-shadow:0 4px 10px rgba(139,92,246,0.3);">🧾</div>
+                  <div class="stat-info">
+                    <div class="stat-title">TICKETS EMITIDOS</div>
+                    <div class="stat-value" id="kpi-tickets">32</div>
+                    <div class="stat-desc">vs. ayer 28</div>
+                  </div>
+                  <div class="stat-trend trend-up" id="kpi-delta-tickets">↑ 12.5%</div>
+                </div>
+                <div class="stat-chart chart-purple"></div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-top">
+                  <div class="stat-icon bg-green" style="color:white; background:#10B981; box-shadow:0 4px 10px rgba(16,185,129,0.3);">👥</div>
+                  <div class="stat-info">
+                    <div class="stat-title">CLIENTES NUEVOS</div>
+                    <div class="stat-value" id="kpi-clientes">5</div>
+                    <div class="stat-desc">vs. semana pasada 4</div>
+                  </div>
+                  <div class="stat-trend trend-up" id="kpi-delta-clientes">↑ 25%</div>
+                </div>
+                <div class="stat-chart chart-green"></div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-top">
+                  <div class="stat-icon bg-orange" style="color:white; background:#F59E0B; box-shadow:0 4px 10px rgba(245,158,11,0.3);">💳</div>
+                  <div class="stat-info">
+                    <div class="stat-title">CUENTAS POR COBRAR</div>
+                    <div class="stat-value" id="kpi-cxc">$85,000.00</div>
+                    <div class="stat-desc">Total pendiente</div>
+                  </div>
+                  <div class="stat-trend trend-down" id="kpi-delta-cxc">↓ 8.3%</div>
+                </div>
+                <div class="stat-chart chart-orange"></div>
+              </div>
+            </div>
+
+            <!-- CHARTS & TABLES -->
+            <div class="dash-bottom-row">
+              
+              <div class="card" style="grid-column: span 2;">
+                <div class="card-header">
+                  <div class="card-title" id="main-chart-title"><span class="card-title-icon" style="color:#3B82F6;">📈</span> VENTAS POR HORA (HOY)</div>
+                  <select id="main-chart-select" style="border:none; background:var(--surface-bg); padding:6px 12px; border-radius:12px; font-weight:600; font-size:0.8rem; color:var(--text-main); outline:none; cursor:pointer;" onchange="updateMainChart()">
+                    <option value="hoy">Hoy</option>
+                    <option value="mes">Este Mes</option>
+                    <option value="ano">Este Año</option>
+                  </select>
+                </div>
+                <div style="flex:1; position:relative; min-height:220px; padding:10px 0;">
+                  <canvas id="main-chart"></canvas>
+                </div>
+                <div class="chart-summaries" style="display:flex; gap:16px; margin-top:20px;">
+                  <div class="chart-summary-box" style="flex:1; background:var(--surface-bg); border-radius:12px; padding:16px; text-align:center;">
+                    <div style="font-size:0.65rem; font-weight:700; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase;" id="cs-total-lbl">TOTAL VENTAS</div>
+                    <div style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.2rem; font-weight:800; color:var(--text-main);" id="cs-total">$0.00</div>
+                  </div>
+                  <div class="chart-summary-box" style="flex:1; background:var(--surface-bg); border-radius:12px; padding:16px; text-align:center;">
+                    <div style="font-size:0.65rem; font-weight:700; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase;" id="cs-avg-lbl">PROMEDIO / HORA</div>
+                    <div style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.2rem; font-weight:800; color:var(--text-main);" id="cs-avg">$0.00</div>
+                  </div>
+                  <div class="chart-summary-box" style="flex:1; background:var(--surface-bg); border-radius:12px; padding:16px; text-align:center;">
+                    <div style="font-size:0.65rem; font-weight:700; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase;" id="cs-max-title">MÁXIMA HORA</div>
+                    <div style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.2rem; font-weight:800; color:#3B82F6;" id="cs-max">$0.00</div>
+                    <div style="font-size:0.65rem; color:#3B82F6; font-weight:600; margin-top:4px;" id="cs-max-lbl">-</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title"><span class="card-title-icon">🧾</span> Últimas ventas</div>
+                  <a href="#" class="card-action">Ver todas</a>
+                </div>
+                <div class="table-container">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Folio</th>
+                        <th>Hora</th>
+                        <th>Forma Pago</th>
+                        <th style="text-align:right">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody id="recent-sales-body">
+                      <tr>
+                        <td style="font-weight:700;">POS-000125</td>
+                        <td>10:35 AM</td>
+                        <td><span class="pill pill-blue">💳 Tarjeta</span></td>
+                        <td style="text-align:right; font-weight:800;">$2,750.00</td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight:700;">POS-000124</td>
+                        <td>10:18 AM</td>
+                        <td><span class="pill pill-green">💵 Efectivo</span></td>
+                        <td style="text-align:right; font-weight:800;">$1,230.00</td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight:700;">POS-000123</td>
+                        <td>09:57 AM</td>
+                        <td><span class="pill pill-blue">🏦 Transferencia</span></td>
+                        <td style="text-align:right; font-weight:800;">$4,890.00</td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight:700;">POS-000122</td>
+                        <td>09:31 AM</td>
+                        <td><span class="pill pill-blue">💳 Tarjeta</span></td>
+                        <td style="text-align:right; font-weight:800;">$3,450.00</td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight:700;">POS-000121</td>
+                        <td>09:05 AM</td>
+                        <td><span class="pill pill-green">💵 Efectivo</span></td>
+                        <td style="text-align:right; font-weight:800;">$1,820.00</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div style="text-align:center; margin-top:16px;">
+                    <a href="#" style="color:var(--primary); font-size:0.8rem; font-weight:600; text-decoration:none;">Cargar más ventas ⌄</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title"><span class="card-title-icon">🏆</span> Top Productos Hoy</div>
+                </div>
+                                <div class="prod-list" id="top-products-list">
+                  <div class="prod-item">
+                    <img src="https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?w=50&h=50&fit=crop" class="prod-img">
+                    <div class="prod-info">
+                      <div class="prod-name">Triplay 18mm</div>
+                      <div class="prod-qty">45 unidades</div>
+                    </div>
+                    <div class="prod-val">$6,750.00</div>
+                  </div>
+                  <div class="prod-item">
+                    <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=50&h=50&fit=crop" class="prod-img">
+                    <div class="prod-info">
+                      <div class="prod-name">MDF 15mm</div>
+                      <div class="prod-qty">38 unidades</div>
+                    </div>
+                    <div class="prod-val">$5,320.00</div>
+                  </div>
+                  <div class="prod-item">
+                    <img src="https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=50&h=50&fit=crop" class="prod-img">
+                    <div class="prod-info">
+                      <div class="prod-name">Tablón de Pino</div>
+                      <div class="prod-qty">32 unidades</div>
+                    </div>
+                    <div class="prod-val">$4,160.00</div>
+                  </div>
+                  <div class="prod-item">
+                    <img src="https://images.unsplash.com/photo-1596460107916-430662021049?w=50&h=50&fit=crop" class="prod-img">
+                    <div class="prod-info">
+                      <div class="prod-name">OSB 11mm</div>
+                      <div class="prod-qty">28 unidades</div>
+                    </div>
+                    <div class="prod-val">$3,640.00</div>
+                  </div>
+                  <div class="prod-item">
+                    <div class="prod-img" style="background:#E2E8F0;"></div>
+                    <div class="prod-info">
+                      <div class="prod-name">Melamina Blanca</div>
+                      <div class="prod-qty">25 unidades</div>
+                    </div>
+                    <div class="prod-val">$3,100.00</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dash-sidebar">
+            <div class="card">
+              <div class="card-header" style="margin-bottom:12px;">
+                <div class="card-title" style="color:var(--text-main); font-size:0.8rem;">RESUMEN RÁPIDO</div>
+              </div>
+              <div class="summary-list">
+                <div class="summary-item">
+                  <div class="summary-label"><div class="summary-icon">💰</div> Ventas del día</div>
+                  <div class="summary-val">$24,750.00</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-label"><div class="summary-icon">🧾</div> Órdenes del día</div>
+                  <div class="summary-val">28</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-label"><div class="summary-icon">👥</div> Clientes atendidos</div>
+                  <div class="summary-val">18</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-label"><div class="summary-icon">📦</div> Productos vendidos</div>
+                  <div class="summary-val">168</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-label"><div class="summary-icon">📊</div> Ticket promedio</div>
+                  <div class="summary-val">$881.25</div>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+
+        </div>
+      </div>
+      
+      <!-- OTHER PANELS (POS, CRM, ETC) -->
+      <!-- POS PANEL -->
+      <div class="module-panel" id="panel-pos" style="align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 100%)">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center;color:white;">
+          <div style="font-size:5rem;filter:drop-shadow(0 4px 20px rgba(59,130,246,.5))">🖥️</div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.6rem;font-weight:900;letter-spacing:.08em">PUNTO DE VENTA</div>
+          <button onclick="launchPOS()" style="margin-top:8px;padding:14px 36px;background:#3b82f6;border:none;border-radius:12px;font-size:1rem;font-weight:800;color:#fff;cursor:pointer;">⚡ Abrir POS Ahora</button>
+        </div>
+      </div>
+      
+      <!-- PLACEHOLDER PANELS -->
+      <div class="module-panel" id="panel-admin"><div style="text-align:center;padding:100px;font-size:1.2rem;font-weight:700;color:var(--text-light)">Administración</div></div>
+      <div class="module-panel" id="panel-social"><div style="text-align:center;padding:100px;font-size:1.2rem;font-weight:700;color:var(--text-light)">Redes Sociales</div></div>
+      <div class="module-panel" id="panel-gps"><div style="text-align:center;padding:100px;font-size:1.2rem;font-weight:700;color:var(--text-light)">GPS Tracking</div></div>
+      <div class="module-panel" id="panel-contabilidad"><div style="text-align:center;padding:100px;font-size:1.2rem;font-weight:700;color:var(--text-light)">El Contador</div></div>
+      <div class="module-panel" id="panel-ia"><div style="text-align:center;padding:100px;font-size:1.2rem;font-weight:700;color:var(--text-light)">iAMAGDALENO IA</div></div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="../scripts/dashboard.js"></script>
+</body>
+</html>

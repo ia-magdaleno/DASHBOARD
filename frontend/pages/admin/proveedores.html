@@ -1,0 +1,121 @@
+<!-- PAGE: PROVEEDORES — CRUD completo contra /api/suppliers -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Proveedores</h1>
+    <p class="page-subtitle">Directorio, condiciones de crédito y contacto comercial</p>
+  </div>
+  <div class="page-header-actions">
+    <button class="btn btn-primary btn-sm" data-click="provNuevo">
+      <i class="fa-solid fa-plus"></i> Nuevo Proveedor
+    </button>
+  </div>
+</div>
+
+<!-- KPI strip -->
+<div class="kpi-row" id="prov-kpis" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
+  <div class="kpi-card"><div class="kpi-label">Total Proveedores</div><div class="kpi-value" id="prov-kpi-total">—</div></div>
+  <div class="kpi-card"><div class="kpi-label">Activos</div><div class="kpi-value" id="prov-kpi-activos" style="color:var(--color-success)">—</div></div>
+  <div class="kpi-card"><div class="kpi-label">Con Crédito</div><div class="kpi-value" id="prov-kpi-credito">—</div></div>
+</div>
+
+<!-- Filtro + tabla -->
+<div class="card">
+  <div class="card-toolbar" style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+    <input type="text" class="form-input" id="prov-search" placeholder="Buscar nombre / RFC…"
+           data-input="provFiltrar" style="max-width:280px;">
+    <select class="form-select" id="prov-filter-status" data-change="provFiltrar" style="max-width:140px;">
+      <option value="">Todos</option>
+      <option value="ACTIVE">Activos</option>
+      <option value="INACTIVE">Inactivos</option>
+    </select>
+    <button class="btn btn-ghost btn-sm" data-click="provCargar"><i class="fa-solid fa-arrows-rotate"></i></button>
+  </div>
+  <div class="table-wrapper">
+    <table class="data-table" id="prov-table">
+      <thead>
+        <tr>
+          <th>Nombre / Razón social</th>
+          <th>RFC</th>
+          <th>Contacto</th>
+          <th>Crédito</th>
+          <th>Estado</th>
+          <th style="width:80px;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="prov-tbody">
+        <tr><td colspan="6" style="text-align:center;padding:32px;color:var(--color-text-muted);">
+          <i class="fa-solid fa-spinner fa-spin"></i> Cargando…
+        </td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL: Alta / Edición de Proveedor -->
+<div class="modal-backdrop" id="modal-proveedor" style="display:none;" data-click="provCerrarModal" data-click-self-target="true">
+  <div class="modal" style="max-width:540px;">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modal-prov-title">Nuevo Proveedor</h3>
+      <button class="modal-close" data-click="provCerrarModal"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="prov-id">
+      <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">Nombre comercial *</label>
+          <input type="text" class="form-input" id="prov-name" placeholder="Ej. Maderas del Pacífico">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Razón social</label>
+          <input type="text" class="form-input" id="prov-trade-name" placeholder="S.A. de C.V.">
+        </div>
+        <div class="form-group">
+          <label class="form-label">RFC</label>
+          <input type="text" class="form-input" id="prov-rfc" placeholder="MPA850101XXX" maxlength="13">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contacto</label>
+          <input type="text" class="form-input" id="prov-contact" placeholder="Nombre del representante">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Teléfono</label>
+          <input type="text" class="form-input" id="prov-phone" placeholder="624 000 0000">
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="prov-email" placeholder="ventas@proveedor.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Días de crédito</label>
+          <input type="number" class="form-input" id="prov-credit-days" value="0" min="0" max="365">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Límite de crédito (MXN)</label>
+          <input type="number" class="form-input" id="prov-credit-limit" value="0" min="0" step="100">
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">Cuenta bancaria</label>
+          <input type="text" class="form-input" id="prov-bank" placeholder="CLABE o número de cuenta">
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">Notas</label>
+          <textarea class="form-input" id="prov-notes" rows="2" placeholder="Condiciones especiales, referencias…"></textarea>
+        </div>
+        <div class="form-group" id="prov-status-group" style="display:none;">
+          <label class="form-label">Estado</label>
+          <select class="form-select" id="prov-status">
+            <option value="ACTIVE">Activo</option>
+            <option value="INACTIVE">Inactivo</option>
+          </select>
+        </div>
+      </div>
+      <div id="prov-modal-error" style="display:none;color:var(--color-danger);margin-top:8px;font-size:13px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-click="provCerrarModal">Cancelar</button>
+      <button class="btn btn-primary" id="prov-btn-guardar" data-click="provGuardar">
+        <i class="fa-solid fa-floppy-disk"></i> Guardar
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden select-none" id="modal-confirm-scale">
+<div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-[450px] max-w-full flex flex-col overflow-hidden font-montserrat font-bold">
+<!-- Modal Header -->
+<div class="bg-slate-50 border-b border-slate-200 px-5 py-4 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<i class="w-5 h-5 text-slate-500" data-lucide="tag"></i>
+<h3 class="font-bold text-slate-700 text-sm">Cambiar Escala de Precios</h3>
+</div>
+<span class="bg-slate-200 text-slate-600 font-bold text-[9px] px-2 py-0.5 rounded">ESC para cancelar</span>
+</div>
+<!-- Modal Body -->
+<div class="p-5 text-xs font-semibold text-slate-600 space-y-3">
+<p>Has seleccionado cambiar la escala de precios a: <span class="font-extrabold text-blue-600" id="new-scale-name"></span>.</p>
+<p class="text-[10px] text-slate-400">¿Deseas aplicar este cambio a todos los productos actualmente en la cuenta o solo al próximo producto que agregues?</p>
+</div>
+<!-- Modal Footer -->
+<div class="bg-slate-50 border-t border-slate-200 px-5 py-3 flex gap-2 justify-end">
+<button class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs px-4 py-2 rounded-xl transition" id="btn-confirm-scale-next" onclick="applyPriceScaleAction('next')">
+          Solo un producto
+        </button>
+<button class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2 rounded-xl transition" id="btn-confirm-scale-all" onclick="applyPriceScaleAction('all')">
+          Toda la cuenta
+        </button>
+<button class="bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold text-xs px-3 py-2 rounded-xl transition" id="btn-confirm-scale-cancel" onclick="closeModal('modal-confirm-scale')">
+          Cancelar
+        </button>
+</div>
+</div>
+</div>

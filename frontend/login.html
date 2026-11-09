@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CALEBSYS — Iniciar Sesión Corporativa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --neon: #00d4ff;
+      --neon2: #0af;
+      --green-btn: #2ecc71;
+      --dark: #050d1a;
+      --card-bg: rgba(10, 30, 60, 0.72);
+      --border-glow: rgba(0, 212, 255, 0.35);
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--dark);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── CIRCUIT CANVAS ── */
+    #circuit-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    /* ── RADIAL GLOW ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 55% at 50% 50%, rgba(0, 90, 180, 0.18) 0%, transparent 70%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* ── LAYOUT WRAPPER ── */
+    .screen {
+      position: relative;
+      z-index: 2;
+      width: 100vw;
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      grid-template-rows: 1fr auto 1fr;
+      grid-template-areas:
+        "tl . tr"
+        ". card ."
+        "bl bc br";
+      padding: 2.5rem;
+      gap: 1rem;
+    }
+
+    /* ── FLOATING MODULE ICONS ── */
+    .module-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: transform .25s;
+      user-select: none;
+    }
+    .module-icon:hover { transform: scale(1.08) translateY(-3px); }
+    .module-icon:hover .icon-ring { box-shadow: 0 0 28px 6px var(--neon), 0 0 60px 12px rgba(0,212,255,.3); }
+
+    /* Iconos deshabilitados (piloto): visibles pero sin funcion */
+    .module-icon.disabled { cursor: not-allowed; opacity: .4; filter: grayscale(.7); }
+    .module-icon.disabled:hover { transform: none; }
+    .module-icon.disabled:hover .icon-ring { box-shadow: 0 0 18px 3px rgba(0,212,255,.4), inset 0 0 14px rgba(0,212,255,.1); }
+    body.light-mode .module-icon.disabled { opacity: .5; }
+
+    .icon-ring {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      border: 2px solid var(--neon);
+      background: rgba(0, 30, 70, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 18px 3px rgba(0,212,255,.4), inset 0 0 14px rgba(0,212,255,.1);
+      position: relative;
+      transition: box-shadow .25s;
+    }
+    .icon-ring svg {
+      width: 44px;
+      height: 44px;
+      stroke: var(--neon);
+      fill: none;
+      stroke-width: 1.5;
+      filter: drop-shadow(0 0 6px var(--neon));
+    }
+
+    /* Corner lines from icon to center */
+    .icon-line {
+      position: absolute;
+      background: linear-gradient(90deg, var(--neon), transparent);
+      height: 1px;
+      width: 70px;
+      top: 50%;
+      opacity: .45;
+    }
+
+    .module-label {
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      color: var(--neon);
+      text-transform: uppercase;
+      text-shadow: 0 0 8px var(--neon);
+      text-align: center;
+    }
+
+    /* Toggle below top-left */
+    .dark-toggle {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      margin-top: .3rem;
+    }
+    .dark-toggle input[type=checkbox] { accent-color: var(--neon); width: 34px; height: 18px; cursor: pointer; }
+    .dark-toggle span { font-size: .55rem; color: rgba(0,212,255,.7); font-weight: 700; letter-spacing: .1em; }
+
+    /* Switch reubicado debajo del boton Ingresar, dentro de la tarjeta */
+    .dark-toggle--below-card {
+      justify-content: center;
+      margin: 1rem 0 .25rem;
+      cursor: pointer;
+    }
+    .dark-toggle--below-card:hover span { text-shadow: 0 0 8px var(--neon); }
+
+    /* grid areas */
+    .mod-tl { grid-area: tl; justify-self: start; align-self: start; }
+    .mod-tr { grid-area: tr; justify-self: end; align-self: start; }
+    .mod-bl { grid-area: bl; justify-self: start; align-self: end; }
+    .mod-bc { grid-area: bc; justify-self: center; align-self: end; }
+    .mod-br { grid-area: br; justify-self: end; align-self: end; }
+
+    /* ── LOGIN CARD ── */
+    .card {
+      grid-area: card;
+      width: 420px;
+      background: var(--card-bg);
+      backdrop-filter: blur(18px) saturate(1.4);
+      -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      border: 1px solid var(--border-glow);
+      border-radius: 18px;
+      padding: 2.5rem 2.2rem 2rem;
+      box-shadow:
+        0 0 40px rgba(0,212,255,.12),
+        0 0 0 1px rgba(0,212,255,.08),
+        inset 0 1px 0 rgba(255,255,255,.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    /* Logo */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      margin-bottom: .5rem;
+    }
+    .logo-icon {
+      width: 46px;
+      height: 46px;
+      background: linear-gradient(135deg, #00d4ff 0%, #0056b3 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(0,212,255,.5);
+    }
+    .logo-icon svg { width: 26px; height: 26px; stroke: #fff; fill: none; stroke-width: 2; }
+    .logo-text {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.9rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: .06em;
+    }
+    .logo-text span { color: var(--neon); }
+
+    .logo-sub {
+      font-size: .6rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      color: rgba(0,212,255,.7);
+      text-align: center;
+      margin-bottom: 1.4rem;
+      text-transform: uppercase;
+    }
+
+    .card-title {
+      font-size: .85rem;
+      font-weight: 900;
+      letter-spacing: .15em;
+      color: #fff;
+      text-align: center;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #fff 30%, var(--neon) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1.6rem;
+      padding-bottom: .6rem;
+      border-bottom: 1px solid rgba(0,212,255,.2);
+      width: 100%;
+    }
+
+    /* Fields */
+    .field { width: 100%; margin-bottom: 1rem; }
+    .field label {
+      display: block;
+      font-size: .65rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      color: rgba(0,212,255,.85);
+      text-transform: uppercase;
+      margin-bottom: .35rem;
+    }
+    .field-row {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .field-row svg {
+      position: absolute;
+      left: .8rem;
+      width: 16px;
+      height: 16px;
+      stroke: rgba(0,212,255,.6);
+      fill: none;
+      stroke-width: 2;
+      pointer-events: none;
+    }
+    .field input {
+      width: 100%;
+      background: rgba(0, 30, 70, 0.6);
+      border: 1px solid rgba(0,212,255,.3);
+      border-radius: 8px;
+      padding: .7rem .85rem .7rem 2.4rem;
+      color: #e0f4ff;
+      font-family: 'Montserrat', sans-serif;
+      font-size: .82rem;
+      font-weight: 600;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .field input::placeholder { color: rgba(150,200,255,.35); }
+    .field input:focus {
+      border-color: var(--neon);
+      box-shadow: 0 0 0 3px rgba(0,212,255,.15);
+    }
+
+    /* Recordar badge */
+    .field-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: .35rem;
+    }
+    .field-meta label { margin-bottom: 0; }
+    .recordar {
+      font-size: .58rem;
+      font-weight: 700;
+      color: rgba(0,212,255,.6);
+      letter-spacing: .1em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: .3rem;
+      text-transform: uppercase;
+    }
+    .recordar input { accent-color: var(--neon); }
+
+    /* Button */
+    .btn-login {
+      width: 100%;
+      margin-top: .5rem;
+      padding: .9rem;
+      background: linear-gradient(90deg, #1aab5e 0%, #27d473 50%, #1aab5e 100%);
+      background-size: 200% 100%;
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      font-size: .9rem;
+      font-weight: 900;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background-position .4s, box-shadow .3s, transform .15s;
+      box-shadow: 0 4px 20px rgba(39,212,115,.35);
+    }
+    .btn-login:hover {
+      background-position: 100% 0;
+      box-shadow: 0 6px 30px rgba(39,212,115,.55);
+      transform: translateY(-1px);
+    }
+    .btn-login:active { transform: translateY(0); }
+
+    .card-footer {
+      margin-top: 1.2rem;
+      font-size: .62rem;
+      color: rgba(150,200,255,.6);
+      text-align: center;
+    }
+    .card-footer a {
+      color: var(--neon);
+      font-weight: 700;
+      text-decoration: none;
+      letter-spacing: .05em;
+    }
+    .card-footer a:hover { text-shadow: 0 0 8px var(--neon); }
+
+    /* Error message */
+    #login-error {
+      display: none;
+      background: rgba(220,50,50,.15);
+      border: 1px solid rgba(220,50,50,.4);
+      border-radius: 8px;
+      padding: .5rem .8rem;
+      font-size: .7rem;
+      color: #ff8080;
+      font-weight: 700;
+      width: 100%;
+      text-align: center;
+      margin-top: .6rem;
+    }
+
+    /* Loading spinner on button */
+    .btn-login.loading {
+      pointer-events: none;
+      opacity: .8;
+    }
+    .btn-login.loading::after {
+      content: '';
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      margin-left: .6rem;
+      border: 2px solid rgba(255,255,255,.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 520px) {
+      .card { width: 96vw; padding: 1.8rem 1.2rem; }
+      .mod-bc, .mod-bl, .mod-br { display: none; }
+    }
+
+    /* ══════════════════════════════════════════════════════════════════
+       MODO CLARO — paleta extraida de Figma "CABLESYS MEJORADO" (frame
+       node-id 60:4). Base: #58B8EE (fondo), borde tarjeta #56EFFD.
+       ══════════════════════════════════════════════════════════════════ */
+    body.light-mode {
+      background: linear-gradient(160deg, #8FE0F7 0%, #4CACDD 55%, #3D9FD1 100%);
+    }
+    body.light-mode::before {
+      background: radial-gradient(ellipse 60% 55% at 50% 50%, rgba(255,255,255,.28) 0%, transparent 70%);
+    }
+    body.light-mode .icon-ring {
+      background: rgba(255,255,255,.30);
+      border-color: #56EFFD;
+      box-shadow: 0 0 18px 3px rgba(86,239,253,.45), inset 0 0 14px rgba(86,239,253,.15);
+    }
+    body.light-mode .module-icon:hover .icon-ring {
+      box-shadow: 0 0 28px 6px #56EFFD, 0 0 60px 12px rgba(86,239,253,.3);
+    }
+    body.light-mode .icon-ring svg {
+      stroke: #0B4F63;
+      filter: drop-shadow(0 0 4px rgba(86,239,253,.5));
+    }
+    body.light-mode .icon-line { background: linear-gradient(90deg, #56EFFD, transparent); }
+    body.light-mode .module-label { color: #0B4F63; text-shadow: none; }
+    body.light-mode .dark-toggle span { color: rgba(11,79,99,.8); }
+    body.light-mode .dark-toggle input[type=checkbox] { accent-color: #0B90A8; }
+
+    body.light-mode .card {
+      background: rgba(255,255,255,.55);
+      backdrop-filter: blur(20px) saturate(1.3);
+      -webkit-backdrop-filter: blur(20px) saturate(1.3);
+      border: 2px solid #56EFFD;
+      box-shadow: 0 0 40px rgba(86,239,253,.3), inset 0 1px 0 rgba(255,255,255,.5);
+    }
+    body.light-mode .logo-text { color: #0B4F63; }
+    body.light-mode .logo-text span { color: #0B90A8; }
+    body.light-mode .logo-sub { color: rgba(11,79,99,.75); }
+    body.light-mode .card-title {
+      background: linear-gradient(135deg, #0B4F63 30%, #0B90A8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      border-bottom-color: rgba(11,144,168,.25);
+    }
+    body.light-mode .field label { color: rgba(11,79,99,.85); }
+    body.light-mode .field-row svg { stroke: rgba(11,79,99,.55); }
+    body.light-mode .field input {
+      background: rgba(255,255,255,.45);
+      border-color: rgba(11,144,168,.35);
+      color: #0B3A47;
+    }
+    body.light-mode .field input::placeholder { color: rgba(11,79,99,.4); }
+    body.light-mode .field input:focus {
+      border-color: #56EFFD;
+      box-shadow: 0 0 0 3px rgba(86,239,253,.2);
+    }
+    body.light-mode .recordar { color: rgba(11,79,99,.7); }
+    body.light-mode .recordar input { accent-color: #0B90A8; }
+    body.light-mode .btn-login {
+      background: linear-gradient(90deg, #1E7F8C 0%, #2FA8B8 50%, #1E7F8C 100%);
+      background-size: 200% 100%;
+      box-shadow: 0 4px 20px rgba(47,168,184,.4);
+    }
+    body.light-mode .btn-login:hover { box-shadow: 0 6px 30px rgba(47,168,184,.6); }
+    body.light-mode .card-footer { color: rgba(11,79,99,.7); }
+    body.light-mode .card-footer a { color: #0B90A8; }
+    body.light-mode .card-footer a:hover { text-shadow: 0 0 8px rgba(11,144,168,.5); }
+  </style>
+</head>
+<body>
+<script src="/scripts/theme-init.js"></script>
+
+<!-- Animated circuit board canvas -->
+<canvas id="circuit-canvas"></canvas>
+
+<div class="screen">
+
+  <!-- TOP-LEFT: SUCURSALES -->
+  <div class="module-icon disabled mod-tl" data-action="show-unavailable" title="No disponible">
+    <div class="icon-ring">
+      <svg viewBox="0 0 24 24"><path d="M3 21h18M9 21V3h6v18M3 10h6M15 10h6"/></svg>
+    </div>
+    <span class="module-label">Sucursales</span>
+  </div>
+
+  <!-- TOP-RIGHT: ALMACENES -->
+  <div class="module-icon disabled mod-tr" data-action="show-unavailable" title="No disponible">
+    <div class="icon-ring">
+      <svg viewBox="0 0 24 24"><path d="M1 20V9l11-6 11 6v11H1zM9 20v-8h6v8"/></svg>
+    </div>
+    <span class="module-label">Almacenes</span>
+  </div>
+
+  <!-- CENTER: LOGIN CARD -->
+  <div class="card">
+    <!-- Logo -->
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l2.5 2.5L16 9"/></svg>
+      </div>
+      <div class="logo-text">CALEB<span>SYS</span></div>
+    </div>
+    <div class="logo-sub">Plataforma de Gestión Empresarial — Edición de Franquicias</div>
+
+    <div class="card-title">Iniciar Sesión Corporativa</div>
+
+    <form id="login-form" autocomplete="off" style="width:100%">
+
+      <div class="field">
+        <label for="empresa-id">ID de la Empresa</label>
+        <div class="field-row">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+          <input type="text" id="empresa-id" name="empresa_id" placeholder="ej. MAG-001" required spellcheck="false" autocomplete="new-password">
+        </div>
+        <!-- D4: si esta terminal está registrada, login.js muestra aquí su sede -->
+        <div id="terminal-hint" style="display:none;font-size:0.72rem;margin-top:4px;"></div>
+      </div>
+
+      <div class="field">
+        <div class="field-meta">
+          <label for="usuario-id">ID de Usuario</label>
+          <label class="recordar">
+            <input type="checkbox" id="recordar"> Recordar
+          </label>
+        </div>
+        <div class="field-row">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          <input type="text" id="usuario-id" name="usuario_id" placeholder="ej. ANTONIO.M" required spellcheck="false" autocomplete="new-password">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="password">Contraseña</label>
+        <div class="field-row">
+          <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          <input type="password" id="password" name="password" placeholder="••••••••" required autocomplete="new-password">
+        </div>
+      </div>
+
+      <button type="submit" class="btn-login" id="btn-login">Ingresar</button>
+      <div id="login-error">⚠ ID de empresa, usuario o contraseña incorrectos.</div>
+    </form>
+
+    <label class="dark-toggle dark-toggle--below-card" for="dark-toggle">
+      <input type="checkbox" id="dark-toggle" checked>
+      <span>DARK MAGDABETIC</span>
+    </label>
+
+    <div class="card-footer">
+      ¿Sin cuenta? &nbsp;<a href="#">Solicita tu cuenta de franquicia aquí.</a>
+    </div>
+  </div>
+
+  <!-- BOTTOM-LEFT: NÓMINAS -->
+  <div class="module-icon disabled mod-bl" data-action="show-unavailable" title="No disponible">
+    <div class="icon-ring">
+      <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4M14 15h4"/></svg>
+    </div>
+    <span class="module-label">Nóminas</span>
+  </div>
+
+  <!-- BOTTOM-CENTER: SISTEMA CAJA (POS) -->
+  <div class="module-icon disabled mod-bc" data-action="show-login-hint" title="Inicie sesión para acceder">
+    <div class="icon-ring" style="width:100px;height:100px;border-color:#00ff99;box-shadow:0 0 22px 5px rgba(0,255,153,.45)">
+      <svg viewBox="0 0 24 24" style="stroke:#00ff99;width:50px;height:50px;filter:drop-shadow(0 0 8px #00ff99)">
+        <rect x="2" y="3" width="20" height="14" rx="2"/>
+        <path d="M8 21h8M12 17v4"/>
+        <path d="M6 8h.01M10 8h4M6 11h.01M10 11h4M18 8h.01M18 11h.01"/>
+      </svg>
+    </div>
+    <span class="module-label" style="color:#00ff99;text-shadow:0 0 8px #00ff99;font-size:.7rem">Sistema Caja<br>(POS)</span>
+  </div>
+
+  <!-- BOTTOM-RIGHT: ADMINISTRACIÓN -->
+  <div class="module-icon disabled mod-br" data-action="show-unavailable" title="No disponible">
+    <div class="icon-ring">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </div>
+    <span class="module-label">Administración<br>y Finanzas</span>
+  </div>
+
+</div><!-- /screen -->
+
+<script>
+// ─── ANIMATED CIRCUIT BOARD ─────────────────────────────────────────────────
+const canvas = document.getElementById('circuit-canvas');
+const ctx    = canvas.getContext('2d');
+let W, H, nodes, pulses;
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  init();
+}
+
+function randBetween(a, b) { return a + Math.random() * (b - a); }
+
+// Paleta del canvas: cambia segun body.light-mode
+function circuitPalette() {
+  var light = document.body.classList.contains('light-mode');
+  return light ? {
+    line0: 'rgba(11,100,150,0.16)',
+    line1: 'rgba(11,80,130,0.05)',
+    glow0: 'rgba(11,144,168,ALPHA)',
+    glow1: 'rgba(11,100,150,0)',
+    node:  'rgba(11,160,190,ALPHA2)',
+    nodeShadow: '#0B90A8',
+    pulseG0: 'rgba(20,180,210,0.9)',
+    pulseG1: 'rgba(11,130,170,0.4)',
+    pulseDot: '#0B90A8'
+  } : {
+    line0: 'rgba(0,150,255,0.12)',
+    line1: 'rgba(0,80,180,0.04)',
+    glow0: 'rgba(0,210,255,ALPHA)',
+    glow1: 'rgba(0,100,200,0)',
+    node:  'rgba(0,220,255,ALPHA2)',
+    nodeShadow: '#00d4ff',
+    pulseG0: 'rgba(0,230,255,0.95)',
+    pulseG1: 'rgba(0,150,255,0.4)',
+    pulseDot: '#00f5ff'
+  };
+}
+
+function init() {
+  const nodeCount = Math.floor((W * H) / 18000);
+  nodes = [];
+  for (let i = 0; i < nodeCount; i++) {
+    nodes.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: randBetween(3, 7),
+      glow: randBetween(0, Math.PI * 2),
+      glowSpeed: randBetween(0.01, 0.04),
+      connections: []
+    });
+  }
+
+  // Build connections (nearest neighbors)
+  nodes.forEach((n, i) => {
+    const distances = nodes
+      .map((m, j) => ({ j, d: Math.hypot(m.x - n.x, m.y - n.y) }))
+      .filter(e => e.j !== i && e.d < 220)
+      .sort((a, b) => a.d - b.d)
+      .slice(0, 3);
+    n.connections = distances.map(e => e.j);
+  });
+
+  // Pulses that travel along connections
+  pulses = [];
+  for (let k = 0; k < 18; k++) {
+    spawnPulse();
+  }
+}
+
+function spawnPulse() {
+  const ni = Math.floor(Math.random() * nodes.length);
+  const node = nodes[ni];
+  if (!node.connections.length) return;
+  const ci = node.connections[Math.floor(Math.random() * node.connections.length)];
+  pulses.push({ from: ni, to: ci, t: 0, speed: randBetween(0.005, 0.018) });
+}
+
+function draw(ts) {
+  ctx.clearRect(0, 0, W, H);
+  const pal = circuitPalette();
+
+  // Draw connections
+  nodes.forEach(n => {
+    n.connections.forEach(ci => {
+      const m = nodes[ci];
+      const grad = ctx.createLinearGradient(n.x, n.y, m.x, m.y);
+      grad.addColorStop(0, pal.line0);
+      grad.addColorStop(1, pal.line1);
+      ctx.beginPath();
+      ctx.moveTo(n.x, n.y);
+      ctx.lineTo(m.x, m.y);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = .8;
+      ctx.stroke();
+    });
+  });
+
+  // Draw nodes
+  nodes.forEach(n => {
+    n.glow += n.glowSpeed;
+    const alpha = .35 + .4 * Math.sin(n.glow);
+    const radius = n.r + 1.5 * Math.sin(n.glow * 1.3);
+
+    const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, radius * 3.5);
+    g.addColorStop(0, pal.glow0.replace('ALPHA', alpha));
+    g.addColorStop(1, pal.glow1);
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, radius * 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = g;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, radius, 0, Math.PI * 2);
+    ctx.fillStyle = pal.node.replace('ALPHA2', alpha + .15);
+    ctx.shadowColor = pal.nodeShadow;
+    ctx.shadowBlur = 12;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  });
+
+  // Draw pulses
+  pulses.forEach((p, idx) => {
+    p.t += p.speed;
+    if (p.t >= 1) {
+      // Hop to next node
+      const node = nodes[p.to];
+      if (node && node.connections.length) {
+        p.from = p.to;
+        p.to = node.connections[Math.floor(Math.random() * node.connections.length)];
+        p.t = 0;
+      } else {
+        pulses.splice(idx, 1);
+        spawnPulse();
+      }
+      return;
+    }
+    const a = nodes[p.from], b = nodes[p.to];
+    if (!a || !b) return;
+    const px = a.x + (b.x - a.x) * p.t;
+    const py = a.y + (b.y - a.y) * p.t;
+
+    const pg = ctx.createRadialGradient(px, py, 0, px, py, 10);
+    pg.addColorStop(0, pal.pulseG0);
+    pg.addColorStop(.5, pal.pulseG1);
+    pg.addColorStop(1, 'transparent');
+    ctx.beginPath();
+    ctx.arc(px, py, 10, 0, Math.PI * 2);
+    ctx.fillStyle = pg;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = pal.pulseDot;
+    ctx.shadowColor = pal.pulseDot;
+    ctx.shadowBlur = 16;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  });
+
+  requestAnimationFrame(draw);
+}
+
+// ─── CALEBSYS LOGIN — funcion global, sin listeners de timing ─────────────────
+function calebsysLogin() {
+  console.log('[CALEBSYS LOGIN] JS CARGADO + SUBMIT DISPARADO');
+
+  var empresaId = (document.getElementById('empresa-id').value || '').trim();
+  var usuarioId = (document.getElementById('usuario-id').value || '').trim();
+  var password  = (document.getElementById('password').value   || '');
+  var errorEl   = document.getElementById('login-error');
+  var btnLogin  = document.getElementById('btn-login');
+
+  if (!empresaId || !usuarioId || !password) {
+    console.error('[CALEBSYS LOGIN] Campos incompletos', {e:!!empresaId, u:!!usuarioId, p:!!password});
+    if (errorEl) errorEl.style.display = 'block';
+    return;
+  }
+
+  console.log('[CALEBSYS LOGIN] ENVIANDO LOGIN', empresaId, usuarioId);
+  if (errorEl) errorEl.style.display = 'none';
+  if (btnLogin) { btnLogin.textContent = 'Verificando...'; btnLogin.disabled = true; }
+
+  fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ empresa_id: empresaId, usuario_id: usuarioId, username: usuarioId, password: password })
+  })
+  .then(function(resp) {
+    console.log('[CALEBSYS LOGIN] STATUS', resp.status);
+    return resp.json().then(function(data) { return { status: resp.status, ok: resp.ok, data: data }; });
+  })
+  .then(function(result) {
+    console.log('[CALEBSYS LOGIN] RESPONSE', result.data);
+    if (!result.ok) {
+      console.error('[CALEBSYS LOGIN] ERROR LOGIN', result.data);
+      if (errorEl) errorEl.style.display = 'block';
+      if (btnLogin) { btnLogin.textContent = 'Ingresar'; btnLogin.disabled = false; }
+      return;
+    }
+    var role = result.data.role || result.data.rol || 'Cajero';
+    localStorage.setItem('calebsys_role',    role);
+    localStorage.setItem('calebsys_user',    usuarioId);
+    localStorage.setItem('calebsys_company', empresaId);
+    localStorage.setItem('calebsys_branch',  'Magdaleno');
+    var rem = document.getElementById('recordar');
+    if (rem && rem.checked) {
+      localStorage.setItem('calebsys_remember', '1');
+      localStorage.setItem('calebsys_empresa',  empresaId);
+      localStorage.setItem('calebsys_usuario',  usuarioId);
+    } else {
+      localStorage.removeItem('calebsys_remember');
+      localStorage.removeItem('calebsys_empresa');
+      localStorage.removeItem('calebsys_usuario');
+    }
+    if (btnLogin) { btnLogin.textContent = 'Acceso Concedido'; btnLogin.style.background = 'linear-gradient(90deg,#1aab5e,#0fcf5f)'; }
+    var RUTAS = {
+      // ── Administración (OS shell) ──
+      'Administrador': '/os', 'Administrador General': '/os',
+      'Dueño': '/os', 'Dueno': '/os', 'Owner': '/os', 'Admin': '/os', 'admin': '/os', 'Gerente': '/os',
+      // ── Punto de Venta (POS) ──
+      // ── POS Operativo → home con dashboard por rol ──
+      'Cajero': '/home', 'Vendedor': '/home',
+      'Supervisor': '/home',
+      'Operador ventas': '/home',
+      'Operador caja': '/home',
+      'Solo lectura': '/home',
+      'Almacenista': '/home', 'Almacen': '/home',
+      'Operador almacén': '/home',
+      'Comprador': '/home', 'Jefe de compras': '/home', 'Gestor de compras': '/home',
+      'Cartera': '/home', 'Gestor de cartera': '/home', 'Analista cartera': '/home', 'Cobrador': '/home',
+      // ── Reparto ──
+      'Repartidor': '/gps', 'Chofer': '/gps',
+      'Operador reparto': '/gps', // creado desde RH
+      // ── Administrativos / contables ──
+      'Recursos Humanos': '/admin_shell.html', // creado desde RH
+      'Contador': '/admin_shell.html',         // creado desde RH
+      // ── Otros ──
+      'Community': '/connect'
+    };
+    var next = RUTAS[role] || '/';
+    console.log('[CALEBSYS LOGIN] REDIRIGIENDO A', next);
+    window.location.href = next;
+  })
+  .catch(function(err) {
+    console.error('[CALEBSYS LOGIN] FETCH ERROR', err);
+    if (errorEl) errorEl.style.display = 'block';
+    if (btnLogin) { btnLogin.textContent = 'Ingresar'; btnLogin.disabled = false; }
+  });
+}
+
+// Restaurar recordado al cargar
+(function() {
+  if (localStorage.getItem('calebsys_remember') === '1') {
+    var e1 = document.getElementById('empresa-id');
+    var e2 = document.getElementById('usuario-id');
+    var e3 = document.getElementById('recordar');
+    if (e1) e1.value = localStorage.getItem('calebsys_empresa') || '';
+    if (e2) e2.value = localStorage.getItem('calebsys_usuario') || '';
+    if (e3) e3.checked = true;
+  }
+  // Enter entre campos
+  var fe = document.getElementById('empresa-id');
+  var fu = document.getElementById('usuario-id');
+  var fp = document.getElementById('password');
+  if (fe) fe.addEventListener('keydown', function(e){ if(e.key==='Enter'){e.preventDefault();if(fu)fu.focus();} });
+  if (fu) fu.addEventListener('keydown', function(e){ if(e.key==='Enter'){e.preventDefault();if(fp)fp.focus();} });
+  if (fp) fp.addEventListener('keydown', function(e){ if(e.key==='Enter'){e.preventDefault();calebsysLogin();} });
+
+  // Toggle modo claro/oscuro: movido a /scripts/login.js — este bloque es
+  // <script> inline y la CSP (script-src 'self' sin 'unsafe-inline') lo
+  // bloquea por completo, nunca se ejecuta. No borrar login.js pensando
+  // que es codigo muerto duplicado.
+})();
+</script>
+
+  <script src="/scripts/native-bridge.js"></script>
+  <script src="/scripts/login.js"></script>
+</body>
+</html>

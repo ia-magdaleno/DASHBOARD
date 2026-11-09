@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CALEBSYS — Admin Shell v5.1A</title>
+  <meta name="description" content="Panel de Administración Enterprise — Calebsys ERP · v1.0.0-ui-core-shell-freeze">
+  <!-- Fonts & Icons -->
+  <link href="css/inter.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/all.min.css">
+  <!-- Admin Shell Design System -->
+  <link rel="stylesheet" href="styles/admin-shell.css?v=dev-rh-02l-p12">
+  <link rel="stylesheet" href="styles/dashboard/tokens.css?v=20261108d">
+  <link rel="stylesheet" href="styles/dashboard/dashboard.css?v=20261108d">
+</head>
+<body>
+
+  <!-- Ã¢â€â‚¬Ã¢â€â‚¬ OFFLINE BANNER Ã¢â€â‚¬Ã¢â€â‚¬ -->
+  <div class="offline-banner">
+    <i class="fa-solid fa-wifi-slash"></i>&nbsp; Sin conexión — trabajando en modo offline
+  </div>
+
+  <!-- Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+       SIDEBAR (static — always present)
+       Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- Logo -->
+    <div class="sidebar-logo">
+      <div class="logo-icon"><i class="fa-solid fa-bolt"></i></div>
+      <div class="logo-text">
+        <div class="name">CALEBSYS</div>
+        <div class="tagline">Admin Enterprise</div>
+      </div>
+    </div>
+
+    <!-- Tenant Badge -->
+    <div class="tenant-badge">
+      <div class="dot"></div>
+      <div class="info">
+        <div class="tname" id="sidebar-tenant-name">Cargando...</div>
+        <div class="tsub">Tenant Activo · MATRIZ</div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sidebar-nav" id="sidebar-nav">
+
+      <div class="nav-group-label">Principal</div>
+      <div class="nav-item active" data-page="dashboard" data-click="navigateTo" data-click-arg="dashboard">
+        <span class="nav-icon"><i class="fa-solid fa-grid-2"></i></span> Dashboard
+      </div>
+      <div class="nav-item" data-reloj="1" data-click="__openReloj" title="Registrar entrada / salida de asistencia">
+        <span class="nav-icon"><i class="fa-solid fa-clock"></i></span> Reloj checador
+      </div>
+
+      <div class="nav-group-label">Operaciones</div>
+      <div class="nav-item" data-page="productos" data-click="navigateTo" data-click-arg="productos">
+        <span class="nav-icon"><i class="fa-solid fa-tag"></i></span> Productos
+      </div>
+      <div class="nav-item" data-page="inventario" data-click="navigateTo" data-click-arg="inventario">
+        <span class="nav-icon"><i class="fa-solid fa-boxes-stacked"></i></span> Inventario
+      </div>
+      <div class="nav-item" data-page="cfdi" data-click="navigateTo" data-click-arg="cfdi">
+        <span class="nav-icon"><i class="fa-solid fa-file-invoice"></i></span> CFDI
+      </div>
+      <div class="nav-item" data-page="kardex" data-click="navigateTo" data-click-arg="kardex">
+        <span class="nav-icon"><i class="fa-solid fa-list-ul"></i></span> Kardex
+      </div>
+      <div class="nav-item" data-page="traspasos" data-click="navigateTo" data-click-arg="traspasos">
+        <span class="nav-icon"><i class="fa-solid fa-arrow-right-arrow-left"></i></span> Traslados
+      </div>
+      <div class="nav-item" data-page="almacen-devoluciones" data-click="navigateTo" data-click-arg="almacen-devoluciones">
+        <span class="nav-icon"><i class="fa-solid fa-rotate-left"></i></span> Devoluciones
+      </div>
+      <div class="nav-item" data-page="almacen-ajuste" data-click="navigateTo" data-click-arg="almacen-ajuste">
+        <span class="nav-icon"><i class="fa-solid fa-sliders"></i></span> Ajuste de Inventario
+      </div>
+      <div class="nav-item" data-page="compras-recepciones" data-click="navigateTo" data-click-arg="compras-recepciones">
+        <span class="nav-icon"><i class="fa-solid fa-truck-ramp-box"></i></span> Recepción de Mercancía
+      </div>
+
+      <div class="nav-group-label">Compras</div>
+      <div class="nav-item" data-page="proveedores" data-click="navigateTo" data-click-arg="proveedores">
+        <span class="nav-icon"><i class="fa-solid fa-truck-fast"></i></span> Proveedores
+      </div>
+      <div class="nav-item" data-page="compras-ordenes" data-click="navigateTo" data-click-arg="compras-ordenes">
+        <span class="nav-icon"><i class="fa-solid fa-cart-shopping"></i></span> Órdenes de Compra
+      </div>
+      <div class="nav-item" data-page="compras-cxp" data-click="navigateTo" data-click-arg="compras-cxp">
+        <span class="nav-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span> Cuentas x Pagar
+      </div>
+
+      <div class="nav-group-label">Clientes y Finanzas</div>
+      <div class="nav-item" data-page="clientes" data-click="navigateTo" data-click-arg="clientes">
+        <span class="nav-icon"><i class="fa-solid fa-address-book"></i></span> Clientes / CRM
+      </div>
+      <div class="nav-item" data-page="cuentas_cobrar" data-click="navigateTo" data-click-arg="cuentas_cobrar">
+        <span class="nav-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span> Cuentas x Cobrar
+      </div>
+      <div class="nav-item" data-page="caja" data-click="navigateTo" data-click-arg="caja">
+        <span class="nav-icon"><i class="fa-solid fa-cash-register"></i></span> Caja y Cortes
+        <span class="nav-badge locked"><i class="fa-solid fa-snowflake"></i></span>
+      </div>
+
+      <div class="nav-group-label">Cartera</div>
+      <div class="nav-item" data-page="cxc" data-click="navigateTo" data-click-arg="cxc">
+        <span class="nav-icon"><i class="fa-solid fa-wallet"></i></span> Cartera / CxC
+      </div>
+      <!-- Fix B-08: Escalas y Cupos eliminado del menú — se define al crear cliente, se ve en CRM -->
+
+      <div class="nav-group-label">Administración</div>
+      <a href="#recursos-humanos" class="nav-item" data-page="recursos-humanos">
+        <span class="nav-icon"><i class="fa-solid fa-users"></i></span> Recursos Humanos
+      </a>
+      <div class="nav-item" data-page="reportes" data-click="navigateTo" data-click-arg="reportes">
+        <span class="nav-icon"><i class="fa-solid fa-chart-mixed"></i></span> Reportes
+      </div>
+      <!-- Fix B-09: Usuarios y Roles eliminado — roles se gestionan desde RRHH al crear empleado -->
+      <div class="nav-item" data-page="auditoria" data-click="navigateTo" data-click-arg="auditoria">
+        <span class="nav-icon"><i class="fa-solid fa-shield-halved"></i></span> Auditoría
+      </div>
+      <div class="nav-item" data-page="configuracion" data-click="navigateTo" data-click-arg="configuracion">
+        <span class="nav-icon"><i class="fa-solid fa-gear"></i></span> Configuración
+      </div>
+      <div class="nav-item" data-page="superadmin" data-superadmin="1" style="display:none" data-click="navigateTo" data-click-arg="superadmin">
+        <span class="nav-icon"><i class="fa-solid fa-user-shield"></i></span> Consola SuperAdmin
+      </div>
+      <div class="nav-item" data-page="plugins" data-superadmin="1" style="display:none" data-click="navigateTo" data-click-arg="plugins">
+        <span class="nav-icon"><i class="fa-solid fa-puzzle-piece"></i></span> Plugins / Licencias
+      </div>
+
+      <!-- Ítem 1-4: nuevas páginas Don Antonio -->
+      <div class="nav-group-label">CRM Avanzado</div>
+      <div class="nav-item" data-page="loyalty" data-click="navigateTo" data-click-arg="loyalty">
+        <span class="nav-icon"><i class="fa-solid fa-star"></i></span> Fidelización Puntos
+      </div>
+      <div class="nav-item" data-page="contractors" data-click="navigateTo" data-click-arg="contractors">
+        <span class="nav-icon"><i class="fa-solid fa-hard-hat"></i></span> Contratistas
+      </div>
+      <div class="nav-item" data-page="projects" data-click="navigateTo" data-click-arg="projects">
+        <span class="nav-icon"><i class="fa-solid fa-diagram-project"></i></span> Proyectos / Obras
+      </div>
+      <div class="nav-item" data-page="sellers-config" data-click="navigateTo" data-click-arg="sellers-config">
+        <span class="nav-icon"><i class="fa-solid fa-user-tie"></i></span> Config. Vendedores
+      </div>
+      <div class="nav-item" data-page="rutas" data-click="navigateTo" data-click-arg="rutas">
+        <span class="nav-icon"><i class="fa-solid fa-map-location-dot"></i></span> Rutas GPS
+      </div>
+
+      <div class="nav-group-label">Acceso Rápido</div>
+      <div class="nav-pos-wrapper" style="padding: 0 16px; margin-bottom: 16px;">
+        <a href="/os" class="admin-pos-button">
+          <span class="admin-pos-arrow"><i class="fa-solid fa-arrow-left"></i></span>
+          <span>OS</span>
+          <small>CALEBSYS</small>
+        </a>
+      </div>
+
+    </nav>
+
+    <!-- User Card -->
+    <div class="sidebar-footer">
+      <div class="user-card" data-click="openModal" data-click-arg="modal-user">
+        <div class="user-avatar" id="user-avatar-initials">AD</div>
+        <div class="user-info">
+          <div class="uname" id="sidebar-user-name">Administrador</div>
+          <div class="urole" id="sidebar-user-role">ADMIN</div>
+        </div>
+        <i class="fa-solid fa-ellipsis-vertical chevron"></i>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+       MAIN WRAPPER
+       Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â -->
+  <div class="main-wrapper">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-breadcrumb">
+        <span>Calebsys</span>
+        <i class="fa-solid fa-chevron-right"></i>
+        <span class="current" id="topbar-current-page">Dashboard</span>
+      </div>
+      <div class="topbar-actions">
+        <div class="tb-search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Buscar módulo..." id="global-search">
+        </div>
+        <div class="status-chip">
+          <div class="dot"></div>
+          Online
+        </div>
+        <button class="tb-btn theme-toggle-admin" id="adminThemeToggle" type="button" aria-label="Cambiar tema" title="Cambiar tema">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+        <div class="tb-btn" id="btn-notifications" title="Notificaciones">
+          <i class="fa-solid fa-bell"></i>
+          <div class="notif-dot"></div>
+        </div>
+        <button class="tb-btn" id="btn-fullscreen" type="button" title="Pantalla completa (F11)" data-click="toggleAdminFullscreen">
+          <i class="fa-solid fa-expand" id="fullscreen-icon"></i>
+        </button>
+        <button class="tb-btn" id="tb-pos-link" type="button" title="Ir al POS — regresar al Punto de Venta" style="color:inherit;" data-click="__redirectToPos">
+          <i class="fa-solid fa-store"></i>
+        </button>
+        <button class="tb-btn" id="tb-logout" type="button" title="Cerrar sesión" data-click="handleLogout" style="color:inherit;">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENT AREA — pages loaded dynamically here -->
+    <main class="content-area" id="content-area">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <div class="loading-text">Iniciando Admin Shell...</div>
+      </div>
+    </main>
+
+  </div><!-- /main-wrapper -->
+
+  <!-- Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+       MODALS (always present, opened on demand)
+       Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â -->
+
+  <!-- Modal: Nuevo Producto -->
+  <div class="modal-backdrop" id="modal-nuevo-producto">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fa-solid fa-tag" style="color:var(--brand-400);margin-right:8px;"></i>Nuevo Producto</div>
+        <button class="modal-close" data-click="closeModal" data-click-arg="modal-nuevo-producto"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group"><label class="form-label">SKU *</label><input class="form-control" type="text" placeholder="PROD-001"></div>
+          <div class="form-group"><label class="form-label">Código de Barras</label><input class="form-control" type="text" placeholder="7501234567890"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Nombre del Producto *</label><input class="form-control" type="text" placeholder="Nombre completo del producto"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group"><label class="form-label">Unidad Compra</label><select class="form-control"><option>CAJA</option><option>PIEZA</option><option>KG</option><option>LT</option></select></div>
+          <div class="form-group"><label class="form-label">Unidad Venta</label><select class="form-control"><option>PIEZA</option><option>CAJA</option><option>KG</option><option>LT</option></select></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group"><label class="form-label">Factor de Conversión</label><input class="form-control" type="number" value="1"></div>
+          <div class="form-group"><label class="form-label">Precio Base</label><input class="form-control" type="number" placeholder="0.00" step="0.01"></div>
+        </div>
+        <div class="empty-module-label" style="margin-top:4px;">
+          <i class="fa-solid fa-info-circle"></i> Formulario diseñado — guardado pendiente de endpoint /api/products
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-click="closeModal" data-click-arg="modal-nuevo-producto">Cancelar</button>
+        <button class="btn btn-primary" disabled style="opacity:.5;">Guardar Producto</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Nuevo Cliente -->
+  <div class="modal-backdrop" id="modal-nuevo-cliente">
+    <div class="modal" style="width:520px;max-width:95vw;">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fa-solid fa-user-plus" style="color:var(--success);margin-right:8px;"></i>Nuevo Cliente</div>
+        <button class="modal-close" data-click="closeModal" data-click-arg="modal-nuevo-cliente"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body" style="display:flex;flex-direction:column;gap:14px;">
+        <div class="form-group">
+          <label class="form-label">Nombre / Raz&#243;n Social *</label>
+          <input id="nc-nombre" class="form-control" type="text" placeholder="NOMBRE DEL CLIENTE"
+                 style="text-transform:uppercase" data-input="toUpperCase">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group">
+            <label class="form-label">RFC</label>
+            <input id="nc-rfc" class="form-control" type="text" placeholder="XAXX010101000"
+                   style="text-transform:uppercase" data-input="toUpperCase">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tel&#233;fono</label>
+            <input id="nc-phone" class="form-control" type="tel" placeholder="55 0000 0000">
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group">
+            <label class="form-label">Escala de Precio</label>
+            <select id="nc-escala" class="form-control">
+              <option value="PUBLICO">PUBLICO</option>
+              <option value="MAYOREO">MAYOREO</option>
+              <option value="VIP">VIP</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">L&#237;mite de Cr&#233;dito</label>
+            <input id="nc-limite" class="form-control" type="number" value="0" step="0.01" min="0">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">R&#233;gimen Fiscal</label>
+          <select id="nc-regimen" class="form-control">
+            <option value="">-- Sin especificar --</option>
+            <option value="616" selected>616 - Sin obligaciones fiscales</option>
+            <option value="601">601 - General de Ley Personas Morales</option>
+            <option value="612">612 - Personas F&#237;sicas con Act. Empresariales</option>
+            <option value="605">605 - Sueldos y Salarios</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content:space-between;align-items:center;">
+        <button id="btn-sembrar-publico" class="btn btn-secondary" style="font-size:.73rem;opacity:.75;" type="button"
+                title="Crea PUBLICO EN GENERAL (XAXX010101000) si no existe">
+          &#9749; Sembrar P&#218;BLICO EN GENERAL
+        </button>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-secondary" data-click="closeModal" data-click-arg="modal-nuevo-cliente">Cancelar</button>
+          <button id="btn-guardar-cliente" class="btn btn-primary">Guardar Cliente</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Traspaso -->
+  <div class="modal-backdrop" id="modal-traspaso">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fa-solid fa-arrow-right-arrow-left" style="color:var(--teal);margin-right:8px;"></i>Nuevo Traspaso</div>
+        <button class="modal-close" data-click="closeModal" data-click-arg="modal-traspaso"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group"><label class="form-label">Bodega Origen *</label><select class="form-control"><option>MATRIZ</option><option>BODEGA-2</option></select></div>
+          <div class="form-group"><label class="form-label">Bodega Destino *</label><select class="form-control"><option>BODEGA-2</option><option>MATRIZ</option></select></div>
+        </div>
+        <div class="form-group"><label class="form-label">SKU / Producto *</label><input class="form-control" type="text" placeholder="Buscar SKU..."></div>
+        <div class="form-group"><label class="form-label">Cantidad *</label><input class="form-control" type="number" min="1" value="1"></div>
+        <div class="empty-module-label" style="margin-top:4px;">
+          <i class="fa-solid fa-info-circle"></i> Formulario diseñado — guardado pendiente de endpoint /api/transfers
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-click="closeModal" data-click-arg="modal-traspaso">Cancelar</button>
+        <button class="btn btn-primary" disabled style="opacity:.5;">Confirmar Traspaso</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Mi Cuenta -->
+  <div class="modal-backdrop" id="modal-user">
+    <div class="modal" style="width:380px;">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fa-solid fa-circle-user" style="color:var(--brand-400);margin-right:8px;"></i>Mi Cuenta</div>
+        <button class="modal-close" data-click="closeModal" data-click-arg="modal-user"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex;align-items:center;gap:14px;padding:8px 0;margin-bottom:16px;border-bottom:1px solid var(--border);">
+          <div class="user-avatar" style="width:48px;height:48px;font-size:18px;" id="modal-user-avatar">AD</div>
+          <div>
+            <div style="font-weight:700;font-size:15px;" id="modal-user-name">Administrador</div>
+            <div style="font-size:12px;color:var(--text-muted);" id="modal-user-role">ADMIN</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" data-click="closeModal" data-click-arg="modal-user">
+            <i class="fa-solid fa-key" style="color:var(--brand-400);width:16px;"></i> Cambiar PIN de Seguridad
+          </button>
+          <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" data-click="closeModal" data-click-arg="modal-user">
+            <i class="fa-solid fa-shield" style="color:var(--success);width:16px;"></i> Cambiar Contraseña
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content:space-between;">
+        <button class="btn btn-danger" data-click="handleLogout">
+          <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+        </button>
+        <button class="btn btn-secondary" data-click="closeModal" data-click-arg="modal-user">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ã¢â€â‚¬Ã¢â€â‚¬ FREEZE TAG Ã¢â€â‚¬Ã¢â€â‚¬ -->
+  <div class="freeze-tag">
+    <i class="fa-solid fa-snowflake"></i>
+    v1.0.0-ui-core-shell-freeze &nbsp;|&nbsp; v1.0.0-core-models-fase-5-freeze
+  </div>
+
+  <!-- FAB ACCESO RAPIDO — esquina inferior derecha -->
+  <div id="fab-quick-access" style="position:fixed;bottom:24px;right:24px;z-index:9000;display:flex;flex-direction:column;align-items:flex-end;gap:10px;">
+    <div id="fab-menu" style="display:none;flex-direction:column;align-items:flex-end;gap:8px;">
+      <button data-click="__redirectToPos" style="display:flex;align-items:center;gap:8px;background:var(--brand-500,#2563eb);color:#fff;font-size:12px;font-weight:700;padding:8px 14px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.25);border:none;cursor:pointer;white-space:nowrap;">
+        <i class="fa-solid fa-store"></i> Ir al POS
+      </button>
+      <button data-fab-page="usuarios" data-click="navigateTo" data-click-arg="usuarios" style="display:flex;align-items:center;gap:8px;background:var(--surface-2,#1e293b);color:var(--text-primary,#f1f5f9);font-size:12px;font-weight:700;padding:8px 14px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.25);border:none;cursor:pointer;white-space:nowrap;">
+        <i class="fa-solid fa-users-gear"></i> Usuarios
+      </button>
+      <button data-fab-page="auditoria" data-click="navigateTo" data-click-arg="auditoria" style="display:flex;align-items:center;gap:8px;background:var(--surface-2,#1e293b);color:var(--text-primary,#f1f5f9);font-size:12px;font-weight:700;padding:8px 14px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.25);border:none;cursor:pointer;white-space:nowrap;">
+        <i class="fa-solid fa-shield-halved"></i> Auditoría
+      </button>
+      <button data-fab-page="configuracion" data-click="navigateTo" data-click-arg="configuracion" style="display:flex;align-items:center;gap:8px;background:var(--surface-2,#1e293b);color:var(--text-primary,#f1f5f9);font-size:12px;font-weight:700;padding:8px 14px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.25);border:none;cursor:pointer;white-space:nowrap;">
+        <i class="fa-solid fa-gear"></i> Configuración
+      </button>
+    </div>
+    <button id="fab-btn" data-click="toggleFabMenu" title="Acceso rápido"
+            style="width:52px;height:52px;border-radius:50%;background:var(--brand-500,#2563eb);color:#fff;border:none;cursor:pointer;box-shadow:0 6px 20px rgba(37,99,235,.45);font-size:20px;display:flex;align-items:center;justify-content:center;transition:transform .2s,background .2s;">
+      <i class="fa-solid fa-bolt" id="fab-icon"></i>
+    </button>
+  </div>
+
+  <!-- Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+       SCRIPTS — Load order matters
+       Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â -->
+  <script src="scripts/api-client.js" charset="utf-8"></script>
+  <script src="scripts/dashboard/registry.js?v=20261108d" charset="utf-8"></script>
+  <script src="scripts/dashboard/layout-engine.js?v=20261108d" charset="utf-8"></script>
+  <script src="scripts/dashboard/editor.js?v=20261108d" charset="utf-8"></script>
+  <script src="scripts/loaders/dashboard.js?v=20261108d" charset="utf-8"></script>
+  <script src="scripts/loaders/products.js?v=20261023a" charset="utf-8"></script>
+  <script src="scripts/loaders/products-form.js?v=20261025b" charset="utf-8"></script>
+  <script src="scripts/loaders/kardex.js" charset="utf-8"></script>
+  <script src="scripts/loaders/cfdi.js?v=20261026a" charset="utf-8"></script>
+  <script src="scripts/loaders/clients.js" charset="utf-8"></script>
+  <script src="scripts/loaders/cxc.js" charset="utf-8"></script>
+  <script src="scripts/loaders/transfers.js" charset="utf-8"></script>
+  <script src="scripts/loaders/almacen.js" charset="utf-8"></script>
+  <script src="scripts/loaders/almacen-devoluciones.js" charset="utf-8"></script>
+  <script src="scripts/loaders/compras.js" charset="utf-8"></script>
+  <script src="scripts/loaders/admin.js" charset="utf-8"></script>
+  <script src="scripts/loaders/config-hub.js?v=20261014v" charset="utf-8"></script>
+  <script src="scripts/loaders/superadmin.js" charset="utf-8"></script>
+  <script src="scripts/click-delegate.js" charset="utf-8"></script>
+  <script src="scripts/admin/page-inits.js?v=20261025a" charset="utf-8"></script>
+  <script src="scripts/loaders/reception-hub.js?v=20261024b" charset="utf-8"></script>
+  <script src="scripts/loaders/reception-wizard.js?v=20261024c" charset="utf-8"></script>
+  <script src="scripts/admin-shell.js?v=20261108d" charset="utf-8"></script>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       RELOJ CHECADOR — modal embebido (RH-04)
+       El empleado que aterriza en el Admin Shell (RH, Contador,
+       Almacenista…) ficha aquí mismo. Se abre solo si no ha
+       fichado hoy y confirma con el botón ACEPTAR.
+  ════════════════════════════════════════════════════════════ -->
+  <link rel="stylesheet" href="styles/reloj-checador.css" />
+
+  <div class="rc-overlay" id="relojModal" role="dialog" aria-modal="true" aria-label="Reloj Checador" aria-hidden="true">
+    <span class="rc-esc-hint"><kbd>ESC</kbd> cerrar</span>
+
+    <div id="rc-toast" class="rc-toast" role="alert" aria-live="assertive"></div>
+
+    <div class="rc-card">
+
+      <header class="rc-header">
+        <div class="rc-logo-mark" aria-hidden="true">C</div>
+        <div class="rc-header-meta">
+          <div class="rc-header-empresa" id="rcEmpresa">Calebsys</div>
+          <div class="rc-header-sucursal" id="rcSucursal">Sucursal</div>
+        </div>
+        <div class="rc-status-dot" id="rcStatusDot" title="Conectado"></div>
+      </header>
+
+      <div id="rc-keypad-view" class="rc-keypad-view">
+
+        <div class="rc-clock-block">
+          <div class="rc-time" id="rcTime" aria-live="polite">--<span class="rc-time-sep">:</span>--<span class="rc-time-sep">:</span>--</div>
+          <div class="rc-date" id="rcDate">Cargando fecha...</div>
+        </div>
+
+        <div class="rc-user-identity">
+          <div class="rc-user-name" id="rcUserName">—</div>
+          <div class="rc-user-role" id="rcUserRole"></div>
+        </div>
+
+        <div id="rcAccionLabel" class="rc-accion-label" hidden>Hora de Ingreso</div>
+        <button id="rcBtnAceptar" class="rc-btn-aceptar" type="button" hidden>ACEPTAR</button>
+
+        <div id="rcMsgAutorizacion" class="rc-jornada-cerrada-msg" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 1 21h22L12 2zm0 4.53L19.06 19H4.94L12 6.53zM11 10v4h2v-4h-2zm0 6v2h2v-2h-2z"/></svg>
+          <span>Tu salida requiere autorización del administrador.</span>
+        </div>
+
+        <div id="rcMsgControlAcceso" class="rc-jornada-cerrada-msg rc-msg-info" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          <span>Ya registraste tu ingreso en el control de acceso.</span>
+        </div>
+
+        <div class="rc-loading-block" id="rcLoading" hidden>
+          <span class="rc-spinner"></span>
+          <span class="rc-pending-label" id="rcPendingLabel">Registrando…</span>
+        </div>
+
+        <div id="rcMsgJornadaCerrada" class="rc-jornada-cerrada-msg" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm-1-5h2v2h-2v-2Zm0-8h2v6h-2V7Z"/></svg>
+          <span>Jornada cerrada · Regresa mañana</span>
+        </div>
+
+        <div class="rc-result" id="rcResult" role="status" aria-live="assertive"></div>
+
+      </div><!-- /#rc-keypad-view -->
+
+      <div id="rc-success-view" class="rc-success-view" hidden>
+        <div class="rc-success-icon" id="rcSuccessIcon">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <h2 id="rc-success-title">¡Entrada registrada!</h2>
+        <div class="rc-success-user">
+          <div class="rc-success-photo-wrap">
+            <img id="rc-success-photo" class="rc-success-photo" alt="Foto del trabajador" hidden />
+            <div id="rc-success-avatar" class="rc-avatar-fallback">AM</div>
+          </div>
+          <div>
+            <strong id="rc-success-name">ADMINISTRADOR</strong>
+            <span id="rc-success-code">EMP-0001</span>
+          </div>
+        </div>
+        <div class="rc-success-divider"></div>
+        <p id="rc-success-date">—</p>
+        <strong id="rc-success-time" class="rc-success-time">—</strong>
+        <div id="rc-success-badge" class="rc-success-badge">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>Tu checada fue registrada correctamente</span>
+        </div>
+      </div><!-- /#rc-success-view -->
+
+    </div><!-- /.rc-card -->
+  </div><!-- /#relojModal -->
+
+  <script src="scripts/reloj-checador.js" charset="utf-8"></script>
+  <script src="scripts/reloj-embed.js" charset="utf-8"></script>
+
+</body>
+</html>

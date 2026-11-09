@@ -1,0 +1,438 @@
+<!-- ALTA DE CLIENTE VIEW -->
+<div id="new-client-view" class="flex-1 min-h-0 flex flex-col overflow-hidden bg-[#f8fafc] hidden font-inter">
+  
+  
+
+  <!-- DASHBOARD CONTAINER -->
+  <div class="flex-1 overflow-y-auto">
+    <div class="p-1 lg:p-2 grid grid-cols-1 xl:grid-cols-4 gap-1.5">
+      
+      <!-- LEFT COLUMN (Takes 3/4 width) -->
+      <div class="xl:col-span-3 flex flex-col gap-1">
+        
+        <!-- UPLOAD BANNER -->
+        <section id="nc-upload-zone" class="bg-white border border-dashed border-slate-300 rounded-xl px-2 py-1 flex justify-between items-center transition-colors">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-semibold shadow-sm">1</div>
+            <div>
+              <h3 class="text-sm font-semibold text-slate-900">Carga la Constancia Fiscal (PDF o Imagen)</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Extraeremos automáticamente los datos fiscales.</p>
+            </div>
+          </div>
+          <button class="bg-transparent border border-slate-200 px-2 py-1 rounded-lg text-[13px] font-medium text-indigo-600 flex items-center gap-2 hover:bg-slate-50 transition">
+            <i data-lucide="upload-cloud" class="w-4 h-4"></i> Cargar Constancia Fiscal
+            <span class="text-slate-400 text-[11px] ml-3 pl-3 border-l border-slate-200 flex items-center gap-1">o arrastra el archivo aquí <i data-lucide="chevron-right" class="w-3 h-3"></i></span>
+          </button>
+          <div id="nc-upload-preview" class="absolute right-0 top-0 bottom-0 w-[120px] bg-slate-100 border-l border-slate-200 hidden items-center justify-center transition-all opacity-0">
+    <i data-lucide="file-check" class="w-6 h-6 text-emerald-500"></i>
+    <span class="text-[10px] text-slate-500 font-bold ml-1">OK</span>
+</div>
+        </section>
+
+        <!-- GRID 3 COLUMNS (TOP ROW) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
+          
+          <!-- IDENTIDAD -->
+          <div class="bg-white rounded-xl p-3 border border-slate-200">
+            <div class="text-xs font-bold text-slate-800 uppercase tracking-wide mb-0.5">IDENTIDAD</div>
+            <div class="grid grid-cols-[1fr_2fr] gap-2">
+              <div>
+                <div class="border border-dashed border-slate-300 rounded-lg h-[110px] flex flex-col items-center justify-center gap-2 text-slate-400 mb-1.5 bg-slate-50 cursor-pointer hover:border-indigo-400 transition">
+                  <i data-lucide="camera" class="w-6 h-6 text-indigo-600"></i>
+                  <span class="text-xs font-medium text-slate-700">Foto Cliente</span>
+                  <small class="text-[10px]">JPG, PNG o WEBP</small>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <button class="bg-white border border-slate-200 rounded-lg py-1.5 text-[11px] font-medium text-slate-700 flex items-center justify-center gap-1.5 hover:bg-slate-50"><i data-lucide="camera" class="w-3 h-3"></i> Tomar</button>
+                  <button class="bg-white border border-slate-200 rounded-lg py-1.5 text-[11px] font-medium text-slate-700 flex items-center justify-center gap-1.5 hover:bg-slate-50"><i data-lucide="upload" class="w-3 h-3"></i> Subir</button>
+                </div>
+              </div>
+              <div class="space-y-1.5">
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Razón Social *</label>
+                  <input type="text" id="nc-razon-social" class="w-full border border-slate-200 rounded-lg px-3 py-1 text-[13px] text-slate-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none" value="COMERCIALIZADORA ABC, SA DE CV">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Nombre Comercial</label>
+                  <input type="text" id="nc-nombre-comercial" class="w-full border border-slate-200 rounded-lg px-3 py-1 text-[13px] text-slate-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none" value="COMERCIALIZADORA ABC">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">RFC *</label>
+                  <input type="text" id="nc-rfc" class="w-full border border-slate-200 rounded-lg px-3 py-1 text-[13px] text-slate-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none" value="ABC123456789">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-500 mb-1.5">Tipo de Persona</label>
+                  <div class="flex gap-2">
+                    <label class="flex items-center gap-1.5 text-[13px] font-medium text-slate-800 cursor-pointer"><input type="radio" name="tipo" class="w-4 h-4 text-indigo-600 accent-indigo-600"> Física</label>
+                    <label class="flex items-center gap-1.5 text-[13px] font-medium text-slate-800 cursor-pointer"><input type="radio" name="tipo" checked class="w-4 h-4 text-indigo-600 accent-indigo-600"> Moral</label>
+                  </div>
+                </div>
+                <div class="pt-1">
+                  <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">ID Cliente</label>
+                  <input type="text" id="nc-id-cliente" readonly class="w-full bg-slate-50 border border-dashed border-slate-300 rounded-lg px-3 py-1 text-[13px] text-slate-600 font-bold outline-none" value="">
+                  <span class="text-[10px] text-slate-400 mt-1 block">ID generado automáticamente</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- INFORMACIÓN FISCAL -->
+          <div class="bg-white rounded-xl p-3 border border-slate-200 flex flex-col">
+            <div class="text-xs font-bold text-slate-800 uppercase tracking-wide mb-0.5">INFORMACIÓN FISCAL</div>
+            <div class="space-y-2 flex-1">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Régimen Fiscal *</label>
+                <select id="nc-regimen" class="w-full border border-slate-200 rounded-lg px-3 py-1 text-[13px] text-slate-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2364748b%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_12px_center] bg-[length:10px_auto]">
+<option value="601">601 - Régimen General de Ley Personas Morales</option>
+<option value="602">602 - Régimen Simplificado de Ley Personas Morales</option>
+<option value="603">603 - Personas Morales con Fines no Lucrativos</option>
+<option value="604">604 - Régimen de Pequeños Contribuyentes</option>
+<option value="605">605 - Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios</option>
+<option value="606">606 - Régimen de Arrendamiento</option>
+<option value="607">607 - Régimen de Enajenación o Adquisición de Bienes</option>
+<option value="608">608 - Régimen de los Demás Ingresos</option>
+<option value="609">609 - Régimen de Consolidación</option>
+<option value="610">610 - Régimen Residentes en el Extranjero sin Establecimiento Permanente en México</option>
+<option value="611">611 - Régimen de Ingresos por Dividendos (socios y accionistas)</option>
+<option value="612">612 - Régimen de las Personas Físicas con Actividades Empresariales y Profesionales</option>
+<option value="613">613 - Régimen Intermedio de las Personas Físicas con Actividades Empresariales</option>
+<option value="614">614 - Régimen de los Ingresos por Intereses</option>
+<option value="615">615 - Régimen de los Ingresos por Obtención de Premios</option>
+<option value="616">616 - Sin obligaciones fiscales</option>
+<option value="617">617 - PEMEX</option>
+<option value="618">618 - Régimen Simplificado de Ley Personas Físicas</option>
+<option value="619">619 - Ingresos por la Obtención de Préstamos</option>
+<option value="620">620 - Sociedades Cooperativas de Producción que optan por diferir sus ingresos</option>
+<option value="621">621 - Régimen de Incorporación Fiscal</option>
+<option value="622">622 - Régimen de Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras PM</option>
+<option value="623">623 - Régimen de Opcional para Grupos de Sociedades</option>
+<option value="624">624 - Régimen de los Coordinados</option>
+<option value="625">625 - Régimen de las Actividades Empresariales con ingresos a través de Plataformas Tecnológicas</option>
+<option value="626">626 - Régimen Simplificado de Confianza</option>
+</select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Uso CFDI *</label>
+                <select class="w-full border border-slate-200 rounded-lg px-3 py-1 text-[13px] text-slate-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,...')] bg-no-repeat bg-[position:right_12px_center] bg-[length:10px_auto]">
+                  <option>G03 - Gastos en general</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Forma de Pago Predeterminada</label>
+                <select class="w-full border border-slate-200 rounded-lg px-3 py-1 text-[13px] text-slate-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,...')] bg-no-repeat bg-[position:right_12px_center] bg-[length:10px_auto]">
+                  <option>99 - Por definir</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Escala de Precios</label>
+                <select id="nc-precio" class="w-full border border-slate-200 rounded-lg px-3 py-1 text-[13px] text-slate-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,...')] bg-no-repeat bg-[position:right_12px_center] bg-[length:10px_auto]">
+                  <option value="PUBLICO">PRECIO DE LISTA</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Vendedor Asignado</label>
+                <div class="relative">
+                  <img src="https://ui-avatars.com/api/?name=Antonio+M&background=random" class="w-5 h-5 rounded-full absolute left-3 top-[9px]">
+                  <select class="w-full border border-slate-200 rounded-lg pl-10 pr-3 py-1 text-[13px] text-slate-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,...')] bg-no-repeat bg-[position:right_12px_center] bg-[length:10px_auto]">
+                    <option>Antonio M.</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-1.5 mt-2">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Fecha de Alta</label>
+                <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-1 text-[13px] text-slate-900 outline-none bg-slate-50" value="24/05/2024" readonly>
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Última Modificación</label>
+                <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-1 text-[13px] text-slate-900 outline-none bg-slate-50" value="24/05/2024 11:30" readonly>
+              </div>
+            </div>
+          </div>
+
+          <!-- CONTACTO -->
+          <div class="bg-white rounded-xl p-3 border border-slate-200">
+            <div class="text-xs font-bold text-slate-800 uppercase tracking-wide mb-0.5">CONTACTO</div>
+            <div class="space-y-2">
+              <div class="relative">
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Teléfono Principal</label>
+                <i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-[22px]"></i>
+                <input type="text" id="nc-phone" class="w-full border border-slate-200 rounded-lg pl-9 pr-3 py-1 text-[13px] text-slate-900 focus:border-indigo-500 outline-none" value="55 1234 5678">
+              </div>
+              <div class="relative">
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">WhatsApp</label>
+                <i data-lucide="message-circle" class="w-3.5 h-3.5 text-[#25D366] absolute left-3 top-[22px]"></i>
+                <input type="text" id="nc-whatsapp" class="w-full border border-slate-200 rounded-lg pl-9 pr-3 py-1 text-[13px] text-slate-900 focus:border-indigo-500 outline-none" placeholder="Ej. 5512345678">
+              </div>
+              <div class="relative">
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Correo Electrónico</label>
+                <i data-lucide="mail" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-[22px]"></i>
+                <div id="nc-email-container" class="w-full border border-slate-200 rounded-lg pl-9 pr-3 py-1 text-[13px] text-slate-900 focus-within:border-indigo-500 bg-white flex flex-wrap gap-1 items-center min-h-[30px] cursor-text" onclick="document.getElementById('nc-email-input').focus()">
+                  <input type="email" id="nc-email-input" class="flex-1 outline-none min-w-[100px] bg-transparent" placeholder="Agregar correo...">
+                </div>
+              </div>
+              <div class="relative">
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Sitio Web</label>
+                <i data-lucide="globe" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-[22px]"></i>
+                <input type="text" class="w-full border border-slate-200 rounded-lg pl-9 pr-3 py-1 text-[13px] text-slate-900 focus:border-indigo-500 outline-none" value="www.comercializadoraabc.com">
+              </div>
+              <div class="relative">
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Facebook</label>
+                <i data-lucide="facebook" class="w-3.5 h-3.5 text-[#1877F2] absolute left-3 top-[22px]"></i>
+                <input type="text" class="w-full border border-slate-200 rounded-lg pl-9 pr-3 py-1 text-[13px] text-slate-900 focus:border-indigo-500 outline-none" value="/comercializadoraabc">
+              </div>
+              <div class="relative">
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Instagram</label>
+                <i data-lucide="instagram" class="w-3.5 h-3.5 text-[#E4405F] absolute left-3 top-[22px]"></i>
+                <input type="text" class="w-full border border-slate-200 rounded-lg pl-9 pr-3 py-1 text-[13px] text-slate-900 focus:border-indigo-500 outline-none" value="@comercializadoraabc">
+              </div>
+            </div>
+          </div>
+          
+        </div>
+
+        <!-- GRID 3 COLUMNS (BOTTOM ROW) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
+          
+          <!-- UBICACIÓN FISCAL -->
+          <div class="bg-white rounded-xl p-3 border border-slate-200">
+            <div class="text-xs font-bold text-slate-800 uppercase tracking-wide mb-0.5">UBICACIÓN FISCAL</div>
+            <div class="space-y-2">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Dirección Fiscal *</label>
+                <input type="text" id="nc-direccion" class="w-full border border-slate-200 rounded-lg px-3 py-1 text-[13px] text-slate-900 focus:border-indigo-500 outline-none" value="Av. Insurgentes Sur 1234">
+              </div>
+              <div class="grid grid-cols-2 gap-1.5">
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Colonia *</label>
+                  <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-1 text-[13px] text-slate-900 focus:border-indigo-500 outline-none" value="Del Valle Norte">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Municipio / Alcaldía *</label>
+                  <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-1 text-[13px] text-slate-900 focus:border-indigo-500 outline-none" value="Benito Juárez">
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-1.5">
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Estado *</label>
+                  <select class="w-full border border-slate-200 rounded-lg px-3 py-1 text-[13px] text-slate-900 outline-none appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,...')] bg-no-repeat bg-[position:right_12px_center] bg-[length:10px_auto]"><option>Ciudad de México</option></select>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Código Postal *</label>
+                  <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-1 text-[13px] text-slate-900 focus:border-indigo-500 outline-none" value="03100">
+                </div>
+              </div>
+              <div class="grid grid-cols-[1fr_1.2fr] gap-1.5">
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">País *</label>
+                  <select class="w-full border border-slate-200 rounded-lg px-3 py-1 text-[13px] text-slate-900 outline-none appearance-none"><option>México</option></select>
+                </div>
+                <div>
+                  <div class="w-full h-[65px] rounded-lg bg-slate-200 bg-[url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Google_Maps_Pin.svg/512px-Google_Maps_Pin.svg.png')] bg-no-repeat bg-center bg-[length:20px]"></div>
+                  <button class="w-full mt-2 bg-white border border-slate-200 rounded-lg py-1.5 text-[11px] font-medium text-indigo-600 flex justify-center items-center gap-1.5 hover:bg-slate-50"><i data-lucide="map-pin" class="w-3 h-3"></i> Ver en Maps</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CRÉDITO -->
+          <div class="bg-white rounded-xl p-3 border border-slate-200 flex flex-col">
+            <div class="text-xs font-bold text-slate-800 uppercase tracking-wide mb-0.5">CRÉDITO</div>
+            <div class="grid grid-cols-2 gap-1.5 mb-1.5 flex-1">
+              <div class="flex items-center justify-center">
+                <div class="relative w-[110px] h-[110px] rounded-full flex items-center justify-center" style="background: conic-gradient(#4f46e5 75%, #f1f5f9 0);">
+                  <div class="w-[86px] h-[86px] bg-white rounded-full flex flex-col items-center justify-center absolute">
+                    <span class="text-[9px] text-slate-500">Disponible</span>
+                    <strong class="text-[12px] font-bold text-slate-900 leading-tight">$75,250.00</strong>
+                    <small class="text-[9px] text-slate-500">75%</small>
+                  </div>
+                </div>
+              </div>
+              <div class="space-y-1.5 flex flex-col justify-center">
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Límite de Crédito</label>
+                  <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-1 text-[13px] font-bold text-slate-900 outline-none" value="$100,000.00">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Días de Crédito</label>
+                  <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-1 text-[13px] text-slate-900 outline-none" value="30">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Días de Apartado</label>
+                  <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-1 text-[13px] text-slate-900 outline-none" value="7">
+                </div>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 pt-4 border-t border-slate-200">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-500">Saldo Actual</label>
+                <div class="text-[14px] font-bold text-slate-900 mt-0.5">$24,750.00</div>
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-500">Disponible</label>
+                <div class="text-[14px] font-bold text-slate-900 mt-0.5">$75,250.00</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RESUMEN FINANCIERO (MOVED BACK TO COLUMN 3 TO MATCH IMAGE) -->
+          <div class="bg-white rounded-xl p-3 border border-slate-200">
+            <div class="text-xs font-bold text-slate-800 uppercase tracking-wide mb-0.5">RESUMEN FINANCIERO</div>
+            <div class="space-y-2">
+              <div class="flex justify-between items-center text-[12px] pb-1.5 border-b border-slate-100">
+                <span class="text-slate-500">Ventas del Año (2024)</span>
+                <strong class="font-bold text-slate-900">$245,750.00</strong>
+              </div>
+              <div class="flex justify-between items-center text-[12px] pb-1.5 border-b border-slate-100">
+                <span class="text-slate-500">Compras del Año</span>
+                <strong class="font-bold text-slate-900">$198,450.00</strong>
+              </div>
+              <div class="flex justify-between items-center text-[12px] pb-1.5 border-b border-slate-100">
+                <span class="text-slate-500">Notas de Crédito</span>
+                <strong class="font-bold text-slate-900">$5,200.00</strong>
+              </div>
+              <div class="flex justify-between items-center text-[12px] pb-1.5 border-b border-slate-100">
+                <span class="text-slate-500">Saldo Pendiente</span>
+                <strong class="font-bold text-slate-900">$24,750.00</strong>
+              </div>
+              <div class="flex justify-between items-center text-[12px] pb-1.5 border-b border-slate-100">
+                <span class="text-slate-500">Días Promedio de Pago</span>
+                <strong class="font-bold text-slate-900">18 días</strong>
+              </div>
+              <div class="flex justify-between items-center text-[12px]">
+                <span class="text-slate-500">Línea de Crédito</span>
+                <strong class="font-bold text-slate-900">$100,000.00</strong>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN (Takes 1/4 width) -->
+      <div class="xl:col-span-1 flex flex-col gap-2">
+        
+        <!-- PERFIL CLIENTE -->
+        <div class="bg-white rounded-xl p-3 border border-slate-200">
+          <div class="text-xs font-bold text-slate-800 uppercase tracking-wide mb-0.5">PERFIL CLIENTE</div>
+          <div class="flex flex-col items-center mb-1.5">
+            <div class="w-[70px] h-[70px] bg-indigo-600 rounded-full flex items-center justify-center text-2xl font-bold text-white border-4 border-indigo-50 relative mb-0.5">
+              CA
+              <div class="absolute bottom-0 right-0 w-7 h-7 bg-white rounded-full border border-slate-200 flex items-center justify-center text-slate-500 cursor-pointer hover:bg-slate-50 shadow-sm"><i data-lucide="pen" class="w-3.5 h-3.5"></i></div>
+            </div>
+            <h3 class="text-[14px] font-bold text-slate-900 text-center leading-snug mb-0.5">COMERCIALIZADORA ABC, SA DE CV</h3>
+            <span class="bg-emerald-100 text-emerald-600 px-3 py-1 rounded-full text-[11px] font-semibold">Cliente Activo</span>
+          </div>
+          <div class="space-y-1.5">
+            <div class="flex justify-between items-center text-[12px] pb-1 border-b border-slate-100">
+              <span class="text-slate-500">RFC</span>
+              <strong class="font-bold text-slate-900">ABC123456789</strong>
+            </div>
+            <div class="flex justify-between items-center text-[12px] pb-1 border-b border-slate-100">
+              <span class="text-slate-500">Tipo</span>
+              <strong class="font-bold text-slate-900">Moral</strong>
+            </div>
+            <div class="flex justify-between items-center text-[12px]">
+              <span class="text-slate-500">ID Cliente</span>
+              <strong class="font-bold text-slate-900">CLI-000158</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- LÍMITE DE CRÉDITO -->
+        <div class="bg-white rounded-xl p-3 border border-slate-200">
+          <div class="text-xs font-bold text-slate-800 uppercase tracking-wide mb-0.5">LÍMITE DE CRÉDITO</div>
+          <div class="flex justify-between items-end mb-0.5">
+            <strong class="text-lg font-bold text-slate-900">$100,000.00</strong>
+            <span class="text-[11px] text-slate-500">75%</span>
+          </div>
+          <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden mb-1.5">
+            <div class="h-full bg-indigo-600 rounded-full" style="width: 75%;"></div>
+          </div>
+          <div class="flex justify-between items-center text-[12px]">
+            <span class="text-slate-500">Disponible</span>
+            <strong class="font-bold text-slate-900">$75,250.00</strong>
+          </div>
+        </div>
+
+        <!-- HIGHLIGHTS / ESTADISTICAS -->
+        <div class="bg-white rounded-xl p-3 border border-slate-200 flex-1">
+          <div class="text-xs font-bold text-slate-800 uppercase tracking-wide mb-0.5">ESTADÍSTICAS</div>
+          <div class="space-y-2">
+            <div class="flex justify-between items-center text-[12px] pb-1.5 border-b border-dashed border-slate-200">
+              <div class="flex items-center gap-2 text-slate-500">
+                <i data-lucide="trending-up" class="w-4 h-4"></i> Ventas Totales
+              </div>
+              <strong class="font-bold text-slate-900">$245,750.00</strong>
+            </div>
+            <div class="flex justify-between items-center text-[12px] pb-1.5 border-b border-dashed border-slate-200">
+              <div class="flex items-center gap-2 text-slate-500">
+                <i data-lucide="calendar-check" class="w-4 h-4"></i> Última Compra
+              </div>
+              <strong class="font-bold text-slate-900">20/05/2024</strong>
+            </div>
+            <div class="flex justify-between items-center text-[12px]">
+              <div class="flex items-center gap-2 text-slate-500">
+                <i data-lucide="medal" class="w-4 h-4"></i> Nivel Fidelidad
+              </div>
+              <div class="flex items-center gap-1 font-bold text-slate-900">
+                <i data-lucide="award" class="w-4 h-4 text-violet-500"></i> Platino
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bg-white border-t border-slate-200 px-6 lg:px-8 shrink-0">
+    <!-- Tabs -->
+    <div class="flex gap-2 border-b border-slate-200 overflow-x-auto no-scrollbar mb-0.5">
+      <div class="py-1.5 text-[13px] font-semibold text-indigo-600 border-b-2 border-indigo-600 flex items-center gap-2 cursor-pointer whitespace-nowrap">
+        <i data-lucide="user" class="w-4 h-4"></i> Datos Generales
+      </div>
+      <div class="py-1.5 text-[13px] font-medium text-slate-500 hover:text-slate-800 flex items-center gap-2 cursor-pointer whitespace-nowrap">
+        <i data-lucide="home" class="w-4 h-4"></i> Direcciones
+      </div>
+      <div class="py-1.5 text-[13px] font-medium text-slate-500 hover:text-slate-800 flex items-center gap-2 cursor-pointer whitespace-nowrap">
+        <i data-lucide="users" class="w-4 h-4"></i> Contactos
+      </div>
+      <div class="py-1.5 text-[13px] font-medium text-slate-500 hover:text-slate-800 flex items-center gap-2 cursor-pointer whitespace-nowrap">
+        <i data-lucide="building" class="w-4 h-4"></i> Información Bancaria
+      </div>
+      <div class="py-1.5 text-[13px] font-medium text-slate-500 hover:text-slate-800 flex items-center gap-2 cursor-pointer whitespace-nowrap">
+        <i data-lucide="folder-open" class="w-4 h-4"></i> Documentos
+      </div>
+      <div class="py-1.5 text-[13px] font-medium text-slate-500 hover:text-slate-800 flex items-center gap-2 cursor-pointer whitespace-nowrap">
+        <i data-lucide="sticky-note" class="w-4 h-4"></i> Notas
+      </div>
+      <div class="py-1.5 text-[13px] font-medium text-slate-500 hover:text-slate-800 flex items-center gap-2 cursor-pointer whitespace-nowrap">
+        <i data-lucide="history" class="w-4 h-4"></i> Historial
+      </div>
+    </div>
+    
+    <!-- Actions -->
+    <div class="flex justify-between items-center pb-4">
+      <button onclick="setView('clients')" class="px-5 py-1.5 bg-white border border-slate-300 rounded-lg text-[13px] font-semibold text-slate-700 hover:bg-slate-50 transition">
+        Cancelar
+      </button>
+      <div class="flex gap-1.5">
+        <button class="px-5 py-1.5 bg-white border border-slate-300 rounded-lg text-[13px] font-semibold text-slate-700 hover:bg-slate-50 transition flex items-center gap-2">
+          <i data-lucide="save" class="w-4 h-4 text-slate-400"></i> Guardar Borrador
+        </button>
+        <button onclick="submitNewClientView(event)" class="px-5 py-1.5 bg-indigo-50 border border-transparent rounded-lg text-[13px] font-semibold text-indigo-700 hover:bg-indigo-100 transition flex items-center gap-2">
+          <i data-lucide="save" class="w-4 h-4"></i> Guardar Cliente
+        </button>
+        <button onclick="submitNewClientView(event, true)" class="px-5 py-1.5 bg-gradient-to-r from-indigo-600 to-blue-500 rounded-lg text-[13px] font-semibold text-white hover:from-indigo-700 hover:to-blue-600 transition shadow-sm flex items-center gap-2">
+          <i data-lucide="sparkles" class="w-4 h-4"></i> Guardar y Crear Primera Venta
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

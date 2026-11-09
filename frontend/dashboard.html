@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CALEBSYS — Menú Principal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --neon: #00d4ff;
+      --dark: #050d1a;
+      --card-bg: rgba(8, 25, 58, 0.78);
+      --card-border: rgba(0,212,255,0.28);
+    }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    #circuit-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      position: relative;
+      z-index: 10;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      background: rgba(5,13,26,0.82);
+      border-bottom: 1px solid rgba(0,212,255,0.18);
+      backdrop-filter: blur(12px);
+      flex-shrink: 0;
+    }
+    /* Left: CALEBSYS logo + dark toggle */
+    .top-left { display: flex; align-items: center; gap: 1rem; }
+    .logo-mark {
+      display: flex; align-items: center; gap: .5rem;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.15rem; font-weight: 900;
+      color: #fff; letter-spacing: .06em;
+    }
+    .logo-mark .dot { color: var(--neon); }
+    .logo-badge {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #00d4ff, #0056b3);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 14px rgba(0,212,255,.5);
+    }
+    .logo-badge svg { width: 20px; height: 20px; stroke: #fff; fill: none; stroke-width: 2; }
+    .dark-switch {
+      display: flex; align-items: center; gap: .4rem;
+      font-size: .6rem; color: rgba(0,212,255,.65);
+      font-weight: 700; letter-spacing: .1em;
+    }
+    .dark-switch input { accent-color: var(--neon); width: 36px; height: 18px; cursor: pointer; }
+
+    /* Center: Company brand */
+    .top-center {
+      display: flex; flex-direction: column; align-items: center;
+      position: absolute; left: 50%; transform: translateX(-50%);
+    }
+    .company-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem; font-weight: 900;
+      background: linear-gradient(90deg, #ff6a00, #ff9a3c, #ffe259, #ff9a3c, #ff6a00);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+      letter-spacing: .1em;
+    }
+    @keyframes shimmer { to { background-position: 200% center; } }
+    .company-sub {
+      font-size: .58rem; font-weight: 700; letter-spacing: .25em;
+      color: rgba(255,210,100,.7); text-transform: uppercase;
+    }
+    .location-pin {
+      width: 14px; height: 14px;
+      background: #ff4444;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      display: inline-block;
+      margin-right: .4rem;
+      box-shadow: 0 0 8px rgba(255,68,68,.6);
+    }
+
+    /* Right: User info */
+    .top-right {
+      display: flex; align-items: center; gap: .8rem;
+    }
+    .user-avatar {
+      width: 42px; height: 42px;
+      background: linear-gradient(135deg, #1a3a6e, #2563eb);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid rgba(0,212,255,.4);
+      box-shadow: 0 0 12px rgba(0,212,255,.3);
+    }
+    .user-avatar svg { width: 22px; height: 22px; stroke: #fff; fill: none; stroke-width: 1.8; }
+    .user-info { text-align: right; }
+    .user-name { font-size: .82rem; font-weight: 800; color: #fff; }
+    .user-f12 {
+      font-size: .62rem; font-weight: 700; color: rgba(0,212,255,.8);
+      display: flex; align-items: center; gap: .3rem; justify-content: flex-end;
+    }
+    .key-badge {
+      background: rgba(0,212,255,.15);
+      border: 1px solid rgba(0,212,255,.3);
+      border-radius: 4px;
+      padding: .1rem .35rem;
+      font-size: .6rem; font-weight: 800; color: var(--neon);
+      letter-spacing: .06em;
+    }
+
+    /* ── MAIN GRID ── */
+    .main-grid {
+      position: relative; z-index: 5;
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 1.6rem;
+      padding: 1.6rem 2.4rem;
+      min-height: 0;
+    }
+
+    /* ── MODULE CARDS ── */
+    .mod-card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--card-border);
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 1.4rem 1.6rem 1.2rem;
+      cursor: pointer;
+      transition: transform .22s, box-shadow .22s, border-color .22s;
+      backdrop-filter: blur(14px);
+      overflow: hidden;
+      position: relative;
+    }
+    .mod-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(0,212,255,.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .mod-card:hover {
+      transform: translateY(-4px) scale(1.015);
+      border-color: rgba(0,212,255,.55);
+      box-shadow: 0 12px 40px rgba(0,212,255,.18), 0 0 0 1px rgba(0,212,255,.15);
+    }
+    .mod-card:active { transform: scale(.99); }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      text-shadow: 0 0 20px rgba(255,255,255,.2);
+    }
+    .card-key {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--neon);
+      text-shadow: 0 0 12px var(--neon);
+      background: rgba(0,212,255,.1);
+      border: 1px solid rgba(0,212,255,.3);
+      border-radius: 8px;
+      padding: .25rem .7rem;
+    }
+
+    .card-illustration {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: .8rem 0;
+    }
+    .card-illustration img,
+    .card-illustration .illus-emoji {
+      max-height: 130px;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 20px rgba(0,150,255,.35));
+      transition: transform .3s;
+    }
+    .mod-card:hover .illus-emoji { transform: scale(1.08) translateY(-4px); }
+
+    /* Emoji-based illustrations */
+    .illus-emoji {
+      font-size: 7rem;
+      line-height: 1;
+      display: block;
+      text-align: center;
+    }
+
+    /* Card-specific colors */
+    .card-pos  { border-color: rgba(0,212,255,.35); }
+    .card-pos:hover { border-color: #00d4ff; box-shadow: 0 12px 40px rgba(0,212,255,.22); }
+
+    .card-delivery { border-color: rgba(255,150,0,.3); }
+    .card-delivery .card-title { color: #ffe0a0; }
+    .card-delivery .card-key { color: #ffb347; text-shadow: 0 0 12px #ffb347; background: rgba(255,150,0,.1); border-color: rgba(255,150,0,.3); }
+    .card-delivery:hover { border-color: #ffb347; box-shadow: 0 12px 40px rgba(255,150,0,.18); }
+
+    .card-admin { border-color: rgba(150,100,255,.35); }
+    .card-admin .card-title { color: #d0c0ff; }
+    .card-admin .card-key { color: #c084fc; text-shadow: 0 0 12px #c084fc; background: rgba(150,100,255,.1); border-color: rgba(150,100,255,.3); }
+    .card-admin:hover { border-color: #c084fc; box-shadow: 0 12px 40px rgba(150,100,255,.2); }
+
+    .card-social { border-color: rgba(0,220,100,.3); }
+    .card-social .card-title { color: #a0ffcf; }
+    .card-social .card-key { color: #34d399; text-shadow: 0 0 12px #34d399; background: rgba(0,200,100,.1); border-color: rgba(0,200,100,.3); }
+    .card-social:hover { border-color: #34d399; box-shadow: 0 12px 40px rgba(0,200,100,.18); }
+
+    /* Social icons row */
+    .social-icons {
+      display: flex; gap: 1.4rem;
+      align-items: center; justify-content: center;
+      width: 100%; padding: .5rem 0;
+    }
+    .social-icon {
+      width: 72px; height: 72px;
+      border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.8rem;
+      box-shadow: 0 6px 20px rgba(0,0,0,.4);
+      transition: transform .2s;
+    }
+    .social-icon:hover { transform: scale(1.12) rotate(-4deg); }
+    .si-fb   { background: linear-gradient(135deg, #1877f2, #0e5fb5); }
+    .si-ig   { background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af, #515bd4); }
+    .si-wa   { background: linear-gradient(135deg, #25d366, #128c7e); }
+
+    /* ── BOTTOM BAR ── */
+    .bottombar {
+      position: relative; z-index: 10;
+      height: 52px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(5,13,26,.85);
+      border-top: 1px solid rgba(0,212,255,.15);
+      gap: 2rem;
+      flex-shrink: 0;
+    }
+    .menu-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.05rem; font-weight: 900;
+      color: #fff; letter-spacing: .3em;
+      text-shadow: 0 0 20px rgba(0,212,255,.5);
+    }
+    .esc-btn {
+      position: absolute; right: 1.5rem;
+      background: rgba(220,50,50,.15);
+      border: 1px solid rgba(220,50,50,.4);
+      border-radius: 8px;
+      padding: .3rem .9rem;
+      font-size: .72rem; font-weight: 800; color: #ff8080;
+      letter-spacing: .12em; cursor: pointer;
+      transition: background .2s;
+    }
+    .esc-btn:hover { background: rgba(220,50,50,.28); }
+  </style>
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="top-left">
+    <div class="logo-mark">
+      <div class="logo-badge">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l2.5 2.5L16 9"/></svg>
+      </div>
+      CALEB<span class="dot">SYS</span>
+    </div>
+    <div class="dark-switch">
+      <input type="checkbox" checked>
+      <span>DARK MODE</span>
+    </div>
+  </div>
+
+  <div class="top-center">
+    <div class="company-name">
+      <span style="font-size:.95rem;vertical-align:middle">📍</span> MAGDALENO
+    </div>
+    <div class="company-sub">Maderas &amp; Materiales</div>
+  </div>
+
+  <div class="top-right">
+    <div class="user-avatar">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    </div>
+    <div class="user-info">
+      <div class="user-name" id="user-display-name">Antonio Magdaleno</div>
+      <div class="user-f12">
+        <span class="key-badge">F12</span> Usuarios
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- 2×2 MODULE GRID -->
+<div class="main-grid">
+
+  <!-- F1: PUNTO DE VENTA -->
+  <div class="mod-card card-pos" id="mod-pos" onclick="goTo('pos')" tabindex="0">
+    <div class="card-header">
+      <div class="card-title">Punto de Venta</div>
+      <div class="card-key">F1</div>
+    </div>
+    <div class="card-illustration">
+      <span class="illus-emoji">🖥️💳</span>
+    </div>
+  </div>
+
+  <!-- F2: ENTREGAS A DOMICILIO -->
+  <div class="mod-card card-delivery" id="mod-delivery" onclick="goTo('delivery')" tabindex="0">
+    <div class="card-header">
+      <div class="card-title">Entregas a Domicilio</div>
+      <div class="card-key">F2</div>
+    </div>
+    <div class="card-illustration">
+      <span class="illus-emoji">🚚⏱️</span>
+    </div>
+  </div>
+
+  <!-- F3: ADMINISTRACIÓN -->
+  <div class="mod-card card-admin" id="mod-admin" onclick="goTo('admin')" tabindex="0">
+    <div class="card-header">
+      <div class="card-title">Administración</div>
+      <div class="card-key">F3</div>
+    </div>
+    <div class="card-illustration">
+      <span class="illus-emoji">⚙️👥</span>
+    </div>
+  </div>
+
+  <!-- F4: REDES SOCIALES -->
+  <div class="mod-card card-social" id="mod-social" onclick="goTo('social')" tabindex="0">
+    <div class="card-header">
+      <div class="card-title">Redes Sociales</div>
+      <div class="card-key">F4</div>
+    </div>
+    <div class="card-illustration">
+      <div class="social-icons">
+        <div class="social-icon si-fb">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </div>
+        <div class="social-icon si-ig">
+          <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </div>
+        <div class="social-icon si-wa">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="bottombar">
+  <div class="menu-title">MENÚ PRINCIPAL</div>
+  <button class="esc-btn" onclick="location.href='/login'">ESC ↩</button>
+</div>
+
+<script>
+// ─── CIRCUIT BOARD (same engine as login) ─────────────────────────────────
+const canvas = document.getElementById('circuit-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, nodes, pulses;
+function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; init(); }
+function randBetween(a, b) { return a + Math.random() * (b - a); }
+function init() {
+  const n = Math.floor(W * H / 18000);
+  nodes = [];
+  for (let i = 0; i < n; i++) nodes.push({ x: Math.random()*W, y: Math.random()*H, r: randBetween(3,6), glow: Math.random()*Math.PI*2, glowSpeed: randBetween(.012,.04), connections: [] });
+  nodes.forEach((node, i) => {
+    node.connections = nodes.map((m, j) => ({ j, d: Math.hypot(m.x-node.x, m.y-node.y) }))
+      .filter(e => e.j !== i && e.d < 210).sort((a,b)=>a.d-b.d).slice(0,3).map(e=>e.j);
+  });
+  pulses = []; for (let k = 0; k < 16; k++) spawnPulse();
+}
+function spawnPulse() {
+  const ni = Math.floor(Math.random()*nodes.length);
+  const nd = nodes[ni]; if (!nd||!nd.connections.length) return;
+  pulses.push({ from: ni, to: nd.connections[Math.floor(Math.random()*nd.connections.length)], t: 0, speed: randBetween(.005,.018) });
+}
+function draw() {
+  ctx.clearRect(0,0,W,H);
+  nodes.forEach(n => {
+    n.connections.forEach(ci => {
+      const m = nodes[ci];
+      const g = ctx.createLinearGradient(n.x,n.y,m.x,m.y);
+      g.addColorStop(0,'rgba(0,140,255,0.12)'); g.addColorStop(1,'rgba(0,60,160,0.04)');
+      ctx.beginPath(); ctx.moveTo(n.x,n.y); ctx.lineTo(m.x,m.y);
+      ctx.strokeStyle=g; ctx.lineWidth=.8; ctx.stroke();
+    });
+  });
+  nodes.forEach(n => {
+    n.glow += n.glowSpeed;
+    const a = .35 + .4*Math.sin(n.glow), r = n.r + 1.5*Math.sin(n.glow*1.3);
+    const g = ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,r*3.5);
+    g.addColorStop(0,`rgba(0,200,255,${a})`); g.addColorStop(1,'rgba(0,80,200,0)');
+    ctx.beginPath(); ctx.arc(n.x,n.y,r*3.5,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+    ctx.beginPath(); ctx.arc(n.x,n.y,r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(0,210,255,${a+.15})`; ctx.shadowColor='#00d4ff'; ctx.shadowBlur=12; ctx.fill(); ctx.shadowBlur=0;
+  });
+  pulses.forEach((p,idx) => {
+    p.t += p.speed;
+    if (p.t >= 1) {
+      const nd = nodes[p.to]; if (nd&&nd.connections.length) { p.from=p.to; p.to=nd.connections[Math.floor(Math.random()*nd.connections.length)]; p.t=0; }
+      else { pulses.splice(idx,1); spawnPulse(); } return;
+    }
+    const a=nodes[p.from], b=nodes[p.to]; if(!a||!b) return;
+    const px=a.x+(b.x-a.x)*p.t, py=a.y+(b.y-a.y)*p.t;
+    const pg=ctx.createRadialGradient(px,py,0,px,py,10);
+    pg.addColorStop(0,'rgba(0,230,255,.95)'); pg.addColorStop(.5,'rgba(0,140,255,.4)'); pg.addColorStop(1,'transparent');
+    ctx.beginPath(); ctx.arc(px,py,10,0,Math.PI*2); ctx.fillStyle=pg; ctx.fill();
+    ctx.beginPath(); ctx.arc(px,py,2.5,0,Math.PI*2);
+    ctx.fillStyle='#00f5ff'; ctx.shadowColor='#00f5ff'; ctx.shadowBlur=16; ctx.fill(); ctx.shadowBlur=0;
+  });
+  requestAnimationFrame(draw);
+}
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(draw);
+
+// ─── KEYBOARD SHORTCUTS ────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  switch(e.key) {
+    case 'F1': e.preventDefault(); goTo('pos');      break;
+    case 'F2': e.preventDefault(); goTo('delivery'); break;
+    case 'F3': e.preventDefault(); goTo('admin');    break;
+    case 'F4': e.preventDefault(); goTo('social');   break;
+    case 'F12': e.preventDefault(); goTo('users');   break;
+    case 'Escape': location.href = '/login';          break;
+  }
+});
+
+// Hover pulse effect on cards
+document.querySelectorAll('.mod-card').forEach(card => {
+  card.addEventListener('mouseenter', () => {
+    card.style.transition = 'transform .22s, box-shadow .22s, border-color .22s';
+  });
+});
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────────
+function goTo(module) {
+  const routes = {
+    pos:      '/',
+    delivery: '/delivery',
+    admin:    '/admin',
+    social:   '/social',
+    users:    '/usuarios'
+  };
+  const card = {
+    pos: 'mod-pos', delivery: 'mod-delivery', admin: 'mod-admin', social: 'mod-social'
+  };
+  // Flash selected card
+  if (card[module]) {
+    const el = document.getElementById(card[module]);
+    if (el) {
+      el.style.transform = 'scale(0.97)';
+      el.style.opacity = '.8';
+      setTimeout(() => { location.href = routes[module] || '/'; }, 200);
+    }
+  } else {
+    location.href = routes[module] || '/';
+  }
+}
+
+// ─── LOAD USER INFO FROM SESSION ──────────────────────────────────────────
+const storedUser = localStorage.getItem('calebsys_usuario');
+if (storedUser) {
+  document.getElementById('user-display-name').textContent =
+    storedUser.replace('.', ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+</script>
+</body>
+</html>

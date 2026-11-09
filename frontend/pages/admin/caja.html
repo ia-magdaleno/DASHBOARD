@@ -1,0 +1,176 @@
+<!-- PAGE: CAJA Y CORTES — MVP Funcional -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Caja y Cortes</h1>
+    <p class="page-subtitle">Turnos de caja · Corte Ciego · Arqueo con autorización</p>
+  </div>
+  <div class="page-header-actions" style="display:flex;gap:8px;align-items:center;">
+    <span id="caja-turno-badge" style="display:none;font-size:0.72rem;font-weight:700;padding:4px 10px;border-radius:20px;background:rgba(16,185,129,0.12);color:var(--success);border:1px solid rgba(16,185,129,0.3);">
+      <i class="fa-solid fa-circle" style="font-size:7px;vertical-align:middle;"></i> TURNO ABIERTO
+    </span>
+    <button id="btn-abrir-turno" class="btn btn-primary btn-sm" data-click="cajaAbrirTurno">
+      <i class="fa-solid fa-play"></i> Abrir Turno
+    </button>
+    <button id="btn-corte" class="btn btn-danger btn-sm" style="display:none;" data-click="cajaMostrarCorte">
+      <i class="fa-solid fa-scissors"></i> Hacer Corte
+    </button>
+  </div>
+</div>
+
+<!-- Panel: Turno Activo -->
+<div id="caja-sin-turno" class="card" style="text-align:center;padding:40px;">
+  <div class="empty-icon"><i class="fa-solid fa-cash-register"></i></div>
+  <div class="empty-title">Sin turno activo</div>
+  <div class="empty-desc" style="margin-bottom:20px;">Abre un turno para comenzar a registrar ventas de caja.</div>
+  <button class="btn btn-primary" data-click="cajaAbrirTurno"><i class="fa-solid fa-play"></i> Abrir Turno</button>
+</div>
+
+<div id="caja-turno-panel" style="display:none;">
+  <!-- Resumen del turno activo -->
+  <div class="grid-3" style="margin-bottom:20px;gap:16px;display:grid;grid-template-columns:1fr 1fr 1fr;">
+    <div class="card card-sm" style="text-align:center;">
+      <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Fondo Inicial</div>
+      <div id="caja-fondo" style="font-size:1.6rem;font-weight:800;color:var(--text-primary);">$0.00</div>
+    </div>
+    <div class="card card-sm" style="text-align:center;">
+      <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Ventas Efectivo</div>
+      <div id="caja-ventas" style="font-size:1.6rem;font-weight:800;color:var(--success);">$0.00</div>
+    </div>
+    <div class="card card-sm" style="text-align:center;">
+      <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Total Esperado</div>
+      <div id="caja-esperado" style="font-size:1.6rem;font-weight:800;color:var(--brand-400);">$0.00</div>
+    </div>
+  </div>
+  <div class="card card-sm" style="margin-bottom:20px;">
+    <div style="display:flex;gap:24px;font-size:0.8rem;color:var(--text-muted);">
+      <span><i class="fa-solid fa-user"></i> Abierto por: <strong id="caja-opened-by" style="color:var(--text-primary);">—</strong></span>
+      <span><i class="fa-solid fa-clock"></i> Desde: <strong id="caja-desde" style="color:var(--text-primary);">—</strong></span>
+      <span><i class="fa-solid fa-hashtag"></i> ID: <span id="caja-shift-id" style="font-family:monospace;font-size:0.72rem;">—</span></span>
+    </div>
+  </div>
+  <div class="plugin-upsell" style="margin-bottom:20px;">
+    <i class="fa-solid fa-eye-slash"></i>
+    <div class="plugin-upsell-info">
+      <h4>Protocolo Corte Ciego Activo</h4>
+      <p>El cajero reporta lo que cuenta sin ver el monto esperado. La diferencia se calcula automáticamente y requiere autorización del Admin o Gerente.</p>
+    </div>
+    <span class="badge badge-success">Activo</span>
+  </div>
+</div>
+
+<!-- Historial de turnos -->
+<div class="table-wrapper" id="caja-historial-section" style="display:none;">
+  <div class="table-toolbar" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+    <div class="table-toolbar-title">Historial de Turnos <span class="badge badge-neutral" id="caja-hist-count"></span></div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <!-- M-2: breadcrumb — solo visible cuando el admin dueño/gerente general
+           está viendo el detalle de UNA sucursal (llegó desde el desglose). -->
+      <div id="caja-scope-breadcrumb" style="display:none;align-items:center;gap:8px;font-size:0.74rem;color:var(--text-muted);">
+        <button id="caja-scope-back" data-click="__safe" data-click-arg="cajaBackToAll"
+                style="padding:3px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface);font-size:0.7rem;font-weight:700;cursor:pointer;color:var(--brand-400,#3b82f6);display:flex;align-items:center;gap:5px;">
+          <i class="fa-solid fa-arrow-left"></i> Todas
+        </button>
+        <span>Viendo: <strong id="caja-scope-label" style="color:var(--text-main);">—</strong></span>
+      </div>
+      <!-- M-2: selector de sucursal — solo visible para el admin dueño/gerente
+           general. El Gerente de sucursal nunca lo ve (queda scoped siempre a
+           su propia sede, igual que antes). -->
+      <select id="caja-sucursal-filter"
+              style="display:none;padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);font-size:0.76rem;font-weight:600;cursor:pointer;color:var(--text-main);"
+              data-change="__safe" data-change-arg="cajaLoadHistorial">
+        <option value="ALL">Todas las sucursales</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- M-2: desglose por sucursal (nivel 2) — solo cuando el scope es ALL.
+       Cada fila es clicable: lleva al historial de esa sola sede (nivel 3). -->
+  <div id="caja-by-sucursal-panel" style="display:none;padding:12px 16px;border-bottom:1px solid var(--border);">
+    <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);margin-bottom:8px;">
+      Turnos por Sucursal
+    </div>
+    <div id="caja-by-sucursal-list" style="display:flex;flex-direction:column;gap:6px;"></div>
+  </div>
+
+  <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:0.78rem;">
+      <thead>
+        <tr>
+          <th id="caja-th-sucursal" style="display:none;padding:8px 12px;text-align:left;color:var(--text-muted);font-size:0.68rem;text-transform:uppercase;border-bottom:1px solid var(--border);">Sucursal</th>
+          <th style="padding:8px 12px;text-align:left;color:var(--text-muted);font-size:0.68rem;text-transform:uppercase;border-bottom:1px solid var(--border);">Abierto por</th>
+          <th style="padding:8px 12px;text-align:left;color:var(--text-muted);font-size:0.68rem;text-transform:uppercase;border-bottom:1px solid var(--border);">Cerrado por</th>
+          <th style="padding:8px 12px;text-align:right;color:var(--text-muted);font-size:0.68rem;text-transform:uppercase;border-bottom:1px solid var(--border);">Fondo</th>
+          <th style="padding:8px 12px;text-align:right;color:var(--text-muted);font-size:0.68rem;text-transform:uppercase;border-bottom:1px solid var(--border);">Esperado</th>
+          <th style="padding:8px 12px;text-align:right;color:var(--text-muted);font-size:0.68rem;text-transform:uppercase;border-bottom:1px solid var(--border);">Reportado</th>
+          <th style="padding:8px 12px;text-align:right;color:var(--text-muted);font-size:0.68rem;text-transform:uppercase;border-bottom:1px solid var(--border);">Diferencia</th>
+          <th style="padding:8px 12px;text-align:left;color:var(--text-muted);font-size:0.68rem;text-transform:uppercase;border-bottom:1px solid var(--border);">Estado</th>
+          <th style="padding:8px 12px;text-align:left;color:var(--text-muted);font-size:0.68rem;text-transform:uppercase;border-bottom:1px solid var(--border);">Fecha</th>
+          <th style="padding:8px 12px;border-bottom:1px solid var(--border);"></th>
+        </tr>
+      </thead>
+      <tbody id="caja-hist-tbody">
+        <tr><td colspan="9" style="padding:32px;text-align:center;color:var(--text-muted);">Cargando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal: Abrir Turno -->
+<div class="modal-backdrop" id="modal-abrir-turno">
+  <div class="modal" style="max-width:380px;">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa-solid fa-play"></i> Abrir Turno de Caja</div>
+      <button class="modal-close" data-click="closeModalCaja" data-click-arg="modal-abrir-turno"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Fondo Inicial (efectivo en caja al abrir)</label>
+        <input class="form-control" type="number" id="caja-fondo-input" value="0" min="0" step="0.01" placeholder="0.00">
+      </div>
+      <div id="caja-abrir-error" style="display:none;color:var(--danger);font-size:0.78rem;margin-top:8px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" data-click="cajaConfirmarAbrir"><i class="fa-solid fa-play"></i> Confirmar Apertura</button>
+      <button class="btn btn-secondary" data-click="closeModalCaja" data-click-arg="modal-abrir-turno">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Corte Ciego -->
+<div class="modal-backdrop" id="modal-corte-ciego">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa-solid fa-scissors"></i> Corte de Caja — Ciego</div>
+      <button class="modal-close" data-click="closeModalCaja" data-click-arg="modal-corte-ciego"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:0.8rem;color:var(--text-muted);">
+        <i class="fa-solid fa-eye-slash" style="color:var(--warning);margin-right:6px;"></i>
+        <strong style="color:var(--warning);">Protocolo Ciego:</strong> No verás el monto esperado antes de reportar. Cuenta el efectivo físico en caja y escribe la cantidad exacta.
+      </div>
+      <div class="form-group">
+        <label class="form-label">Efectivo contado en caja *</label>
+        <input class="form-control" type="number" id="caja-reportado-input" min="0" step="0.01" placeholder="0.00" style="font-size:1.2rem;font-weight:700;">
+      </div>
+      <div id="caja-corte-error" style="display:none;color:var(--danger);font-size:0.78rem;margin-top:8px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" data-click="cajaConfirmarCorte"><i class="fa-solid fa-scissors"></i> Registrar Corte</button>
+      <button class="btn btn-secondary" data-click="closeModalCaja" data-click-arg="modal-corte-ciego">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Resultado del corte / Autorización -->
+<div class="modal-backdrop" id="modal-resultado-corte">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-header">
+      <div class="modal-title" id="resultado-title"><i class="fa-solid fa-receipt"></i> Resultado del Corte</div>
+      <button class="modal-close" data-click="__closeModalCajaLoad"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" id="resultado-body"></div>
+    <div class="modal-footer" id="resultado-footer">
+      <button class="btn btn-secondary" data-click="__closeModalCajaLoad">Cerrar</button>
+    </div>
+  </div>
+</div>

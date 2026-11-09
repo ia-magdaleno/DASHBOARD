@@ -1,0 +1,26 @@
+<div class="hidden fixed inset-0 z-[60] bg-black/50 flex items-center justify-center backdrop-blur-sm" id="modal-paquete">
+<div class="bg-white rounded-xl shadow-2xl w-[400px] p-6">
+<h3 class="text-lg font-black text-gray-800 mb-1"><i class="inline w-5 h-5 text-blue-600" data-lucide="package-plus"></i> ARMAR NUEVO PAQUETE</h3>
+<p class="text-[10px] text-gray-500 mb-4 bg-blue-50 p-2 rounded">El paquete se creará con los artículos que marcaste en la tabla. Se ocultará automáticamente si el stock de algún componente llega a cero.</p>
+<label class="block text-[11px] font-bold text-gray-700 mb-1">NOMBRE DEL PAQUETE</label>
+<input class="w-full border border-gray-300 rounded p-2 text-sm mb-3 outline-none focus:border-blue-500" placeholder="Ej. POSTE DE LUZ COMPLETO" type="text"/>
+<div class="grid grid-cols-2 gap-3 mb-4">
+<div>
+<label class="block text-[11px] font-bold text-gray-700 mb-1">DESCUENTO EXTRA (%)</label>
+<input class="w-full border border-gray-300 rounded p-2 text-sm outline-none" placeholder="0" type="number"/>
+</div>
+<div>
+<label class="block text-[11px] font-bold text-gray-700 mb-1">ESCALA PRECIO</label>
+<select class="w-full border border-gray-300 rounded p-2 text-sm outline-none">
+<option>MAYOREO</option>
+<option>MENUDEO</option>
+<option>ESPECIAL</option>
+</select>
+</div>
+</div>
+<div class="flex gap-2 mt-4">
+<button class="flex-1 border border-gray-300 text-gray-600 font-bold py-2 rounded-lg hover:bg-gray-50" onclick="document.getElementById('modal-paquete').classList.add('hidden')">CANCELAR</button>
+<button class="flex-1 bg-blue-600 text-white font-black py-2 rounded-lg hover:bg-blue-700 shadow-lg">GUARDAR PAQUETE</button>
+</div>
+</div>
+</div>

@@ -1,0 +1,12 @@
+/* Custom CSS overrides for CALEBSYS POS */
+
+/* Custom monospaced sizing for thermal ticket simulation */
+#thermal-ticket-container {
+  width: 80mm;
+  max-width: 100%;
+}
+
+kbd {
+  font-family: monospace;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+}

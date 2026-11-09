@@ -1,0 +1,166 @@
+<!-- PAGE: CUENTAS POR PAGAR — /api/payables -->
+<!-- Se generan automáticamente desde compras-recepciones (tipo CREDIT) -->
+<!-- Soporta: listado, aplicar pago parcial o total, cancelación       -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Cuentas por Pagar</h1>
+    <p class="page-subtitle">Pasivos generados por recepciones a crédito — aplicación y seguimiento de pagos</p>
+  </div>
+  <div class="page-header-actions">
+    <button class="btn btn-ghost btn-sm" data-click="cxpCargar">
+      <i class="fa-solid fa-arrows-rotate"></i> Actualizar
+    </button>
+  </div>
+</div>
+
+<!-- KPI strip -->
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;">
+  <div class="kpi-card">
+    <div class="kpi-label">Pendientes</div>
+    <div class="kpi-value" id="cxp-kpi-pending" style="color:var(--color-warning)">—</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Parciales</div>
+    <div class="kpi-value" id="cxp-kpi-partial" style="color:var(--color-info,#3b82f6)">—</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Pagadas</div>
+    <div class="kpi-value" id="cxp-kpi-paid" style="color:var(--color-success)">—</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Total Adeudado</div>
+    <div class="kpi-value" id="cxp-kpi-total" style="color:var(--color-danger);font-size:20px;">—</div>
+  </div>
+</div>
+
+<!-- Filtros + tabla -->
+<div class="card">
+  <div class="card-toolbar" style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+    <input type="text" class="form-input" id="cxp-search"
+           placeholder="Buscar folio CxP, UUID fiscal, factura, proveedor…"
+           data-input="cxpFiltrar" style="max-width:320px;">
+    <select class="form-select" id="cxp-filter-status" data-change="cxpFiltrar" style="max-width:160px;">
+      <option value="">Todos los estados</option>
+      <option value="PENDING">Pendiente</option>
+      <option value="PARTIAL">Pago parcial</option>
+      <option value="PAID">Pagada</option>
+      <option value="CANCELLED">Cancelada</option>
+    </select>
+    <input type="date" class="form-input" id="cxp-filter-from"
+           data-change="cxpFiltrar" style="max-width:150px;" title="Vence desde">
+    <input type="date" class="form-input" id="cxp-filter-to"
+           data-change="cxpFiltrar" style="max-width:150px;" title="Vence hasta">
+    <button class="btn btn-ghost btn-sm" data-click="cxpCargar">
+      <i class="fa-solid fa-arrows-rotate"></i>
+    </button>
+  </div>
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Folio Seguimiento (CxP)</th>
+          <th>Proveedor</th>
+          <th>Folio Fiscal / Factura</th>
+          <th>Fecha de Recepción</th>
+          <th>Día de Emisión</th>
+          <th>Fecha de Vencimiento</th>
+          <th style="text-align:right;">Total</th>
+          <th style="text-align:right;">Saldo</th>
+          <th>Estado</th>
+          <th style="width:110px;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="cxp-tbody">
+        <tr>
+          <td colspan="10" style="text-align:center;padding:32px;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Cargando…
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL: Aplicar Pago -->
+<div class="modal-backdrop" id="modal-cxp-pago" style="display:none;"
+     data-click="cxpCerrarPago" data-click-self-target="true">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header">
+      <h3 class="modal-title" id="cxp-pago-title">Aplicar Pago</h3>
+      <button class="modal-close" data-click="cxpCerrarPago">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="cxp-pago-id">
+
+      <div style="background:var(--color-surface-alt,rgba(0,0,0,.04));border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <div><span style="color:var(--color-text-muted);">Proveedor:</span> <strong id="cxp-info-supplier">—</strong></div>
+          <div><span style="color:var(--color-text-muted);">Vence:</span> <strong id="cxp-info-due">—</strong></div>
+          <div><span style="color:var(--color-text-muted);">Total CxP:</span> <strong id="cxp-info-total">—</strong></div>
+          <div><span style="color:var(--color-text-muted);">Saldo pendiente:</span>
+            <strong id="cxp-info-balance" style="color:var(--color-danger);">—</strong>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label">Monto a pagar *</label>
+          <input type="number" class="form-input" id="cxp-monto" min="0.01" step="0.01"
+                 placeholder="0.00" data-input="cxpActualizarMontoPago">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Método de pago</label>
+          <select class="form-select" id="cxp-metodo">
+            <option value="TRANSFER">Transferencia</option>
+            <option value="CASH">Efectivo</option>
+            <option value="CHECK">Cheque</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fecha de pago</label>
+          <input type="date" class="form-input" id="cxp-fecha-pago">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Referencia / Folio bancario</label>
+          <input type="text" class="form-input" id="cxp-referencia" placeholder="Ej. TRF-2026-001">
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">Notas</label>
+          <input type="text" class="form-input" id="cxp-pago-notas" placeholder="Observaciones del pago…">
+        </div>
+      </div>
+
+      <!-- Indicador pago total vs parcial -->
+      <div id="cxp-pago-indicator" style="font-size:13px;margin-top:4px;color:var(--color-text-muted);"></div>
+      <div id="cxp-pago-error" style="display:none;color:var(--color-danger);margin-top:8px;font-size:13px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-click="cxpCerrarPago">Cancelar</button>
+      <button class="btn btn-primary" id="cxp-btn-pagar" data-click="cxpAplicarPago">
+        <i class="fa-solid fa-money-bill-wave"></i> Aplicar Pago
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Detalle de CxP (historial de pagos + visor de factura) -->
+<div class="modal-backdrop" id="modal-cxp-detalle" style="display:none;"
+     data-click="cxpCerrarDetalle" data-click-self-target="true">
+  <div class="modal" style="max-width:960px;width:95vw;max-height:92vh;overflow-y:auto;">
+    <div class="modal-header">
+      <h3 class="modal-title" id="cxp-det-title">Detalle CxP y Factura</h3>
+      <button class="modal-close" data-click="cxpCerrarDetalle">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-body" id="cxp-det-body">
+      <i class="fa-solid fa-spinner fa-spin"></i> Cargando…
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-click="cxpCerrarDetalle">Cerrar</button>
+    </div>
+  </div>
+</div>

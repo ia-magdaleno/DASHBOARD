@@ -1,0 +1,88 @@
+<!-- PAGE: SELLERS-CONFIG — conectado a /api/sellers/{id}/catalog-permissions, commission-rules, commission-rate -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Configuración de Vendedores</h1>
+    <p class="page-subtitle">Permisos de catálogo y reglas de comisión por vendedor</p>
+  </div>
+</div>
+
+<!-- Selector de empleado -->
+<div class="card" style="margin-bottom:16px;">
+  <div class="card-title">Seleccionar Vendedor</div>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <input class="form-control" type="text" id="seller-search" placeholder="Buscar por nombre..."
+      data-input="searchSellers" style="max-width:320px;">
+    <select class="form-control" id="seller-select" style="max-width:360px;" data-change="loadSellerConfig">
+      <option value="">— Selecciona un vendedor —</option>
+    </select>
+  </div>
+</div>
+
+<!-- Config del vendedor seleccionado -->
+<div id="seller-config-area" style="display:none;">
+  <div class="grid-2">
+
+    <!-- Permisos de catálogo -->
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-layer-group"></i> Acceso por Categoría</div>
+      <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:10px;">
+        Sin reglas = puede vender todo el catálogo. Agrega restricciones solo si aplica.
+      </p>
+      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+        <input class="form-control" type="text" id="cat-perm-cat" placeholder="Categoría" style="flex:1;">
+        <select class="form-control" id="cat-perm-can" style="width:130px;">
+          <option value="true">Puede vender</option>
+          <option value="false">Bloqueado</option>
+        </select>
+        <button class="btn btn-primary btn-sm" data-click="addCatalogPerm">Agregar</button>
+      </div>
+      <div id="cat-perm-msg" style="display:none;margin-bottom:8px;font-size:0.75rem;padding:5px 10px;border-radius:8px;"></div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead><tr><th>Categoría</th><th>Acceso</th><th></th></tr></thead>
+          <tbody id="cat-perm-tbody">
+            <tr><td colspan="3" style="text-align:center;padding:12px;color:var(--text-secondary);">Sin restricciones (acceso total)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Reglas de comisión -->
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-percent"></i> Comisiones</div>
+      <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:10px;">
+        Jerarquía: escala_precio > categoría > default > commission_factor del empleado
+      </p>
+      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+        <select class="form-control" id="comm-scope" style="width:140px;" data-change="toggleCommScopeValue">
+          <option value="default">Default (global)</option>
+          <option value="category">Por categoría</option>
+          <option value="price_scale">Por escala precio</option>
+        </select>
+        <input class="form-control" type="text" id="comm-scope-value" placeholder="Valor (cat./escala)" style="flex:1;">
+        <input class="form-control" type="number" id="comm-rate" min="0" step="0.0001" placeholder="% tasa" style="width:110px;">
+        <button class="btn btn-primary btn-sm" data-click="addCommRule">Agregar</button>
+      </div>
+      <div id="comm-msg" style="display:none;margin-bottom:8px;font-size:0.75rem;padding:5px 10px;border-radius:8px;"></div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead><tr><th>Scope</th><th>Valor</th><th>Tasa %</th><th></th></tr></thead>
+          <tbody id="comm-rules-tbody">
+            <tr><td colspan="4" style="text-align:center;padding:12px;color:var(--text-secondary);">Sin reglas explícitas</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Tasa efectiva -->
+      <div style="margin-top:12px;background:#ede9fe;border-radius:8px;padding:10px;">
+        <p style="font-size:0.72rem;font-weight:700;color:#5b21b6;margin-bottom:4px;">TASA EFECTIVA SIMULADA</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <input class="form-control" type="text" id="sim-category" placeholder="categoría (opcional)" style="flex:1;">
+          <input class="form-control" type="text" id="sim-scale" placeholder="escala precio (opcional)" style="flex:1;">
+          <button class="btn btn-sm" data-click="simulateRate" style="background:#7c3aed;color:#fff;font-size:0.72rem;">Simular</button>
+        </div>
+        <p id="sim-result" style="margin-top:6px;font-size:0.78rem;font-weight:700;color:#5b21b6;"></p>
+      </div>
+    </div>
+
+  </div>
+</div>

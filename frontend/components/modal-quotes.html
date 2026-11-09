@@ -1,0 +1,46 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden select-none" id="modal-quotes">
+<div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-[800px] max-w-full max-h-[85vh] flex flex-col overflow-hidden font-montserrat">
+<!-- Header -->
+<div class="bg-gradient-to-r from-blue-600 to-blue-800 px-5 py-4 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<i class="w-5 h-5 text-blue-200" data-lucide="file-text"></i>
+<h3 class="font-black text-white text-sm uppercase tracking-wider">Cotizaciones del Cliente</h3>
+<span class="bg-blue-900 text-blue-200 font-bold text-[9px] px-2 py-0.5 rounded">F4</span>
+</div>
+<span class="text-blue-100 font-bold text-xs" id="quotes-client-name">-</span>
+<button class="text-blue-200 hover:text-white transition" onclick="closeModal('modal-quotes')"><i class="w-5 h-5" data-lucide="x"></i></button>
+</div>
+<!-- Toggle (Solo visible para Público en General) -->
+<div class="bg-white border-b border-slate-200 px-4 py-2 hidden" id="quotes-filter-container">
+<div class="flex items-center gap-4 text-xs font-bold text-slate-500">
+<span class="mr-2">Ver:</span>
+<label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-600 transition">
+<input checked="" class="w-3.5 h-3.5 text-blue-600" name="quotesFilter" onchange="handleQuotesFilterChange()" type="radio" value="publico"/>
+          Solo Público en General
+        </label>
+<label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-600 transition">
+<input class="w-3.5 h-3.5 text-blue-600" name="quotesFilter" onchange="handleQuotesFilterChange()" type="radio" value="all"/>
+          Todas las Cotizaciones
+        </label>
+</div>
+</div>
+<!-- Body / List -->
+<div class="flex-1 overflow-y-auto bg-slate-50 p-4">
+<div class="space-y-3" id="quotes-list-container">
+<!-- Cotizaciones se renderizan aquí -->
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="bg-white border-t border-slate-200 p-4 flex items-center justify-between">
+<div class="text-xs font-bold text-slate-500">
+        Cotizaciones mostradas para el cliente actual.
+      </div>
+<div class="flex items-center gap-3">
+<button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-xl flex items-center gap-2 transition shadow-lg shadow-blue-600/30" onclick="createNewQuote()">
+<i class="w-4 h-4" data-lucide="save"></i>
+<span class="text-xs uppercase tracking-tight">Generar Cotización (del Carrito)</span>
+</button>
+</div>
+</div>
+</div>
+</div>

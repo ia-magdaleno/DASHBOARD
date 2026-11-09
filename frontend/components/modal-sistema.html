@@ -1,0 +1,389 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden select-none" id="modal-sistema">
+<div class="bg-white rounded-3xl shadow-2xl w-[600px] max-w-full max-h-[88vh] flex flex-col overflow-hidden font-montserrat">
+<!-- Header -->
+<div class="bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-4 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<i class="w-5 h-5 text-[#8afcfd]" data-lucide="settings"></i>
+<h2 class="font-black text-white text-sm uppercase tracking-wide">F8 — Configuración del Sistema</h2>
+</div>
+<button class="text-slate-400 hover:text-white transition" onclick="closeModal('modal-sistema')">
+<i class="w-5 h-5" data-lucide="x"></i>
+</button>
+</div>
+<!-- Tabs -->
+<div class="flex border-b border-slate-200 bg-slate-50">
+<button class="px-5 py-3 text-xs font-black border-b-2 border-blue-600 text-blue-700 uppercase tracking-wide" id="tab-sis-1" onclick="switchSisTab(1)">Formato Cotización</button>
+<button class="px-5 py-3 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-700 uppercase tracking-wide" id="tab-sis-2" onclick="switchSisTab(2)">Redes y Pagos</button>
+<button class="px-5 py-3 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-700 uppercase tracking-wide flex items-center gap-1" id="tab-sis-3" onclick="switchSisTab(3)">
+<i class="w-3 h-3" data-lucide="printer"></i> Impresoras
+        </button>
+</div>
+<!-- TAB 1: Formato cotización -->
+<div class="p-6 flex-1 overflow-y-auto space-y-5 text-xs" id="sis-tab-1">
+<div class="bg-blue-50 border border-blue-100 rounded-2xl px-4 py-3 text-[10px] text-blue-700 font-semibold">
+<i class="w-3.5 h-3.5 inline mr-1" data-lucide="info"></i>
+          Estos datos aparecerán en el encabezado de todos tus tickets y cotizaciones.
+        </div>
+<!-- Logotipo -->
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Logotipo de la Empresa (Máx 1MB)</label>
+<div class="flex items-center gap-4">
+<div class="w-20 h-20 bg-slate-100 border-2 border-dashed border-slate-300 rounded-xl flex items-center justify-center overflow-hidden bg-contain bg-center bg-no-repeat" id="cfg-logo-preview">
+<i class="w-6 h-6 text-slate-300" data-lucide="image"></i>
+</div>
+<div class="flex-1">
+<input accept="image/png, image/jpeg" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer" id="cfg-biz-logo-input" type="file"/>
+<p class="text-[9px] text-slate-400 mt-2">Aparecerá en tickets (blanco y negro) y cotizaciones carta (a color).</p>
+<button class="text-[9px] text-red-500 hover:text-red-700 font-bold mt-1" onclick="clearLogo()" type="button">Eliminar Logo</button>
+</div>
+</div>
+</div>
+<!-- Datos del negocio -->
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Nombre del Negocio</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-300" id="cfg-biz-name" placeholder="MAGDALENO" type="text"/>
+</div>
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Giro / Descripción</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-300" id="cfg-biz-giro" placeholder="MADERAS &amp; MATERIALES" type="text"/>
+</div>
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-1">RFC Fiscal</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-300" id="cfg-biz-rfc" placeholder="MAGA840919XXX" type="text"/>
+</div>
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Teléfono</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-300" id="cfg-biz-phone" placeholder="(615) 157-0000" type="text"/>
+</div>
+<div class="col-span-2">
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Dirección</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-300" id="cfg-biz-address" placeholder="Calle Hidalgo #124, Col. Centro" type="text"/>
+</div>
+</div>
+<div class="border-t border-slate-100 my-2 pt-3">
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Espaciado del Encabezado (Ticket)</label>
+<div class="flex items-center gap-3">
+<input class="w-20 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 text-center focus:outline-none focus:ring-2 focus:ring-blue-300" id="cfg-ticket-blank-lines" max="10" min="0" type="number" value="0"/>
+<span class="text-[10px] text-slate-500">Líneas en blanco antes de imprimir (para ajustar el corte o dar espacio al logo pre-impreso del papel).</span>
+</div>
+</div>
+<!-- Formato de impresión -->
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Formato predeterminado</label>
+<div class="grid grid-cols-2 gap-3">
+<label class="flex items-center gap-3 p-3 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-blue-400 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 transition">
+<input checked="" class="accent-blue-600" name="cfg-formato" type="radio" value="ticket"/>
+<div>
+<div class="font-black text-slate-700">TICKET 80mm</div>
+<div class="text-[9px] text-slate-400">Impresora térmica</div>
+</div>
+</label>
+<label class="flex items-center gap-3 p-3 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-indigo-400 has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50 transition">
+<input class="accent-indigo-600" name="cfg-formato" type="radio" value="carta"/>
+<div>
+<div class="font-black text-slate-700">CARTA A4</div>
+<div class="text-[9px] text-slate-400">Membretado completo</div>
+</div>
+</label>
+</div>
+</div>
+<!-- Notas de cotización -->
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Nota al pie de cotización</label>
+<textarea class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none resize-none" id="cfg-quote-footer" placeholder="ej. Precios sujetos a cambio sin previo aviso. Validez 15 días." rows="2"></textarea>
+</div>
+<!-- Botón guardar -->
+<div class="flex justify-end">
+<button class="bg-blue-600 hover:bg-blue-700 text-white font-black text-xs px-6 py-2.5 rounded-xl transition flex items-center gap-2" onclick="saveSisConfig()">
+<i class="w-4 h-4" data-lucide="save"></i>
+            GUARDAR CONFIGURACIÓN
+          </button>
+</div>
+</div>
+<!-- TAB 2: Redes y Pagos -->
+<div class="p-6 flex-1 overflow-y-auto space-y-5 text-xs hidden" id="sis-tab-2">
+<div class="bg-green-50 border border-green-100 rounded-2xl px-4 py-3 text-[10px] text-green-700 font-semibold">
+<i class="w-3.5 h-3.5 inline mr-1" data-lucide="info"></i>
+          Estos datos se adjuntarán automáticamente cuando envíes cotizaciones por WhatsApp, correo o Facebook.
+        </div>
+<!-- WhatsApp -->
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-1">📱 Número WhatsApp (10 dígitos, sin +52)</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-green-300" id="cfg-wa-number" placeholder="6151570000" type="text"/>
+</div>
+<!-- Facebook -->
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-1">👍 Facebook — URL de tu página</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-300" id="cfg-fb-url" placeholder="https://facebook.com/tuNegocio" type="url"/>
+</div>
+<!-- Correo -->
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-1">📧 Correo de respuesta</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-300" id="cfg-email" placeholder="ventas@tunegocio.com" type="email"/>
+</div>
+<div class="border-t border-slate-100 pt-4">
+<div class="text-[10px] font-black text-slate-400 uppercase mb-3">⚡ Links de Pago</div>
+<div class="space-y-3">
+<div>
+<label class="block text-[9px] font-black text-blue-500 uppercase mb-1">PayPal.me</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-300" id="cfg-paypal" placeholder="https://paypal.me/tuUsuario" type="url"/>
+</div>
+<div>
+<label class="block text-[9px] font-black text-amber-500 uppercase mb-1">MercadoPago Link</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-300" id="cfg-mp" placeholder="https://mpago.la/tuLink" type="url"/>
+</div>
+</div>
+</div>
+<!-- Datos bancarios para transferencia -->
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-2">🏦 Datos Bancarios (Transferencia)</label>
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block text-[9px] text-slate-400 uppercase mb-1">Banco</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:outline-none" id="cfg-banco-nombre" placeholder="BBVA / Banorte / etc." type="text"/>
+</div>
+<div>
+<label class="block text-[9px] text-slate-400 uppercase mb-1">Cuenta / CLABE</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:outline-none" id="cfg-banco-cuenta" placeholder="012345678901234567" type="text"/>
+</div>
+<div>
+<label class="block text-[9px] text-slate-400 uppercase mb-1">Titular</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:outline-none" id="cfg-banco-titular" placeholder="Nombre del titular" type="text"/>
+</div>
+<div>
+<label class="block text-[9px] text-slate-400 uppercase mb-1">Tarjeta (últimos 4)</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:outline-none" id="cfg-banco-tarjeta" placeholder="**** **** **** 1234" type="text"/>
+</div>
+</div>
+</div>
+<!-- Botón guardar -->
+<div class="flex justify-end">
+<button class="bg-green-600 hover:bg-green-700 text-white font-black text-xs px-6 py-2.5 rounded-xl transition flex items-center gap-2" onclick="saveSisConfig()">
+<i class="w-4 h-4" data-lucide="save"></i>
+            GUARDAR CONFIGURACIÓN
+          </button>
+</div>
+</div>
+<!-- ══ TAB 3: IMPRESORAS ══ -->
+<div class="p-6 flex-1 overflow-y-auto space-y-5 text-xs hidden" id="sis-tab-3">
+<div class="bg-purple-50 border border-purple-100 rounded-2xl px-4 py-3 text-[10px] text-purple-700 font-semibold">
+<i class="w-3.5 h-3.5 inline mr-1" data-lucide="info"></i>
+          Configura cada impresora por separado. Los cambios se guardan localmente en esta computadora.
+        </div>
+<!-- ── IMPRESORA TÉRMICA 80mm ── -->
+<div class="border-2 border-blue-100 rounded-2xl overflow-hidden">
+<div class="bg-blue-600 px-4 py-3 flex items-center justify-between">
+<div class="flex items-center gap-2 text-white font-black text-xs uppercase tracking-wide">
+<i class="w-4 h-4" data-lucide="receipt"></i>
+              Impresora Térmica — Tickets 80mm
+            </div>
+<span class="bg-blue-500 text-blue-100 text-[9px] font-bold px-2 py-0.5 rounded">TICKET / COTIZACIÓN</span>
+</div>
+<div class="p-4 space-y-3">
+<!-- Tipo de conexión -->
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Tipo de Conexión</label>
+<div class="grid grid-cols-3 gap-2">
+<label class="flex items-center gap-2 p-2.5 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-blue-400 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 transition">
+<input checked="" class="accent-blue-600" name="cfg-term-conn" type="radio" value="usb"/>
+<div>
+<div class="font-black text-slate-700 text-[11px]">USB</div>
+<div class="text-[9px] text-slate-400">Cable directo</div>
+</div>
+</label>
+<label class="flex items-center gap-2 p-2.5 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-blue-400 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 transition">
+<input class="accent-blue-600" name="cfg-term-conn" type="radio" value="network"/>
+<div>
+<div class="font-black text-slate-700 text-[11px]">Red / IP</div>
+<div class="text-[9px] text-slate-400">LAN / WiFi</div>
+</div>
+</label>
+<label class="flex items-center gap-2 p-2.5 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-blue-400 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 transition">
+<input class="accent-blue-600" name="cfg-term-conn" type="radio" value="bluetooth"/>
+<div>
+<div class="font-black text-slate-700 text-[11px]">Bluetooth</div>
+<div class="text-[9px] text-slate-400">Inalámbrica</div>
+</div>
+</label>
+</div>
+</div>
+<!-- Puerto / IP -->
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Puerto USB / COM</label>
+<select class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none" id="cfg-term-port">
+<option value="auto">Auto-detectar</option>
+<option value="USB001">USB001</option>
+<option value="COM1">COM1</option>
+<option value="COM2">COM2</option>
+<option value="COM3">COM3</option>
+<option value="COM4">COM4</option>
+<option value="LPT1">LPT1</option>
+</select>
+</div>
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-1">IP de Red (si aplica)</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none" id="cfg-term-ip" placeholder="192.168.1.100" type="text"/>
+</div>
+</div>
+<!-- Nombre de impresora en Windows -->
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Nombre en Windows (Panel de control → Dispositivos)</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none" id="cfg-term-name" placeholder="ej. EPSON TM-T20III" type="text"/>
+</div>
+<!-- Opciones adicionales -->
+<div class="grid grid-cols-3 gap-3">
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Ancho papel</label>
+<select class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none" id="cfg-term-width">
+<option value="80">80mm ✓</option>
+<option value="58">58mm</option>
+<option value="76">76mm</option>
+</select>
+</div>
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Copias</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none text-center" id="cfg-term-copies" max="5" min="1" type="number" value="1"/>
+</div>
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Corte automático</label>
+<select class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none" id="cfg-term-cut">
+<option value="full">Corte total</option>
+<option value="partial">Corte parcial</option>
+<option value="none">Sin corte</option>
+</select>
+</div>
+</div>
+<!-- Opciones booleanas -->
+<div class="flex flex-wrap gap-3">
+<label class="flex items-center gap-2 cursor-pointer text-[11px] font-semibold text-slate-600">
+<input class="accent-blue-600 w-4 h-4" id="cfg-term-logo" type="checkbox"/>
+                Imprimir logo
+              </label>
+<label class="flex items-center gap-2 cursor-pointer text-[11px] font-semibold text-slate-600">
+<input checked="" class="accent-blue-600 w-4 h-4" id="cfg-term-barcode" type="checkbox"/>
+                Código de barras
+              </label>
+<label class="flex items-center gap-2 cursor-pointer text-[11px] font-semibold text-slate-600">
+<input class="accent-blue-600 w-4 h-4" id="cfg-term-beep" type="checkbox"/>
+                Beep al terminar
+              </label>
+</div>
+<!-- Botón de prueba -->
+<button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black text-xs py-2.5 rounded-xl transition flex items-center justify-center gap-2" onclick="testPrintThermal()">
+<i class="w-4 h-4" data-lucide="printer"></i>
+              IMPRIMIR PÁGINA DE PRUEBA (Térmica 80mm)
+            </button>
+</div>
+</div>
+<!-- ── IMPRESORA CARTA / A4 ── -->
+<div class="border-2 border-indigo-100 rounded-2xl overflow-hidden">
+<div class="bg-indigo-600 px-4 py-3 flex items-center justify-between">
+<div class="flex items-center gap-2 text-white font-black text-xs uppercase tracking-wide">
+<i class="w-4 h-4" data-lucide="file-text"></i>
+              Impresora Carta — Membretado A4 / Letter
+            </div>
+<span class="bg-indigo-500 text-indigo-100 text-[9px] font-bold px-2 py-0.5 rounded">COTIZACIÓN FORMAL</span>
+</div>
+<div class="p-4 space-y-3">
+<!-- Nombre de impresora -->
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Nombre en Windows</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none" id="cfg-carta-name" placeholder="ej. HP LaserJet Pro M404n" type="text"/>
+</div>
+<div class="grid grid-cols-3 gap-3">
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Tamaño papel</label>
+<select class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none" id="cfg-carta-size">
+<option value="letter">Carta (Letter)</option>
+<option value="a4">A4</option>
+<option value="legal">Oficio (Legal)</option>
+</select>
+</div>
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Copias</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none text-center" id="cfg-carta-copies" max="5" min="1" type="number" value="1"/>
+</div>
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Orientación</label>
+<select class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none" id="cfg-carta-orient">
+<option value="portrait">Vertical</option>
+<option value="landscape">Horizontal</option>
+</select>
+</div>
+</div>
+<!-- Márgenes -->
+<div>
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Márgenes (mm)</label>
+<div class="grid grid-cols-4 gap-2">
+<div>
+<label class="block text-[9px] text-slate-400 text-center mb-1">Superior</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2 py-1.5 text-xs text-center font-semibold text-slate-800 focus:outline-none" id="cfg-carta-margin-top" type="number" value="15"/>
+</div>
+<div>
+<label class="block text-[9px] text-slate-400 text-center mb-1">Inferior</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2 py-1.5 text-xs text-center font-semibold text-slate-800 focus:outline-none" id="cfg-carta-margin-bottom" type="number" value="15"/>
+</div>
+<div>
+<label class="block text-[9px] text-slate-400 text-center mb-1">Izquierdo</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2 py-1.5 text-xs text-center font-semibold text-slate-800 focus:outline-none" id="cfg-carta-margin-left" type="number" value="20"/>
+</div>
+<div>
+<label class="block text-[9px] text-slate-400 text-center mb-1">Derecho</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2 py-1.5 text-xs text-center font-semibold text-slate-800 focus:outline-none" id="cfg-carta-margin-right" type="number" value="20"/>
+</div>
+</div>
+</div>
+<!-- Opciones booleanas -->
+<div class="flex flex-wrap gap-3">
+<label class="flex items-center gap-2 cursor-pointer text-[11px] font-semibold text-slate-600">
+<input checked="" class="accent-indigo-600 w-4 h-4" id="cfg-carta-logo" type="checkbox"/>
+                Imprimir logo / membrete
+              </label>
+<label class="flex items-center gap-2 cursor-pointer text-[11px] font-semibold text-slate-600">
+<input class="accent-indigo-600 w-4 h-4" id="cfg-carta-firma" type="checkbox"/>
+                Línea de firma
+              </label>
+<label class="flex items-center gap-2 cursor-pointer text-[11px] font-semibold text-slate-600">
+<input class="accent-indigo-600 w-4 h-4" id="cfg-carta-duplex" type="checkbox"/>
+                Impresión dúplex
+              </label>
+</div>
+<!-- Botón de prueba -->
+<button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs py-2.5 rounded-xl transition flex items-center justify-center gap-2" onclick="testPrintCarta()">
+<i class="w-4 h-4" data-lucide="file-text"></i>
+              IMPRIMIR PÁGINA DE PRUEBA (Carta A4)
+            </button>
+</div>
+</div>
+<!-- ── Impresora predeterminada ── -->
+<div class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+<label class="block text-[10px] font-black text-slate-400 uppercase mb-2">🖨️ Impresora predeterminada al dar "Imprimir"</label>
+<div class="grid grid-cols-2 gap-3">
+<label class="flex items-center gap-3 p-3 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-blue-400 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 transition">
+<input checked="" class="accent-blue-600" name="cfg-default-printer" type="radio" value="termica"/>
+<div>
+<div class="font-black text-slate-700 text-[11px]">🔵 Térmica 80mm</div>
+<div class="text-[9px] text-slate-400">Para tickets y cotizaciones rápidas</div>
+</div>
+</label>
+<label class="flex items-center gap-3 p-3 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-indigo-400 has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50 transition">
+<input class="accent-indigo-600" name="cfg-default-printer" type="radio" value="carta"/>
+<div>
+<div class="font-black text-slate-700 text-[11px]">🟣 Carta A4</div>
+<div class="text-[9px] text-slate-400">Para cotizaciones formales</div>
+</div>
+</label>
+</div>
+</div>
+<!-- Guardar -->
+<div class="flex justify-end">
+<button class="bg-purple-600 hover:bg-purple-700 text-white font-black text-xs px-6 py-2.5 rounded-xl transition flex items-center gap-2" onclick="saveSisConfig()">
+<i class="w-4 h-4" data-lucide="save"></i>
+            GUARDAR CONFIGURACIÓN DE IMPRESORAS
+          </button>
+</div>
+</div><!-- / sis-tab-3 -->
+</div>
+</div>

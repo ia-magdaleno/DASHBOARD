@@ -1,0 +1,38 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden select-none" id="modal-transfers">
+<div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-[480px] max-w-full flex flex-col overflow-hidden font-montserrat font-bold">
+<!-- Header -->
+<div class="bg-slate-50 border-b border-slate-200 px-5 py-4 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<i class="w-5 h-5 text-slate-500" data-lucide="arrow-left-right"></i>
+<h3 class="font-bold text-slate-700 text-sm">Traspaso entre Sucursales (CTRL+T)</h3>
+</div>
+<span class="bg-slate-200 text-slate-600 font-bold text-[9px] px-2 py-0.5 rounded">ESC para salir</span>
+</div>
+<!-- Body -->
+<form class="p-5 space-y-4 text-xs" id="transfer-form" onsubmit="submitTransferForm(event)">
+<div>
+<label class="block text-[10px] text-slate-400 mb-1 uppercase" for="transfer-warehouse">Destino / Sucursal de Envío</label>
+<select class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3 py-2 text-sm font-semibold text-slate-800 focus:bg-white" id="transfer-warehouse">
+<option value="MATRIZ">MATRIZ</option>
+<option value="BOULEVARD">BOULEVARD</option>
+<option value="SUCURSAL NORTE">SUCURSAL NORTE</option>
+<option value="SUCURSAL SUR">SUCURSAL SUR</option>
+</select>
+</div>
+<div>
+<label class="block text-[10px] text-slate-400 mb-1 uppercase" for="transfer-product-input">Producto (SKU exacto)</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 text-sm font-semibold text-slate-800" id="transfer-product-input" placeholder="ej. 000002" required="" type="text"/>
+</div>
+<div>
+<label class="block text-[10px] text-slate-400 mb-1 uppercase" for="transfer-qty-input">Cantidad a Traspasar</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 text-sm font-semibold text-slate-800" id="transfer-qty-input" placeholder="0.00" required="" step="any" type="number"/>
+</div>
+<div class="pt-2 flex justify-end">
+<button class="bg-[#2563eb] hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-2xl transition shadow-md shadow-blue-100 flex items-center gap-1.5" type="submit">
+<i class="w-4 h-4" data-lucide="arrow-up-right"></i>
+<span>Realizar Traspaso (Enter)</span>
+</button>
+</div>
+</form>
+</div>
+</div>

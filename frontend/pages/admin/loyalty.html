@@ -1,0 +1,127 @@
+<!-- PAGE: LOYALTY — conectado a /api/loyalty/config y /api/loyalty/redemption-config -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Programa de Fidelización de Puntos</h1>
+    <p class="page-subtitle">Configura acumulación, redención y equivalencia de puntos de lealtad</p>
+  </div>
+</div>
+
+<!-- ── Tarjetas resumen ─────────────────────────────────────────────────────── -->
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;" id="loyalty-stat-cards">
+  <div class="card" style="text-align:center;padding:14px 10px;">
+    <div style="font-size:0.68rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Modo acumulación</div>
+    <div style="font-size:1.35rem;font-weight:700;color:var(--primary);" id="stat-mode">—</div>
+  </div>
+  <div class="card" style="text-align:center;padding:14px 10px;">
+    <div style="font-size:0.68rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Tasa actual</div>
+    <div style="font-size:1.35rem;font-weight:700;color:var(--primary);" id="stat-rate">—</div>
+  </div>
+  <div class="card" style="text-align:center;padding:14px 10px;">
+    <div style="font-size:0.68rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Valor del punto</div>
+    <div style="font-size:1.35rem;font-weight:700;color:var(--primary);" id="stat-valor">—</div>
+  </div>
+</div>
+
+<div class="grid-2">
+
+  <!-- ── Acumulación ──────────────────────────────────────────────────────── -->
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-star"></i> Acumulación de Puntos</div>
+    <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:14px;">
+      Define cuántos puntos gana el cliente al cerrar una venta.
+    </p>
+
+    <div class="form-group">
+      <label class="form-label">Modo de acumulación</label>
+      <select class="form-control" id="loyalty-mode">
+        <option value="percent">Porcentaje del total</option>
+        <option value="fixed">Puntos fijos por compra</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" id="loyalty-rate-label">Tasa (%)</label>
+      <input class="form-control" type="number" id="loyalty-rate" min="0" step="0.01" placeholder="1.0">
+      <small style="color:var(--text-secondary);font-size:0.72rem;" id="loyalty-rate-hint">
+        Ej: 2 → el cliente gana 2 puntos por cada $100 de compra
+      </small>
+    </div>
+
+    <!-- Simulador -->
+    <div style="background:rgba(var(--primary-rgb,99,102,241),0.07);border-radius:10px;padding:12px;margin:10px 0 14px;">
+      <div style="font-size:0.72rem;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">
+        <i class="fa-solid fa-calculator"></i> Simulador
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span style="font-size:0.78rem;color:var(--text-secondary);">Si el cliente compra</span>
+        <div style="position:relative;display:flex;align-items:center;">
+          <span style="position:absolute;left:8px;font-size:0.78rem;color:var(--text-secondary);">$</span>
+          <input type="number" id="sim-amount" min="0" step="10" placeholder="500"
+            style="width:90px;padding:4px 6px 4px 18px;border-radius:6px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-primary);font-size:0.82rem;">
+        </div>
+        <span style="font-size:0.78rem;color:var(--text-secondary);">gana</span>
+        <span style="font-weight:700;font-size:1rem;color:var(--primary);" id="sim-result">— pts</span>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-sm" data-click="saveLoyaltyConfig">
+      <i class="fa-solid fa-floppy-disk"></i> Guardar acumulación
+    </button>
+    <div id="loyalty-config-msg" style="display:none;margin-top:8px;font-size:0.75rem;padding:6px 10px;border-radius:8px;"></div>
+  </div>
+
+  <!-- ── Redención ────────────────────────────────────────────────────────── -->
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-gift"></i> Modos de Redención</div>
+    <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:14px;">
+      Define cómo pueden canjear puntos los clientes y cuánto vale cada punto.
+    </p>
+
+    <div class="form-group">
+      <label class="form-label">Modos habilitados</label>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:6px;">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.82rem;">
+          <input type="checkbox" id="mode-pago_parcial" value="pago_parcial" class="loyalty-mode-check">
+          <span><strong>Abono a compra</strong> <span style="color:var(--text-secondary);font-size:0.72rem;">(pago_parcial)</span></span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.82rem;">
+          <input type="checkbox" id="mode-sorteo" value="sorteo" class="loyalty-mode-check">
+          <span><strong>Rifa / Sorteo</strong> <span style="color:var(--text-secondary);font-size:0.72rem;">(sorteo)</span></span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.82rem;">
+          <input type="checkbox" id="mode-regalo" value="regalo" class="loyalty-mode-check">
+          <span><strong>Regalos</strong> <span style="color:var(--text-secondary);font-size:0.72rem;">(regalo)</span></span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.82rem;">
+          <input type="checkbox" id="mode-descuento_especial" value="descuento_especial" class="loyalty-mode-check">
+          <span><strong>Descuento especial</strong> <span style="color:var(--text-secondary);font-size:0.72rem;">(descuento_especial)</span></span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.82rem;">
+          <input type="checkbox" id="mode-donacion" value="donacion" class="loyalty-mode-check">
+          <span><strong>Donación</strong> <span style="color:var(--text-secondary);font-size:0.72rem;">(donacion)</span></span>
+        </label>
+      </div>
+      <div style="margin-top:6px;">
+        <label style="font-size:0.72rem;color:var(--text-secondary);">Modos adicionales (uno por línea):</label>
+        <textarea class="form-control" id="loyalty-modes-custom" rows="2"
+          placeholder="mi_modo_personalizado&#10;otro_modo"
+          style="font-size:0.78rem;margin-top:4px;"></textarea>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Valor del punto (MXN / punto)</label>
+      <input class="form-control" type="number" id="loyalty-valor-punto" min="0.01" step="0.01" placeholder="1.00">
+      <!-- Preview en tiempo real -->
+      <div style="margin-top:6px;font-size:0.75rem;color:var(--text-secondary);" id="valor-preview">
+        100 puntos = <strong id="valor-equiv">$100.00</strong> MXN de descuento
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-sm" data-click="saveLoyaltyRedemption">
+      <i class="fa-solid fa-floppy-disk"></i> Guardar redención
+    </button>
+    <div id="loyalty-redemption-msg" style="display:none;margin-top:8px;font-size:0.75rem;padding:6px 10px;border-radius:8px;"></div>
+  </div>
+
+</div>

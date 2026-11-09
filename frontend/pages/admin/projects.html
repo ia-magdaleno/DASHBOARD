@@ -1,0 +1,97 @@
+<!-- PAGE: PROJECTS — conectado a /api/projects y /api/contractors -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Proyectos / Obras</h1>
+    <p class="page-subtitle">Gestión de proyectos de obra y comisiones de contratistas</p>
+  </div>
+  <div class="page-header-right">
+    <button class="btn btn-primary btn-sm" data-click="openProjectForm">
+      <i class="fa-solid fa-plus"></i> Nuevo Proyecto
+    </button>
+  </div>
+</div>
+
+<!-- Formulario -->
+<div class="card" id="project-form-card" style="display:none;margin-bottom:16px;">
+  <div class="card-title" id="project-form-title">Nuevo Proyecto</div>
+  <div class="grid-2">
+    <div class="form-group">
+      <label class="form-label">Nombre del proyecto *</label>
+      <input class="form-control" type="text" id="project-nombre" placeholder="Ej: Remodelación Casa García">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Contratista</label>
+      <select class="form-control" id="project-contractor">
+        <option value="">— Sin contratista —</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">% Comisión contratista</label>
+      <input class="form-control" type="number" id="project-commission" min="0" step="0.01" placeholder="0.00">
+      <small style="font-size:0.72rem;color:var(--text-secondary);">Porcentaje del total de compras del proyecto</small>
+    </div>
+    <div class="form-group">
+      <label class="form-label">ID del cliente</label>
+      <input class="form-control" type="text" id="project-client" placeholder="ID del cliente comprador (opcional)">
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Notas</label>
+    <textarea class="form-control" id="project-notas" rows="2" placeholder="Observaciones..."></textarea>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <button class="btn btn-primary btn-sm" data-click="saveProject">Guardar</button>
+    <button class="btn btn-sm" data-click="closeProjectForm" style="background:var(--bg-tertiary);">Cancelar</button>
+  </div>
+  <div id="project-msg" style="display:none;margin-top:8px;font-size:0.75rem;padding:6px 10px;border-radius:8px;"></div>
+</div>
+
+<!-- Tabla proyectos -->
+<div class="card" style="margin-bottom:16px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <div class="card-title" style="margin-bottom:0">Proyectos</div>
+    <select class="form-control" id="project-status-filter" style="width:140px;font-size:0.78rem;" data-change="loadProjects">
+      <option value="activo" selected>Activos</option>
+      <option value="cerrado">Cerrados</option>
+      <option value="">Todos</option>
+    </select>
+  </div>
+  <div style="overflow-x:auto;">
+    <table class="data-table">
+      <thead><tr>
+        <th>Proyecto</th><th>Contratista</th><th>% Comisión</th><th>Estado</th><th>Acciones</th>
+      </tr></thead>
+      <tbody id="projects-tbody">
+        <tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-secondary);">Cargando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Ledger de comisiones -->
+<div class="card" id="ledger-card" style="display:none;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <div class="card-title" style="margin-bottom:0">Comisiones — <span id="ledger-project-name">-</span></div>
+    <button class="btn btn-sm" data-click="closeLedger" style="background:var(--bg-tertiary);font-size:0.72rem;">✕ Cerrar</button>
+  </div>
+  <div id="ledger-summary" style="display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap;"></div>
+  <!-- Registrar pago -->
+  <div style="background:var(--bg-tertiary);border-radius:8px;padding:12px;margin-bottom:12px;">
+    <p style="font-size:0.78rem;font-weight:700;margin-bottom:8px;">Registrar pago al contratista</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <input class="form-control" type="number" id="ledger-monto" min="0.01" step="0.01" placeholder="Monto MXN"
+        style="width:160px;">
+      <input class="form-control" type="text" id="ledger-nota" placeholder="Nota" style="flex:1;">
+      <button class="btn btn-primary btn-sm" data-click="recordPayment">Registrar pago</button>
+    </div>
+    <div id="ledger-pay-msg" style="display:none;margin-top:6px;font-size:0.75rem;padding:5px 10px;border-radius:8px;"></div>
+  </div>
+  <div style="overflow-x:auto;">
+    <table class="data-table">
+      <thead><tr><th>Fecha</th><th>Tipo</th><th>Monto</th><th>Venta / Nota</th></tr></thead>
+      <tbody id="ledger-tbody">
+        <tr><td colspan="4" style="text-align:center;padding:16px;color:var(--text-secondary);">Sin movimientos</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

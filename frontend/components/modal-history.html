@@ -1,0 +1,34 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden select-none" id="modal-history">
+<div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-[700px] max-w-full max-h-[85vh] flex flex-col overflow-hidden font-montserrat font-bold">
+<!-- Header -->
+<div class="bg-slate-50 border-b border-slate-200 px-5 py-4 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<i class="w-5 h-5 text-slate-500" data-lucide="history"></i>
+<h3 class="font-bold text-slate-700 text-sm">Historial de Ventas Recientes (F10)</h3>
+</div>
+<span class="bg-slate-200 text-slate-600 font-bold text-[9px] px-2 py-0.5 rounded">ESC para salir</span>
+</div>
+<!-- Body -->
+<div class="p-5 flex-1 flex flex-col overflow-hidden font-montserrat text-xs">
+<div class="flex-1 overflow-auto border border-slate-200 rounded-2xl">
+<table class="w-full border-collapse text-left">
+<thead class="bg-slate-50 border-b border-slate-200 sticky top-0">
+<tr>
+<th class="py-2 px-3 text-slate-400 text-[10px]" scope="col">ID Ticket</th>
+<th class="py-2 px-3 text-slate-400 text-[10px]" scope="col">Cliente</th>
+<th class="py-2 px-3 text-slate-400 text-[10px] text-center w-28" scope="col">Fecha / Hora</th>
+<th class="py-2 px-3 text-slate-400 text-[10px] text-center w-28" scope="col">Método Pago</th>
+<th class="py-2 px-3 text-slate-400 text-[10px] text-right w-24" scope="col">Total</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100" id="history-sales-body"></tbody>
+</table>
+</div>
+</div>
+<!-- Footer -->
+<div class="bg-slate-50 border-t border-slate-200 px-5 py-3 flex items-center justify-between text-xs text-slate-500 font-montserrat">
+<span>Usa ↑ ↓ para navegar | ENTER para re-imprimir ticket | ESC para salir</span>
+<button class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-2 rounded-xl transition" onclick="closeModal('modal-history')">Cerrar</button>
+</div>
+</div>
+</div>

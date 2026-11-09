@@ -1,0 +1,33 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden select-none" id="modal-ai-assistant">
+<div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-[550px] max-w-full max-h-[80vh] flex flex-col overflow-hidden font-montserrat font-bold">
+<!-- Header -->
+<div class="bg-slate-50 border-b border-slate-200 px-5 py-4 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<i class="w-5 h-5 text-slate-500" data-lucide="mic"></i>
+<h3 class="font-bold text-slate-700 text-sm">Asistente IA Magdaleno (CTRL+I)</h3>
+</div>
+<span class="bg-slate-200 text-slate-600 font-bold text-[9px] px-2 py-0.5 rounded">ESC para salir</span>
+</div>
+<!-- Body -->
+<div class="p-5 flex-1 flex flex-col overflow-hidden font-montserrat text-xs gap-3">
+<!-- Chat Area -->
+<div class="flex-1 border border-slate-100 bg-slate-50/50 rounded-2xl p-4 overflow-y-auto space-y-3.5 max-h-[40vh] custom-scrollbar select-text" id="ai-chat-history">
+<div class="bg-blue-50 text-blue-900 p-3 rounded-2xl leading-relaxed">
+            Hola, soy tu <b>Asistente Inteligente Magdaleno</b>. Puedo ayudarte con consultas rápidas en el mostrador. Escribe tu pregunta sobre inventario, productos o deudas y presiona Enter.
+          </div>
+</div>
+<!-- Input Row -->
+<div class="relative">
+<input class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-base font-semibold focus:bg-white text-slate-800 pl-11 shadow-inner" id="ai-assistant-query" placeholder="ej. '¿Cuánto stock de cemento queda?' o 'Deuda edgar'" type="text"/>
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<i class="w-4 h-4 text-slate-400" data-lucide="arrow-right"></i>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<div class="bg-slate-50 border-t border-slate-200 px-5 py-3 flex items-center justify-between text-xs text-slate-500 font-montserrat">
+<span>Escribe tu consulta y presiona ENTER | ESC para salir</span>
+<button class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-2 rounded-xl transition" onclick="closeModal('modal-ai-assistant')">Cerrar</button>
+</div>
+</div>
+</div>
